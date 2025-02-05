@@ -43,12 +43,24 @@ public class Level {
         return width;
     }
 
+    public int getWidthInVoxels() {
+        return getWidth() * 16;
+    }
+
     public int getHeight() {
         return height;
     }
 
+    public int getHeightInVoxels() {
+        return getHeight() * 16;
+    }
+
     public int getDepth() {
         return depth;
+    }
+
+    public int getDepthInVoxels() {
+        return getDepth() * 16;
     }
 
     private int getChunkIndex(int worldX, int worldY, int worldZ) {
