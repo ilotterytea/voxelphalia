@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.level;
 
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 public class Level {
@@ -63,11 +64,23 @@ public class Level {
         return getDepth() * 16;
     }
 
-    private int getChunkIndex(int worldX, int worldY, int worldZ) {
-        int cx = worldX / 16;
-        int cy = worldY / 16;
-        int cz = worldZ / 16;
+    private int getChunkIndex(int x, int y, int z) {
+        int cx = x / 16;
+        int cy = y / 16;
+        int cz = z / 16;
 
         return cx + cz * width + cy * width * depth;
+    }
+
+    public Vector3 getChunkPositionFromIndex(int index) {
+        int cx = index % width;
+        int cz = (index / width) % depth;
+        int cy = (index / (width * depth)) % height;
+
+        int x = cx * 16;
+        int y = cy * 16;
+        int z = cz * 16;
+
+        return new Vector3(x, y, z);
     }
 }
