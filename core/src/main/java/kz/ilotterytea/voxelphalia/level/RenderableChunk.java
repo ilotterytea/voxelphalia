@@ -1,15 +1,17 @@
 package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 
@@ -49,10 +51,18 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         Gdx.app.log("RenderableChunk" + offset, "Rebuilding chunk model...");
         long startMilliseconds = System.currentTimeMillis();
 
+        Texture terrainTexture = VoxelphaliaGame.getInstance()
+            .getAssetManager().get("textures/terrain.png", Texture.class);
+
         ModelBuilder modelBuilder = new ModelBuilder();
-        int attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal;
+        int attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
         modelBuilder.begin();
-        MeshPartBuilder builder = modelBuilder.part("block", GL20.GL_TRIANGLES, attr, new Material(ColorAttribute.createDiffuse(Color.LIME)));
+        MeshPartBuilder builder = modelBuilder.part(
+            "block",
+            GL20.GL_TRIANGLES,
+            attr,
+            new Material(TextureAttribute.createDiffuse(terrainTexture))
+        );
 
         int i = 0;
         byte[] voxels = chunk.voxels;
@@ -66,40 +76,42 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
                     byte voxel = voxels[i];
                     if (voxel == 0) continue;
 
+                    TextureRegion region = new TextureRegion(terrainTexture, 0, 0, 16, 16);
+
                     if (y < height - 1) {
-                        if (voxels[i + width * depth] == 0) createTop(builder, x, y, z);
+                        if (voxels[i + width * depth] == 0) createTop(builder, x, y, z, region);
                     } else {
-                        createTop(builder, x, y, z);
+                        createTop(builder, x, y, z, region);
                     }
                     if (y > 0) {
                         if (voxels[i - width * depth] == 0)
-                            createBottom(builder, x, y, z);
+                            createBottom(builder, x, y, z, region);
                     } else {
-                        createBottom(builder, x, y, z);
+                        createBottom(builder, x, y, z, region);
                     }
                     if (x > 0) {
                         if (voxels[i - 1] == 0)
-                            createLeft(builder, x, y, z);
+                            createLeft(builder, x, y, z, region);
                     } else {
-                        createLeft(builder, x, y, z);
+                        createLeft(builder, x, y, z, region);
                     }
                     if (x < width - 1) {
                         if (voxels[i + 1] == 0)
-                            createRight(builder, x, y, z);
+                            createRight(builder, x, y, z, region);
                     } else {
-                        createRight(builder, x, y, z);
+                        createRight(builder, x, y, z, region);
                     }
                     if (z > 0) {
                         if (voxels[i - width] == 0)
-                            createFront(builder, x, y, z);
+                            createFront(builder, x, y, z, region);
                     } else {
-                        createFront(builder, x, y, z);
+                        createFront(builder, x, y, z, region);
                     }
                     if (z < depth - 1) {
                         if (voxels[i + width] == 0)
-                            createBack(builder, x, y, z);
+                            createBack(builder, x, y, z, region);
                     } else {
-                        createBack(builder, x, y, z);
+                        createBack(builder, x, y, z, region);
                     }
                 }
             }
@@ -113,7 +125,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         Gdx.app.log("RenderableChunk" + offset, String.format("Finished in %sms!", elapsedMilliseconds));
     }
 
-    private void createTop(MeshPartBuilder builder, int x, int y, int z) {
+    private void createTop(MeshPartBuilder builder, int x, int y, int z, TextureRegion region) {
+        builder.setUVRange(region);
         builder.rect(
             offset.x + x, offset.y + y + 1, offset.z + z,
             offset.x + x + 1, offset.y + y + 1, offset.z + z,
@@ -123,7 +136,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         );
     }
 
-    private void createBottom(MeshPartBuilder builder, int x, int y, int z) {
+    private void createBottom(MeshPartBuilder builder, int x, int y, int z, TextureRegion region) {
+        builder.setUVRange(region);
         builder.rect(
             offset.x + x, offset.y + y, offset.z + z,
             offset.x + x, offset.y + y, offset.z + z + 1,
@@ -133,7 +147,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         );
     }
 
-    private void createLeft(MeshPartBuilder builder, int x, int y, int z) {
+    private void createLeft(MeshPartBuilder builder, int x, int y, int z, TextureRegion region) {
+        builder.setUVRange(region);
         builder.rect(
             offset.x + x, offset.y + y, offset.z + z,
             offset.x + x, offset.y + y + 1, offset.z + z,
@@ -143,7 +158,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         );
     }
 
-    private void createRight(MeshPartBuilder builder, int x, int y, int z) {
+    private void createRight(MeshPartBuilder builder, int x, int y, int z, TextureRegion region) {
+        builder.setUVRange(region);
         builder.rect(
             offset.x + x + 1, offset.y + y, offset.z + z,
             offset.x + x + 1, offset.y + y, offset.z + z + 1,
@@ -153,7 +169,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         );
     }
 
-    private void createFront(MeshPartBuilder builder, int x, int y, int z) {
+    private void createFront(MeshPartBuilder builder, int x, int y, int z, TextureRegion region) {
+        builder.setUVRange(region);
         builder.rect(
             offset.x + x, offset.y + y, offset.z + z,
             offset.x + x + 1, offset.y + y, offset.z + z,
@@ -163,7 +180,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         );
     }
 
-    private void createBack(MeshPartBuilder builder, int x, int y, int z) {
+    private void createBack(MeshPartBuilder builder, int x, int y, int z, TextureRegion region) {
+        builder.setUVRange(region);
         builder.rect(
             offset.x + x, offset.y + y, offset.z + z + 1,
             offset.x + x, offset.y + y + 1, offset.z + z + 1,
