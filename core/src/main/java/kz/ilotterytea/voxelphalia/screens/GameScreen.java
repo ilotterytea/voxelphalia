@@ -51,8 +51,15 @@ public class GameScreen implements Screen {
         // test level
         for (int x = 0; x < level.getWidthInVoxels(); x++) {
             for (int z = 0; z < level.getWidthInVoxels(); z++) {
-                for (int y = 0; y < level.getHeightInVoxels(); y++) {
-                    level.placeVoxel((byte) 1, x, y, z);
+                for (int y = 0; y < 10; y++) {
+                    byte voxel = 2;
+
+                    // place grass on the top
+                    if (y == 9) {
+                        voxel = 1;
+                    }
+
+                    level.placeVoxel(voxel, x, y, z);
                 }
             }
         }
