@@ -76,7 +76,16 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
                     byte voxel = voxels[i];
                     if (voxel == 0) continue;
 
-                    TextureRegion region = new TextureRegion(terrainTexture, 0, 0, 16, 16);
+                    TextureRegion region;
+
+                    // grass
+                    if (voxel == 1) {
+                        region = new TextureRegion(terrainTexture, 0, 0, 16, 16);
+                    }
+                    // rock
+                    else {
+                        region = new TextureRegion(terrainTexture, 16, 0, 16, 16);
+                    }
 
                     if (y < height - 1) {
                         if (voxels[i + width * depth] == 0) createTop(builder, x, y, z, region);
