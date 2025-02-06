@@ -46,7 +46,7 @@ public class GameScreen implements Screen {
         environment.add(new DirectionalLight().set(1, 1, 1, 0, -1, 0));
 
         level = new Level(4, 2, 4);
-        renderableLevel = new RenderableLevel(level);
+        renderableLevel = new RenderableLevel(camera, level);
 
         // test level
         for (int x = 0; x < level.getWidthInVoxels(); x++) {

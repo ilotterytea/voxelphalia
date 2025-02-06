@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.level;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -9,9 +10,11 @@ import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 
 public class RenderableLevel implements Disposable, Tickable, Renderable {
+    private final Camera camera;
     private final Array<RenderableChunk> renderableChunks;
 
-    public RenderableLevel(Level level) {
+    public RenderableLevel(Camera camera, Level level) {
+        this.camera = camera;
         int chunkCapacity = level.width * level.height * level.depth;
         this.renderableChunks = new Array<>(chunkCapacity);
 
@@ -26,14 +29,14 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
     @Override
     public void render(ModelBatch batch, Environment environment) {
         for (RenderableChunk chunk : renderableChunks) {
-            chunk.render(batch, environment);
+            if (isChunkVisible(chunk)) chunk.render(batch, environment);
         }
     }
 
     @Override
     public void tick(float delta) {
         for (RenderableChunk chunk : renderableChunks) {
-            chunk.tick(delta);
+            if (isChunkVisible(chunk)) chunk.tick(delta);
         }
     }
 
@@ -42,5 +45,16 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
         for (RenderableChunk chunk : renderableChunks) {
             chunk.dispose();
         }
+    }
+
+    private boolean isChunkVisible(RenderableChunk chunk) {
+        Vector3 o = chunk.getOffset();
+        return this.camera.frustum.boundsInFrustum(
+            o.x + 16 / 2f,
+            o.y + 16 / 2f,
+            o.z + 16 / 2f
+            ,
+            16, 16, 16
+        );
     }
 }

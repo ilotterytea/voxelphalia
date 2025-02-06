@@ -199,4 +199,8 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
             0, 0, -1
         );
     }
+
+    public Vector3 getOffset() {
+        return offset;
+    }
 }
