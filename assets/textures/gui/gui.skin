@@ -1,0 +1,18 @@
+{
+  com.badlogic.gdx.graphics.Color: {
+    black: { hex: "#000000" },
+    white: { hex: "#fff1e8" }
+  },
+  com.badlogic.gdx.graphics.g2d.BitmapFont: {
+    default: {
+      file: fonts/FontText.fnt,
+      scaledSize: 16
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+    default: {
+      font: default,
+      fontColor: white
+    },
+  }
+}
