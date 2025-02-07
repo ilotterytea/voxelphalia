@@ -10,10 +10,13 @@ import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 
 public class RenderableLevel implements Disposable, Tickable, Renderable {
+    private final Level level;
     private final Camera camera;
     private final Array<RenderableChunk> renderableChunks;
+    private int renderedChunkCount;
 
     public RenderableLevel(Camera camera, Level level) {
+        this.level = level;
         this.camera = camera;
         int chunkCapacity = level.width * level.height * level.depth;
         this.renderableChunks = new Array<>(chunkCapacity);
@@ -28,8 +31,12 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
 
     @Override
     public void render(ModelBatch batch, Environment environment) {
+        renderedChunkCount = 0;
         for (RenderableChunk chunk : renderableChunks) {
-            if (isChunkVisible(chunk)) chunk.render(batch, environment);
+            if (isChunkVisible(chunk)) {
+                chunk.render(batch, environment);
+                renderedChunkCount++;
+            }
         }
     }
 
@@ -56,5 +63,13 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
             ,
             16, 16, 16
         );
+    }
+
+    public int getRenderedChunkCount() {
+        return renderedChunkCount;
+    }
+
+    public Level getLevel() {
+        return level;
     }
 }

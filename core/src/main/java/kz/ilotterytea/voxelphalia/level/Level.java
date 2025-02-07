@@ -83,4 +83,8 @@ public class Level {
 
         return new Vector3(x, y, z);
     }
+
+    public int getChunkCount() {
+        return this.chunks.size;
+    }
 }
