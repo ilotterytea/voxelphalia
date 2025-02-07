@@ -13,6 +13,9 @@ import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.github.czyzby.noise4j.map.Grid;
+import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 
@@ -34,6 +37,7 @@ public class GameScreen implements Screen {
         camera.update();
 
         controller = new FirstPersonCameraController(camera);
+        controller.setVelocity(100f);
 
         DefaultShader.Config config = new DefaultShader.Config();
         config.defaultCullFace = GL20.GL_FRONT;
@@ -45,17 +49,27 @@ public class GameScreen implements Screen {
         environment.set(new ColorAttribute(ColorAttribute.Fog, 0.8f, 0.8f, 0.8f, 0.8f));
         environment.add(new DirectionalLight().set(1, 1, 1, 0, -1, 0));
 
-        level = new Level(4, 2, 4);
+        level = new Level(40, 4, 40);
         renderableLevel = new RenderableLevel(camera, level);
 
-        // test level
-        for (int x = 0; x < level.getWidthInVoxels(); x++) {
-            for (int z = 0; z < level.getWidthInVoxels(); z++) {
-                for (int y = 0; y < 10; y++) {
+        // terrain generation
+        NoiseGenerator noiseGenerator = new NoiseGenerator();
+        Grid grid = new Grid(level.getWidthInVoxels(), level.getDepthInVoxels());
+        noiseStage(grid, noiseGenerator, 32, 0.6f);
+        noiseStage(grid, noiseGenerator, 16, 0.2f);
+        noiseStage(grid, noiseGenerator, 8, 0.1f);
+        noiseStage(grid, noiseGenerator, 4, 0.1f);
+        noiseStage(grid, noiseGenerator, 1, 0.05f);
+
+        for (int x = 0; x < grid.getWidth(); x++) {
+            for (int z = 0; z < grid.getHeight(); z++) {
+                int maxHeight = (int) (level.getHeightInVoxels() * grid.get(x, z));
+
+                for (int y = 0; y < maxHeight; y++) {
                     byte voxel = 2;
 
-                    // place grass on the top
-                    if (y == 9) {
+                    // place grass on top
+                    if (y == maxHeight - 1) {
                         voxel = 1;
                     }
 
@@ -113,5 +127,13 @@ public class GameScreen implements Screen {
     public void dispose() {
         renderableLevel.dispose();
         modelBatch.dispose();
+    }
+
+    private void noiseStage(final Grid grid, final NoiseGenerator noiseGenerator, final int radius,
+                            final float modifier) {
+        noiseGenerator.setRadius(radius);
+        noiseGenerator.setModifier(modifier);
+        noiseGenerator.setSeed(Generators.rollSeed());
+        noiseGenerator.generate(grid);
     }
 }
