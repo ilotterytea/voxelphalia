@@ -114,7 +114,7 @@ public class GameScreen implements Screen {
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
-        stage.addActor(new DebugInfoTable(skin, renderableLevel));
+        stage.addActor(new DebugInfoTable(skin, camera, renderableLevel));
 
         decalBatch = new DecalBatch(new CameraGroupStrategy(camera));
         renderableEntities = new Array<>();
