@@ -27,7 +27,7 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
 
     @Override
     public void tick(float delta) {
-        if (chunk.isDirty) {
+        if (chunk.isDirty || modelInstance == null) {
             rebuildModel();
             chunk.isDirty = false;
         }

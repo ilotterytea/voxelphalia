@@ -43,7 +43,11 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
     @Override
     public void tick(float delta) {
         for (RenderableChunk chunk : renderableChunks) {
-            if (isChunkVisible(chunk)) chunk.tick(delta);
+            if (isChunkVisible(chunk)) {
+                chunk.tick(delta);
+            } else {
+                chunk.dispose();
+            }
         }
     }
 
