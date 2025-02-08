@@ -21,8 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.github.czyzby.noise4j.map.Grid;
-import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.OreEntity;
 import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
@@ -31,6 +30,7 @@ import kz.ilotterytea.voxelphalia.entities.TreeEntity;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
+import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoTable;
 
 import java.util.Random;
@@ -76,33 +76,9 @@ public class GameScreen implements Screen {
         int seed = (int) (System.currentTimeMillis() / 1000);
 
         level = new Level(40, 4, 40);
+        TerrainGenerator.generateTerrain(level, Generators.rollSeed());
+
         renderableLevel = new RenderableLevel(camera, level);
-
-        // terrain generation
-        NoiseGenerator noiseGenerator = new NoiseGenerator();
-        Grid grid = new Grid(level.getWidthInVoxels(), level.getDepthInVoxels());
-        noiseStage(grid, noiseGenerator, 32, 0.6f, seed);
-        noiseStage(grid, noiseGenerator, 16, 0.2f, seed);
-        noiseStage(grid, noiseGenerator, 8, 0.1f, seed);
-        noiseStage(grid, noiseGenerator, 4, 0.1f, seed);
-        noiseStage(grid, noiseGenerator, 1, 0.05f, seed);
-
-        for (int x = 0; x < grid.getWidth(); x++) {
-            for (int z = 0; z < grid.getHeight(); z++) {
-                int maxHeight = (int) (level.getHeightInVoxels() * grid.get(x, z));
-
-                for (int y = 0; y < maxHeight; y++) {
-                    byte voxel = 2;
-
-                    // place grass on top
-                    if (y == maxHeight - 1) {
-                        voxel = 1;
-                    }
-
-                    level.placeVoxel(voxel, x, y, z);
-                }
-            }
-        }
 
         camera.position.set(
             level.getWidthInVoxels() / 2.0f,
