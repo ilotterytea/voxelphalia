@@ -107,7 +107,7 @@ public class GameScreen implements Screen {
             0,
             level.getDepthInVoxels() / 2.0f
         );
-        camera.position.y = level.getHighestY(camera.position.x, camera.position.y) + 5f;
+        camera.position.y = level.getHighestY(camera.position.x, camera.position.z) + 5f;
         camera.update();
 
         Gdx.input.setInputProcessor(new InputMultiplexer(new SpecialInputProcessor(camera), controller));
