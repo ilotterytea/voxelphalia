@@ -1,18 +1,17 @@
 package kz.ilotterytea.voxelphalia.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 
 public class DebugInfoTable extends Table {
     private final RenderableLevel level;
     private final Label gameLabel, chunkLabel, memoryLabel, jvmLabel;
-    private boolean isEnabled;
 
     public DebugInfoTable(Skin skin) {
         this(skin, null);
@@ -54,10 +53,7 @@ public class DebugInfoTable extends Table {
     @Override
     public void act(float delta) {
         super.act(delta);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
-            isEnabled = !isEnabled;
-        }
+        boolean isEnabled = VoxelphaliaGame.getInstance().getPreferences().getBoolean("debug", false);
 
         String gameText = VoxelphaliaConstants.Metadata.APP_VERSION;
 
