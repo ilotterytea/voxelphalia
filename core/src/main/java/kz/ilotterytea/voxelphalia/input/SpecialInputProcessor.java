@@ -3,23 +3,47 @@ package kz.ilotterytea.voxelphalia.input;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Camera;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 
 public class SpecialInputProcessor implements InputProcessor {
     private final Preferences preferences;
+    private final Camera camera;
 
-    public SpecialInputProcessor() {
+    public SpecialInputProcessor(Camera camera) {
         preferences = VoxelphaliaGame.getInstance().getPreferences();
+        this.camera = camera;
     }
 
     @Override
     public boolean keyDown(int keycode) {
         boolean processed = false;
 
-        if (keycode == Input.Keys.F3) {
-            preferences.putBoolean("debug", !preferences.getBoolean("debug", false));
-            preferences.flush();
-            processed = true;
+        switch (keycode) {
+            // debug info
+            case Input.Keys.F3: {
+                preferences.putBoolean("debug", !preferences.getBoolean("debug", false));
+                preferences.flush();
+                processed = true;
+                break;
+            }
+            // render distance
+            case Input.Keys.F4: {
+                int distance = preferences.getInteger("render-distance", 1);
+                distance += 3;
+                if (distance >= 10) distance = 1;
+
+                preferences.putInteger("render-distance", distance);
+                preferences.flush();
+
+                camera.far = 40.0f * distance;
+                camera.update();
+
+                processed = true;
+                break;
+            }
+            default:
+                break;
         }
 
         return processed;
