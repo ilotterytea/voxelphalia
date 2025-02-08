@@ -31,6 +31,7 @@ import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
+import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoTable;
 
 import java.util.Random;
@@ -73,10 +74,10 @@ public class GameScreen implements Screen {
         environment.set(new ColorAttribute(ColorAttribute.Fog, 0.8f, 0.8f, 0.8f, 0.8f));
         environment.add(new DirectionalLight().set(1, 1, 1, 0, -1, 0));
 
-        int seed = (int) (System.currentTimeMillis() / 1000);
+        int seed = Generators.rollSeed();
 
         level = new Level(40, 4, 40);
-        TerrainGenerator.generateTerrain(level, Generators.rollSeed());
+        TerrainGenerator.generateTerrain(level, seed);
 
         renderableLevel = new RenderableLevel(camera, level);
 
@@ -103,8 +104,16 @@ public class GameScreen implements Screen {
         for (int i = 0; i < random.nextInt(800, 2000); i++) {
             int x = random.nextInt(0, level.getWidthInVoxels());
             int z = random.nextInt(0, level.getDepthInVoxels());
+            int y = (int) level.getHighestY(x, z);
 
-            TreeEntity entity = new TreeEntity(new Vector3(x, level.getHighestY(x, z) + 2, z));
+            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
+
+            if (voxelBelow != VoxelType.GRASS) {
+                i--;
+                continue;
+            }
+
+            TreeEntity entity = new TreeEntity(new Vector3(x, y + 2, z));
             renderableEntities.add(entity);
         }
 
@@ -114,6 +123,14 @@ public class GameScreen implements Screen {
         for (int i = 0; i < random.nextInt(200, 800); i++) {
             int x = random.nextInt(0, level.getWidthInVoxels());
             int z = random.nextInt(0, level.getDepthInVoxels());
+            int y = (int) level.getHighestY(x, z);
+
+            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
+
+            if (voxelBelow != VoxelType.ROCK) {
+                i--;
+                continue;
+            }
 
             RockEntity entity = new RockEntity(new Vector3(x, level.getHighestY(x, z) + 1, z));
             renderableEntities.add(entity);
@@ -125,6 +142,14 @@ public class GameScreen implements Screen {
         for (int i = 0; i < random.nextInt(20, 100); i++) {
             int x = random.nextInt(0, level.getWidthInVoxels());
             int z = random.nextInt(0, level.getDepthInVoxels());
+            int y = (int) level.getHighestY(x, z);
+
+            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
+
+            if (voxelBelow != VoxelType.ROCK) {
+                i--;
+                continue;
+            }
 
             int typeRandom = random.nextInt() % 100;
             int type;
@@ -207,13 +232,5 @@ public class GameScreen implements Screen {
         renderableLevel.dispose();
         decalBatch.dispose();
         modelBatch.dispose();
-    }
-
-    private void noiseStage(final Grid grid, final NoiseGenerator noiseGenerator, final int radius,
-                            final float modifier, int seed) {
-        noiseGenerator.setRadius(radius);
-        noiseGenerator.setModifier(modifier);
-        noiseGenerator.setSeed(seed);
-        noiseGenerator.generate(grid);
     }
 }
