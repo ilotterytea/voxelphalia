@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
 
         camera = new PerspectiveCamera(60, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.near = 0.1f;
-        camera.far = 100f;
+        camera.far = 40.0f * game.getPreferences().getInteger("render-distance", 1);
         camera.update();
 
         controller = new FirstPersonCameraController(camera);
@@ -110,7 +110,7 @@ public class GameScreen implements Screen {
         camera.position.y = level.getHighestY(camera.position.x, camera.position.y) + 5f;
         camera.update();
 
-        Gdx.input.setInputProcessor(new InputMultiplexer(new SpecialInputProcessor(), controller));
+        Gdx.input.setInputProcessor(new InputMultiplexer(new SpecialInputProcessor(camera), controller));
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
