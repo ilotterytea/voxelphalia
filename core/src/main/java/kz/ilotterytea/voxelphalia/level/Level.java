@@ -28,6 +28,10 @@ public class Level {
         return chunk.getVoxel(cx, cy, cz);
     }
 
+    public void placeVoxel(VoxelType voxel, int x, int y, int z) {
+        placeVoxel(voxel.getVoxelId(), x, y, z);
+    }
+
     public void placeVoxel(byte voxel, int x, int y, int z) {
         Chunk chunk = getChunk(x, y, z);
         int cx = x % 16;
