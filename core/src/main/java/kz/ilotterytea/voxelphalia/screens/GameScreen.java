@@ -12,14 +12,22 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
 import com.github.czyzby.noise4j.map.generator.util.Generators;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
+import kz.ilotterytea.voxelphalia.ui.DebugInfoTable;
 
 public class GameScreen implements Screen {
+    private VoxelphaliaGame game;
+    private Stage stage;
+
     private PerspectiveCamera camera;
     private FirstPersonCameraController controller;
 
@@ -31,6 +39,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        game = VoxelphaliaGame.getInstance();
+
         camera = new PerspectiveCamera(60, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.near = 0.1f;
         camera.far = 100f;
@@ -86,6 +96,10 @@ public class GameScreen implements Screen {
         camera.update();
 
         Gdx.input.setInputProcessor(controller);
+
+        stage = new Stage(new ScreenViewport());
+        Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
+        stage.addActor(new DebugInfoTable(skin, renderableLevel));
     }
 
     @Override
@@ -99,6 +113,9 @@ public class GameScreen implements Screen {
         modelBatch.begin(camera);
         renderableLevel.render(modelBatch, environment);
         modelBatch.end();
+
+        stage.act(delta);
+        stage.draw();
     }
 
     @Override
@@ -106,6 +123,8 @@ public class GameScreen implements Screen {
         camera.viewportWidth = width;
         camera.viewportHeight = height;
         camera.update();
+
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
@@ -125,6 +144,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        stage.dispose();
         renderableLevel.dispose();
         modelBatch.dispose();
     }
