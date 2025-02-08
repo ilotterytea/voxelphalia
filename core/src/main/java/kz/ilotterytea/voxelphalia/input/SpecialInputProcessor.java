@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
@@ -39,6 +40,25 @@ public class SpecialInputProcessor implements InputProcessor {
                 camera.far = 40.0f * distance;
                 camera.update();
 
+                processed = true;
+                break;
+            }
+            // full screen
+            case Input.Keys.F12: {
+                boolean fullscreen = preferences.getBoolean("fullscreen", false);
+                fullscreen = !fullscreen;
+
+                preferences.putBoolean("fullscreen", fullscreen);
+                preferences.flush();
+
+                if (fullscreen) {
+                    Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+                } else {
+                    int width = preferences.getInteger("screen-width", 800);
+                    int height = preferences.getInteger("screen-height", 600);
+                    Gdx.graphics.setWindowedMode(width, height);
+                }
+                
                 processed = true;
                 break;
             }
