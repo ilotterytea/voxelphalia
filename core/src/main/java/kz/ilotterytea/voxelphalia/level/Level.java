@@ -87,4 +87,15 @@ public class Level {
     public int getChunkCount() {
         return this.chunks.size;
     }
+
+    public float getHighestY(float x, float z) {
+        int ix = (int) x;
+        int iz = (int) z;
+        if (ix < 0 || ix >= getWidthInVoxels()) return 0;
+        if (iz < 0 || iz >= getDepthInVoxels()) return 0;
+        for (int y = getHeightInVoxels() - 1; y > 0; y--) {
+            if (getVoxel(ix, y, iz) > 0) return y + 1;
+        }
+        return 0;
+    }
 }
