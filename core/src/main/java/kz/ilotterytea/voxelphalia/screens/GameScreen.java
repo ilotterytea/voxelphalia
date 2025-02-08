@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.entities.OreEntity;
 import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
 import kz.ilotterytea.voxelphalia.entities.RockEntity;
 import kz.ilotterytea.voxelphalia.entities.TreeEntity;
@@ -139,6 +140,41 @@ public class GameScreen implements Screen {
             int z = random.nextInt(0, level.getDepthInVoxels());
 
             RockEntity entity = new RockEntity(new Vector3(x, level.getHighestY(x, z) + 1, z));
+            renderableEntities.add(entity);
+        }
+
+        random = new Random(seed + 5);
+
+        // ore generation
+        for (int i = 0; i < random.nextInt(20, 100); i++) {
+            int x = random.nextInt(0, level.getWidthInVoxels());
+            int z = random.nextInt(0, level.getDepthInVoxels());
+
+            int typeRandom = random.nextInt() % 100;
+            int type;
+
+            // coal
+            if (70 <= typeRandom) {
+                type = 0;
+            }
+            // iron
+            else if (30 <= typeRandom) {
+                type = 1;
+            }
+            // gold
+            else if (10 <= typeRandom) {
+                type = 2;
+            }
+            // ruby
+            else if (0 < typeRandom) {
+                type = 3;
+            }
+            // gems
+            else {
+                type = 4;
+            }
+
+            OreEntity entity = new OreEntity(type, new Vector3(x, level.getHighestY(x, z) + 1, z));
             renderableEntities.add(entity);
         }
     }
