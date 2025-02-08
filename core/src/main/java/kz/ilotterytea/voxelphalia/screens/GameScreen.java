@@ -103,7 +103,6 @@ public class GameScreen implements Screen {
             VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
 
             if (voxelBelow != VoxelType.GRASS) {
-                i--;
                 continue;
             }
 
@@ -122,7 +121,6 @@ public class GameScreen implements Screen {
             VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
 
             if (voxelBelow != VoxelType.ROCK) {
-                i--;
                 continue;
             }
 
@@ -141,7 +139,6 @@ public class GameScreen implements Screen {
             VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
 
             if (voxelBelow != VoxelType.ROCK) {
-                i--;
                 continue;
             }
 

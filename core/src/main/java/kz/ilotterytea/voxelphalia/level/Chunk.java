@@ -20,11 +20,15 @@ public class Chunk {
     }
 
     public byte getVoxel(int x, int y, int z) {
-        return this.voxels[getIndex(x, y, z)];
+        int index = getIndex(x, y, z);
+        if (index < 0 || index >= voxels.length) return 0;
+        return this.voxels[index];
     }
 
     public void placeVoxel(byte voxel, int x, int y, int z) {
-        this.voxels[getIndex(x, y, z)] = voxel;
+        int index = getIndex(x, y, z);
+        if (index < 0 || index >= voxels.length) return;
+        this.voxels[index] = voxel;
         this.isDirty = true;
     }
 
