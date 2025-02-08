@@ -1,6 +1,7 @@
 package kz.ilotterytea.voxelphalia.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -25,6 +26,7 @@ import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
 import kz.ilotterytea.voxelphalia.entities.TreeEntity;
+import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoTable;
@@ -108,7 +110,7 @@ public class GameScreen implements Screen {
         camera.position.y = level.getHighestY(camera.position.x, camera.position.y) + 5f;
         camera.update();
 
-        Gdx.input.setInputProcessor(controller);
+        Gdx.input.setInputProcessor(new InputMultiplexer(new SpecialInputProcessor(), controller));
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
