@@ -25,6 +25,7 @@ import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
+import kz.ilotterytea.voxelphalia.entities.RockEntity;
 import kz.ilotterytea.voxelphalia.entities.TreeEntity;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
@@ -127,6 +128,17 @@ public class GameScreen implements Screen {
             int z = random.nextInt(0, level.getDepthInVoxels());
 
             TreeEntity entity = new TreeEntity(new Vector3(x, level.getHighestY(x, z) + 2, z));
+            renderableEntities.add(entity);
+        }
+
+        random = new Random(seed + 2);
+
+        // rock generation
+        for (int i = 0; i < random.nextInt(200, 800); i++) {
+            int x = random.nextInt(0, level.getWidthInVoxels());
+            int z = random.nextInt(0, level.getDepthInVoxels());
+
+            RockEntity entity = new RockEntity(new Vector3(x, level.getHighestY(x, z) + 1, z));
             renderableEntities.add(entity);
         }
     }
