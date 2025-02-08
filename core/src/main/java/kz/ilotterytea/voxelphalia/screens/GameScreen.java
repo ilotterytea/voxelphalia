@@ -1,7 +1,6 @@
 package kz.ilotterytea.voxelphalia.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,10 +21,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
-import kz.ilotterytea.voxelphalia.entities.OreEntity;
-import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
-import kz.ilotterytea.voxelphalia.entities.RockEntity;
-import kz.ilotterytea.voxelphalia.entities.TreeEntity;
+import kz.ilotterytea.voxelphalia.entities.*;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
@@ -41,7 +36,6 @@ public class GameScreen implements Screen {
     private Stage stage;
 
     private PerspectiveCamera camera;
-    private FirstPersonCameraController controller;
 
     private ModelBatch modelBatch;
     private Environment environment;
@@ -51,6 +45,7 @@ public class GameScreen implements Screen {
 
     private DecalBatch decalBatch;
     private Array<RenderableEntity> renderableEntities;
+    private PlayerEntity playerEntity;
 
     @Override
     public void show() {
@@ -60,9 +55,6 @@ public class GameScreen implements Screen {
         camera.near = 0.1f;
         camera.far = 40.0f * game.getPreferences().getInteger("render-distance", 1);
         camera.update();
-
-        controller = new FirstPersonCameraController(camera);
-        controller.setVelocity(100f);
 
         DefaultShader.Config config = new DefaultShader.Config();
         config.defaultCullFace = GL20.GL_FRONT;
@@ -81,22 +73,24 @@ public class GameScreen implements Screen {
 
         renderableLevel = new RenderableLevel(camera, level);
 
-        camera.position.set(
-            level.getWidthInVoxels() / 2.0f,
-            0,
-            level.getDepthInVoxels() / 2.0f
-        );
-        camera.position.y = level.getHighestY(camera.position.x, camera.position.z) + 5f;
-        camera.update();
+        renderableEntities = new Array<>();
 
-        Gdx.input.setInputProcessor(new InputMultiplexer(new SpecialInputProcessor(camera), controller));
+        playerEntity = new PlayerEntity(camera);
+        float playerX = level.getWidthInVoxels() / 2.0f,
+            playerZ = level.getDepthInVoxels() / 2.0f;
+        playerEntity.setPosition(playerX,
+            level.getHighestY(playerX, playerZ) + 1f,
+            playerZ
+        );
+
+        Gdx.input.setCursorCatched(true);
+        Gdx.input.setInputProcessor(new SpecialInputProcessor(camera));
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
         stage.addActor(new DebugInfoTable(skin, camera, renderableLevel));
 
         decalBatch = new DecalBatch(new CameraGroupStrategy(camera));
-        renderableEntities = new Array<>();
 
         Random random = new Random(seed);
 
@@ -184,9 +178,8 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Color.SKY, true);
 
-        controller.update(delta);
-
         renderableLevel.tick(delta);
+        playerEntity.tick(delta, level);
 
         modelBatch.begin(camera);
         renderableLevel.render(modelBatch, environment);

@@ -16,14 +16,18 @@ public class RenderableEntity extends Entity implements Renderable {
 
     public RenderableEntity(TextureRegion region, float width, float height, Vector3 position) {
         super(position, new Vector3());
-        this.decal = Decal.newDecal(width, height, region, true);
-        this.decal.setPosition(position);
+        if (region != null) {
+            this.decal = Decal.newDecal(width, height, region, true);
+            this.decal.setPosition(position);
+        } else {
+            this.decal = null;
+        }
     }
 
     @Override
     public void render(DecalBatch batch) {
         Renderable.super.render(batch);
-        batch.add(decal);
+        if (this.decal != null) batch.add(decal);
     }
 
     @Override
@@ -33,18 +37,18 @@ public class RenderableEntity extends Entity implements Renderable {
         Vector3 lookAt = camera.position.cpy();
         lookAt.y = this.position.y;
 
-        this.decal.lookAt(lookAt, Vector3.Y);
+        if (this.decal != null) this.decal.lookAt(lookAt, Vector3.Y);
     }
 
     @Override
     public void setDirection(float x, float y, float z) {
         super.setDirection(x, y, z);
-        this.decal.lookAt(direction.cpy().scl(1f, 0f, 1f).add(0f, position.y, 0f), Vector3.Y);
+        if (this.decal != null) this.decal.lookAt(direction.cpy().scl(1f, 0f, 1f).add(0f, position.y, 0f), Vector3.Y);
     }
 
     @Override
     public void setPosition(float x, float y, float z) {
         super.setPosition(x, y, z);
-        this.decal.setPosition(position);
+        if (this.decal != null) this.decal.setPosition(position);
     }
 }

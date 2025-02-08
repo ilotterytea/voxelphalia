@@ -102,4 +102,15 @@ public class Level {
         }
         return 0;
     }
+
+    public boolean hasVoxel(int x, int y, int z) {
+        return getVoxel(x, y, z) != 0;
+    }
+
+    public boolean hasSolidVoxel(int x, int y, int z) {
+        byte voxel = getVoxel(x, y, z);
+        VoxelType type = VoxelType.getById(voxel);
+
+        return type != VoxelType.AIR && type != VoxelType.WATER;
+    }
 }
