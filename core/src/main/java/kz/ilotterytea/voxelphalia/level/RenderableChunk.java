@@ -74,18 +74,10 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
             for (int z = 0; z < depth; z++) {
                 for (int x = 0; x < width; x++, i++) {
                     byte voxel = voxels[i];
-                    if (voxel == 0) continue;
+                    VoxelType type = VoxelType.getById(voxel);
+                    if (type == VoxelType.AIR) continue;
 
-                    TextureRegion region;
-
-                    // grass
-                    if (voxel == 1) {
-                        region = new TextureRegion(terrainTexture, 0, 0, 16, 16);
-                    }
-                    // rock
-                    else {
-                        region = new TextureRegion(terrainTexture, 16, 0, 16, 16);
-                    }
+                    TextureRegion region = type.getTextureRegion(terrainTexture);
 
                     if (y < height - 1) {
                         if (voxels[i + width * depth] == 0) createTop(builder, x, y, z, region);
