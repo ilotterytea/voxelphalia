@@ -22,6 +22,7 @@ public class Level {
 
     public byte getVoxel(int x, int y, int z) {
         Chunk chunk = getChunk(x, y, z);
+        if (chunk == null) return 0;
         int cx = x % 16;
         int cy = y % 16;
         int cz = z % 16;
@@ -34,6 +35,7 @@ public class Level {
 
     public void placeVoxel(byte voxel, int x, int y, int z) {
         Chunk chunk = getChunk(x, y, z);
+        if (chunk == null) return;
         int cx = x % 16;
         int cy = y % 16;
         int cz = z % 16;
@@ -41,7 +43,9 @@ public class Level {
     }
 
     public Chunk getChunk(int x, int y, int z) {
-        return this.chunks.get(getChunkIndex(x, y, z));
+        int index = getChunkIndex(x, y, z);
+        if (index < 0 || index >= chunks.size) return null;
+        return this.chunks.get(index);
     }
 
     public int getWidth() {
