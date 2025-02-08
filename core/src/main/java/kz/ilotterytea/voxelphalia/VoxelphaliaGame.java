@@ -20,7 +20,19 @@ public class VoxelphaliaGame extends Game {
         assetManager = new AssetManager();
         preferences = Gdx.app.getPreferences(VoxelphaliaConstants.Metadata.APP_PACKAGE);
 
+        if (preferences.getBoolean("fullscreen", false)) {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        }
+
         setScreen(new SplashScreen());
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        preferences.putInteger("screen-width", width);
+        preferences.putInteger("screen-height", height);
+        preferences.flush();
     }
 
     public static VoxelphaliaGame getInstance() {
