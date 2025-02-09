@@ -58,10 +58,12 @@ public class SpecialInputProcessor implements InputProcessor {
                     int height = preferences.getInteger("screen-height", 600);
                     Gdx.graphics.setWindowedMode(width, height);
                 }
-                
+
                 processed = true;
                 break;
             }
+            case Input.Keys.ESCAPE:
+                Gdx.app.exit();
             default:
                 break;
         }
