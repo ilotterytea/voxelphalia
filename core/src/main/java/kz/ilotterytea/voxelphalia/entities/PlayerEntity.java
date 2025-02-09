@@ -81,7 +81,10 @@ public class PlayerEntity extends RenderablePhysicalEntity {
     }
 
     private void processBlockManipulation(Level level) {
-        if (!Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        boolean destroy = Gdx.input.isButtonJustPressed(Input.Buttons.LEFT);
+        boolean place = Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT);
+
+        if (!destroy && !place) {
             return;
         }
 
@@ -89,19 +92,35 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         Vector3 dir = new Vector3(direction);
         boolean collided = false;
 
-        for (float d = 0; d <= 5f; d += 0.1f) {
-            pos.set(position).mulAdd(dir, d).add(0f, height, 0f);
+        if (destroy) {
+            for (float d = 0; d <= 5f; d += 0.1f) {
+                pos.set(position).mulAdd(dir, d).add(0f, height, 0f);
 
-            if (level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z))) {
-                collided = true;
-                break;
+                if (level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z))) {
+                    collided = true;
+                    break;
+                }
             }
+        } else {
+            boolean foundSolidVoxel = false;
+
+            Vector3 lastPos = new Vector3();
+
+            for (float d = 5f; d > 1; d -= 0.1f) {
+                pos.set(position).mulAdd(dir, d).add(0f, height, 0f);
+
+                if (foundSolidVoxel) lastPos.set(pos);
+
+                foundSolidVoxel = level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+            }
+
+            collided = !lastPos.isZero();
+            pos.set(lastPos);
         }
 
         if (collided) {
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                level.placeVoxel((byte) 0, (int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
-            }
+            byte voxel = (byte) (place ? 1 : 0);
+            level.placeVoxel(voxel, (int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
         }
     }
 }
