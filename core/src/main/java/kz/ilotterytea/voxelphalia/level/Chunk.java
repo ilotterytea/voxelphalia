@@ -49,6 +49,9 @@ public class Chunk {
     }
 
     private int getIndex(int x, int y, int z) {
+        if (x < 0 || x > width ||
+            y < 0 || y > height ||
+            z < 0 || z > depth) return -1;
         return x + z * width + y * width * height;
     }
 }

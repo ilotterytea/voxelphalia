@@ -73,6 +73,10 @@ public class Level {
     }
 
     private int getChunkIndex(int x, int y, int z) {
+        if (x < 0 || x > getWidthInVoxels() ||
+            y < 0 || y > getHeightInVoxels() ||
+            z < 0 || z > getDepthInVoxels()) return -1;
+
         int cx = x / 16;
         int cy = y / 16;
         int cz = z / 16;
