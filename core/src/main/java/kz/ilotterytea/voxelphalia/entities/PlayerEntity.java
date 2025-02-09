@@ -30,6 +30,7 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         super.tick(delta, level);
         processMovement(delta, level);
         processCameraLook();
+        processBlockManipulation(level);
     }
 
     // cv pasted these two methods from https://stackoverflow.com/a/34058580
@@ -71,5 +72,30 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         dragY = screenY;
 
         setDirection(camera.direction.x, camera.direction.y, camera.direction.z);
+    }
+
+    private void processBlockManipulation(Level level) {
+        if (!Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            return;
+        }
+
+        Vector3 pos = new Vector3(position);
+        Vector3 dir = new Vector3(direction);
+        boolean collided = false;
+
+        for (float d = 0; d <= 5f; d += 0.1f) {
+            pos.set(position).mulAdd(dir, d).add(0f, height, 0f);
+
+            if (level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z))) {
+                collided = true;
+                break;
+            }
+        }
+
+        if (collided) {
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                level.placeVoxel((byte) 0, (int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+            }
+        }
     }
 }
