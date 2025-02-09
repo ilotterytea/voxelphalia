@@ -67,8 +67,8 @@ public class GameScreen implements Screen {
 
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
-        environment.set(new ColorAttribute(ColorAttribute.Fog, 0.8f, 0.8f, 0.8f, 0.8f));
-        environment.add(new DirectionalLight().set(1, 1, 1, 0, -1, 0));
+        environment.set(new ColorAttribute(ColorAttribute.Fog, Color.SKY));
+        environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, 0, -1, 0));
 
         int seed = Generators.rollSeed();
 
