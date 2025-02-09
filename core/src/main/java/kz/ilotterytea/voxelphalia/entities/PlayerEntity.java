@@ -13,7 +13,9 @@ public class PlayerEntity extends RenderablePhysicalEntity {
     private int dragX, dragY;
 
     public PlayerEntity(Camera camera) {
-        super(null, 0, 0);
+        super(null, 0, 0,
+            0.5f, 1.9f, 0.5f, 10f, 7f
+        );
         this.camera = camera;
         this.cameraRotateSpeed = 0.2f;
     }
@@ -28,6 +30,10 @@ public class PlayerEntity extends RenderablePhysicalEntity {
     @Override
     public void tick(float delta, Level level) {
         super.tick(delta, level);
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            jump();
+        }
+
         processMovement(delta, level);
         processCameraLook();
         processBlockManipulation(level);

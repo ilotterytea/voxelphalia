@@ -1,7 +1,5 @@
 package kz.ilotterytea.voxelphalia.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -14,18 +12,24 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     protected final float width, height, depth, weight;
     protected boolean onGround;
 
-    public RenderablePhysicalEntity(TextureRegion region, float width, float height) {
-        this(region, width, height, new Vector3());
+    public RenderablePhysicalEntity(
+        TextureRegion region, float textureWidth, float textureHeight,
+        float boxWidth, float boxHeight, float boxDepth, float boxWeight, float boxSpeed
+    ) {
+        this(region, textureWidth, textureHeight, boxWidth, boxHeight, boxDepth, boxWeight, boxSpeed, new Vector3());
     }
 
-    public RenderablePhysicalEntity(TextureRegion region, float width, float height, Vector3 position) {
-        super(region, width, height, position);
+    public RenderablePhysicalEntity(TextureRegion region, float textureWidth, float textureHeight,
+                                    float boxWidth, float boxHeight, float boxDepth, float boxWeight,
+                                    float boxSpeed,
+                                    Vector3 position) {
+        super(region, textureWidth, textureHeight, position);
 
-        this.velocity = new Vector2(8f, 0f);
-        this.width = 0.5f;
-        this.height = 1.68f;
-        this.depth = 0.5f;
-        this.weight = 8f;
+        this.velocity = new Vector2(boxSpeed, 0f);
+        this.width = boxWidth;
+        this.height = boxHeight;
+        this.depth = boxDepth;
+        this.weight = boxWeight;
 
         this.box = new BoundingBox(
             new Vector3(position.x - (width / 2f), position.y, position.z - (depth / 2f)),
@@ -45,11 +49,6 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     @Override
     public void tick(float delta, Level level) {
         super.tick(delta, level);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && onGround) {
-            velocity.y = weight * 1.3f;
-            onGround = false;
-        }
 
         // applying gravity
         float gravity = -9.81f;
@@ -74,6 +73,12 @@ public class RenderablePhysicalEntity extends RenderableEntity {
         }
 
         setPosition(position.x, nextY, position.z);
+    }
+
+    public void jump() {
+        if (!onGround) return;
+        velocity.y = weight * 1.3f;
+        onGround = false;
     }
 
     // cv pasted these four functions from https://stackoverflow.com/a/34058580
