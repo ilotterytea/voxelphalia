@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
@@ -13,20 +14,18 @@ public class InventorySlotStack extends Stack {
     private final Inventory.Slot slot;
     private final Label amountLabel;
     private final Image icon, activeImage;
+    private int slotId;
 
     public InventorySlotStack(Skin skin, Inventory.Slot slot) {
         super();
         this.slot = slot;
-
-        TextureAtlas atlas = VoxelphaliaGame.getInstance()
-            .getAssetManager()
-            .get("textures/gui/gui_voxels.atlas");
+        this.slotId = 0;
 
         activeImage = new Image(skin.getDrawable("hotbar-foreground"));
         activeImage.setVisible(false);
         add(activeImage);
 
-        icon = new Image(atlas.findRegion(String.valueOf(slot.id)));
+        icon = new Image();
         add(icon);
 
         amountLabel = new Label(String.valueOf(slot.quantity), skin);
@@ -46,6 +45,16 @@ public class InventorySlotStack extends Stack {
 
         if (visible) {
             amountLabel.setText(String.valueOf(slot.quantity));
+
+            if (slotId != slot.id && slot.id != 0) {
+                TextureAtlas atlas = VoxelphaliaGame.getInstance()
+                    .getAssetManager()
+                    .get("textures/gui/gui_voxels.atlas");
+
+                icon.setDrawable(new TextureRegionDrawable(atlas.findRegion(String.valueOf(slot.id))));
+
+                slotId = slot.id;
+            }
         }
     }
 

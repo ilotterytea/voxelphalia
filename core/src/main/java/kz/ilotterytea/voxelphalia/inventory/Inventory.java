@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class Inventory {
     public static class Slot {
-        public final byte id, size;
+        public byte id, size;
         public byte quantity;
 
         public Slot(byte id, byte quantity, byte size) {
@@ -53,6 +53,10 @@ public class Inventory {
         this.size = size;
         this.slots = new Slot[size];
         this.stackSize = stackSize;
+
+        for (int i = 0; i < size; i++) {
+            this.slots[i] = new Slot((byte) 0, (byte) 0, stackSize);
+        }
     }
 
     public byte add(byte voxel) {
@@ -63,27 +67,35 @@ public class Inventory {
         int index;
 
         while (quantity > 0) {
-            index = getSlotIndex(voxel, quantity, false);
-
+            index = getSlotIndex(voxel, quantity);
             if (index < 0) return quantity;
-            if (slots[index] == null) slots[index] = new Slot(voxel, (byte) 0, stackSize);
 
+            this.slots[index].id = voxel;
             quantity = this.slots[index].add(quantity);
         }
 
         return quantity;
     }
 
+    public byte remove(byte voxel) {
+        return remove(voxel, (byte) 1);
+    }
+
     public byte remove(byte voxel, byte quantity) {
         int index;
 
         while (quantity > 0) {
-            index = getSlotIndex(voxel, quantity, true);
+            if (getCurrentSlot().id == voxel) {
+                index = currentSlotIndex;
+            } else {
+                index = getSlotIndex(voxel, quantity);
+            }
 
-            if (index < 0) return quantity;
-            if (slots[index].quantity == 0) slots[index] = null;
+            Slot slot = this.slots[index];
+            if (slot.id == 0) return quantity;
 
-            quantity = this.slots[index].remove(quantity);
+            quantity = slot.remove(quantity);
+            if (slot.quantity == 0) slot.id = 0;
         }
 
         return quantity;
@@ -113,19 +125,21 @@ public class Inventory {
         return slots;
     }
 
-    private int getSlotIndex(byte voxel, byte quantity, boolean ignoreNull) {
+    private int getSlotIndex(byte voxel, byte quantity) {
         int index = -1;
 
         for (int i = 0; i < slots.length; i++) {
             Slot slot = slots[i];
 
-            if (slot == null) {
-                if (index == -1 && !ignoreNull) {
-                    index = i;
-                }
+            if (slot.id == 0 && index == -1) {
+                index = i;
             } else if (slot.id == voxel && (int) slot.quantity + quantity <= stackSize) {
                 return i;
             }
+        }
+
+        if (getCurrentSlot().id == 0) {
+            return currentSlotIndex;
         }
 
         return index;
