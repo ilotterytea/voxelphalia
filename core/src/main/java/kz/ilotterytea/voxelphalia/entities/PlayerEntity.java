@@ -4,9 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
+import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.level.VoxelType;
 
 public class PlayerEntity extends RenderablePhysicalEntity {
+    private final Inventory inventory;
     private final Camera camera;
     private final float cameraRotateSpeed;
 
@@ -18,6 +21,12 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         );
         this.camera = camera;
         this.cameraRotateSpeed = 0.2f;
+        this.inventory = new Inventory(5, (byte) 100);
+
+        for (VoxelType type : VoxelType.values()) {
+            if (type.getVoxelId() == 0) continue;
+            inventory.add(type.getVoxelId(), (byte) 5);
+        }
     }
 
     @Override
@@ -37,6 +46,7 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         processMovement(delta, level);
         processCameraLook();
         processBlockManipulation(level);
+        processInventory();
     }
 
     // cv pasted these two methods from https://stackoverflow.com/a/34058580
@@ -122,8 +132,28 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         }
 
         if (collided) {
-            byte voxel = (byte) (place ? 1 : 0);
-            level.placeVoxel(voxel, (int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+            byte voxel = 0;
+            int x = (int) Math.floor(pos.x),
+                y = (int) Math.floor(pos.y), z = (int) Math.floor(pos.z);
+
+            if (place) {
+                Inventory.Slot slot = inventory.getCurrentSlot();
+                voxel = slot.id;
+                if (slot.remove() > 0) return;
+            } else {
+                inventory.add(level.getVoxel(x, y, z));
+            }
+
+            level.placeVoxel(voxel, x, y, z);
+        }
+    }
+
+    private void processInventory() {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (Gdx.input.isKeyPressed(Input.Keys.NUM_1 + i)) {
+                inventory.setSlotIndex(i + 1);
+                break;
+            }
         }
     }
 }
