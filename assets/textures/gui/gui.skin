@@ -9,6 +9,16 @@
       scaledSize: 16
     }
   },
+  com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+    hotbar-background: {
+      color: { hex: "#00000055" },
+      name: rectangle
+    },
+    hotbar-foreground: {
+      color: { hex: "#000000aa" },
+      name: rectangle
+    },
+  },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
     default: {
       font: default,

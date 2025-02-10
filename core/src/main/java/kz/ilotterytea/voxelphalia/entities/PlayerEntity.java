@@ -156,4 +156,8 @@ public class PlayerEntity extends RenderablePhysicalEntity {
             }
         }
     }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
 }

@@ -1,3 +1,7 @@
 gui.png
-size:64,64
+size:128,128
 repeat:none
+rectangle
+bounds:0,0,128,128
+split:16,16,16,16
+pad:16,16,16,16
