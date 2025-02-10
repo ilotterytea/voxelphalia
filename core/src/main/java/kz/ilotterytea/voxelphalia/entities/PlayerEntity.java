@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
-import kz.ilotterytea.voxelphalia.level.VoxelType;
 
 public class PlayerEntity extends RenderablePhysicalEntity {
     private final Inventory inventory;
@@ -22,11 +21,6 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         this.camera = camera;
         this.cameraRotateSpeed = 0.2f;
         this.inventory = new Inventory(5, (byte) 100);
-
-        for (VoxelType type : VoxelType.values()) {
-            if (type.getVoxelId() == 0) continue;
-            inventory.add(type.getVoxelId(), (byte) 5);
-        }
     }
 
     @Override
@@ -139,9 +133,10 @@ public class PlayerEntity extends RenderablePhysicalEntity {
             if (place) {
                 Inventory.Slot slot = inventory.getCurrentSlot();
                 voxel = slot.id;
-                if (slot.remove() > 0) return;
-            } else {
-                inventory.add(level.getVoxel(x, y, z));
+                if (inventory.remove(voxel) > 0 || voxel == 0) return;
+            } else if (inventory.add(level.getVoxel(x, y, z)) > 0) {
+                // TODO: drop a voxel instead of just blocking the action
+                return;
             }
 
             level.placeVoxel(voxel, x, y, z);
