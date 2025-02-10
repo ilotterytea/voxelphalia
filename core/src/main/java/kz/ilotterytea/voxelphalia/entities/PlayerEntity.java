@@ -68,9 +68,12 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         float x = dragX - screenX;
         this.camera.rotate(Vector3.Y, x * cameraRotateSpeed);
 
-        float y = (float) Math.sin((double) (dragY - screenY) / 180f);
-        if (Math.abs(camera.direction.y + y * (cameraRotateSpeed * 5.0f)) < 0.9f) {
-            camera.direction.y += y * (cameraRotateSpeed * 5.0f);
+        Vector3 oldPitchAxis = camera.direction.cpy().crs(camera.up).nor();
+        Vector3 newDirection = camera.direction.cpy().rotate(oldPitchAxis, (dragY - screenY) * cameraRotateSpeed);
+        Vector3 newPitchAxis = newDirection.cpy().crs(camera.up);
+
+        if (!newPitchAxis.hasOppositeDirection(oldPitchAxis)) {
+            camera.direction.set(newDirection);
         }
 
         camera.update();
