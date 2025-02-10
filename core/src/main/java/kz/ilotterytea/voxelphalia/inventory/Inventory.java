@@ -105,6 +105,10 @@ public class Inventory {
         return slots[currentSlotIndex];
     }
 
+    public Slot getSlot(int index) {
+        return slots[index];
+    }
+
     public Slot[] getSlots() {
         return slots;
     }
@@ -129,6 +133,10 @@ public class Inventory {
 
     public int getSize() {
         return size;
+    }
+
+    public int getSlotIndex() {
+        return currentSlotIndex;
     }
 
     @Override
