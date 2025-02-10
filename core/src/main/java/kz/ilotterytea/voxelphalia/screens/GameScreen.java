@@ -1,6 +1,7 @@
 package kz.ilotterytea.voxelphalia.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,6 +27,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.*;
+import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
@@ -87,9 +89,6 @@ public class GameScreen implements Screen {
             level.getHighestY(playerX, playerZ) + 1f,
             playerZ
         );
-
-        Gdx.input.setCursorCatched(true);
-        Gdx.input.setInputProcessor(new SpecialInputProcessor(camera));
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
@@ -182,6 +181,12 @@ public class GameScreen implements Screen {
             OreEntity entity = new OreEntity(type, new Vector3(x, level.getHighestY(x, z) + 1, z));
             renderableEntities.add(entity);
         }
+
+        Gdx.input.setCursorCatched(true);
+        Gdx.input.setInputProcessor(new InputMultiplexer(
+            new SpecialInputProcessor(camera),
+            new PlayerInputProcessor(playerEntity, camera)
+        ));
     }
 
     @Override

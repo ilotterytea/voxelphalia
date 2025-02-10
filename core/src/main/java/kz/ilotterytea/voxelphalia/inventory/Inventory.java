@@ -1,7 +1,5 @@
 package kz.ilotterytea.voxelphalia.inventory;
 
-import com.badlogic.gdx.math.MathUtils;
-
 import java.util.Arrays;
 
 public class Inventory {
@@ -102,15 +100,15 @@ public class Inventory {
     }
 
     public void nextSlotIndex() {
-        setSlotIndex(currentSlotIndex - 1);
-    }
-
-    public void previousSlotIndex() {
         setSlotIndex(currentSlotIndex + 1);
     }
 
+    public void previousSlotIndex() {
+        setSlotIndex(currentSlotIndex - 1);
+    }
+
     public void setSlotIndex(int index) {
-        this.currentSlotIndex = MathUtils.clamp(index - 1, 0, this.slots.length);
+        this.currentSlotIndex = (index + this.slots.length) % this.slots.length;
     }
 
     public Slot getCurrentSlot() {
