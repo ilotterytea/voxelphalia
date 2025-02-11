@@ -29,8 +29,11 @@ public class PlayerEntity extends RenderablePhysicalEntity {
     @Override
     public void tick(float delta, Level level) {
         super.tick(delta, level);
-        processMovement(delta, level);
-        processBlockManipulation(level);
+
+        if (Gdx.input.isCursorCatched()) {
+            processMovement(delta, level);
+            processBlockManipulation(level);
+        }
     }
 
     // cv pasted these two methods from https://stackoverflow.com/a/34058580
