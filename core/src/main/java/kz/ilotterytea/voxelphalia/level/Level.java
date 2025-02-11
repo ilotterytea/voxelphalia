@@ -34,12 +34,24 @@ public class Level {
     }
 
     public void placeVoxel(byte voxel, int x, int y, int z) {
-        Chunk chunk = getChunk(x, y, z);
-        if (chunk == null) return;
-        int cx = x % 16;
-        int cy = y % 16;
-        int cz = z % 16;
-        chunk.placeVoxel(voxel, cx, cy, cz);
+        for (int xy = -1; xy < 2; xy++) {
+            for (int xc = -1; xc < 2; xc++) {
+                for (int xz = -1; xz < 2; xz++) {
+                    Chunk chunk = getChunk(x + xc, y + xy, z + xz);
+                    if (chunk == null) continue;
+                    int cx = x % 16;
+                    int cy = y % 16;
+                    int cz = z % 16;
+
+                    if (xc == 0 && xy == 0 && xz == 0) {
+                        chunk.placeVoxel(voxel, cx, cy, cz);
+                    } else {
+                        // update cross chunks
+                        chunk.isDirty = true;
+                    }
+                }
+            }
+        }
     }
 
     public Chunk getChunk(int x, int y, int z) {

@@ -25,7 +25,7 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
             Chunk chunk = level.chunks.get(i);
             Vector3 offset = level.getChunkPositionFromIndex(i);
 
-            this.renderableChunks.add(new RenderableChunk(chunk, offset));
+            this.renderableChunks.add(new RenderableChunk(chunk, level, offset));
         }
     }
 
