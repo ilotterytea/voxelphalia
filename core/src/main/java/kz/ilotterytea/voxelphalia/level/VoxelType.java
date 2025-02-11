@@ -14,17 +14,56 @@ public enum VoxelType {
     WATER(0, 15),
     MISSING_VOXEL(15, 15);
 
-    private final int offsetX, offsetY;
+    private final int sx, sy,
+        tx, ty, bx, by;
 
-    VoxelType(int offsetX, int offsetY) {
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
+    VoxelType(int sx, int sy) {
+        this.sx = sx;
+        this.sy = sy;
+        this.tx = sx;
+        this.ty = sy;
+        this.bx = sx;
+        this.by = sy;
     }
 
-    public TextureRegion getTextureRegion(Texture texture) {
+    VoxelType(int sx, int sy, int tx, int ty) {
+        this.sx = sx;
+        this.sy = sy;
+        this.tx = tx;
+        this.ty = ty;
+        this.bx = sx;
+        this.by = sy;
+    }
+
+    VoxelType(int sx, int sy, int tx, int ty, int bx, int by) {
+        this.sx = sx;
+        this.sy = sy;
+        this.tx = tx;
+        this.ty = ty;
+        this.bx = bx;
+        this.by = by;
+    }
+
+    public TextureRegion getSideTextureRegion(Texture texture) {
         return new TextureRegion(
             texture,
-            offsetX * 16, offsetY * 16,
+            sx * 16, sy * 16,
+            16, 16
+        );
+    }
+
+    public TextureRegion getTopTextureRegion(Texture texture) {
+        return new TextureRegion(
+            texture,
+            tx * 16, ty * 16,
+            16, 16
+        );
+    }
+
+    public TextureRegion getBottomTextureRegion(Texture texture) {
+        return new TextureRegion(
+            texture,
+            bx * 16, by * 16,
             16, 16
         );
     }
