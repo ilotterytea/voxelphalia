@@ -182,7 +182,6 @@ public class GameScreen implements Screen {
             renderableEntities.add(entity);
         }
 
-        Gdx.input.setCursorCatched(true);
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(camera),
             new PlayerInputProcessor(playerEntity, camera)

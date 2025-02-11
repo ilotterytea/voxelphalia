@@ -62,8 +62,14 @@ public class SpecialInputProcessor implements InputProcessor {
                 processed = true;
                 break;
             }
-            case Input.Keys.ESCAPE:
-                Gdx.app.exit();
+            // press two times to close the game, press one time to unfocus
+            case Input.Keys.ESCAPE: {
+                if (Gdx.input.isCursorCatched()) {
+                    Gdx.input.setCursorCatched(false);
+                } else {
+                    Gdx.app.exit();
+                }
+            }
             default:
                 break;
         }
@@ -83,6 +89,11 @@ public class SpecialInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (!Gdx.input.isCursorCatched()) {
+            Gdx.input.setCursorCatched(true);
+            return true;
+        }
+        
         return false;
     }
 

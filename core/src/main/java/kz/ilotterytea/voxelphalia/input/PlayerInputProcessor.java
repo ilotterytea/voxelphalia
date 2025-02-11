@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
@@ -20,6 +21,8 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (!Gdx.input.isCursorCatched()) return false;
+
         if (keycode == Input.Keys.SPACE) {
             playerEntity.jump();
             return true;
@@ -69,6 +72,8 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        if (!Gdx.input.isCursorCatched()) return false;
+
         float sensitivity = VoxelphaliaGame.getInstance().getPreferences().getFloat("mouse-sensitivity", 20f) / 100f;
         float x = dragX - screenX;
         camera.rotate(Vector3.Y, x * sensitivity);
@@ -91,6 +96,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        if (!Gdx.input.isCursorCatched()) return false;
         if (amountY > 0f) {
             playerEntity.getInventory().previousSlotIndex();
         } else {
