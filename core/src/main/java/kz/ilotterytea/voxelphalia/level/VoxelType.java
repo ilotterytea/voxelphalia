@@ -12,7 +12,9 @@ public enum VoxelType {
     MANTLE(4, 0),
     SNOW(5, 0),
     WATER(0, 15),
-    MISSING_VOXEL(15, 15);
+    MISSING_VOXEL(15, 15),
+    LOG(6, 0, 7, 0, 7, 0),
+    LEAVES(8, 0);
 
     private final int sx, sy,
         tx, ty, bx, by;

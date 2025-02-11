@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.utils.Renderable;
 
 public class RenderableEntity extends Entity implements Renderable {
-    private final Decal decal;
+    protected final Decal decal;
 
     public RenderableEntity(TextureRegion region, float width, float height) {
         this(region, width, height, new Vector3());
