@@ -26,7 +26,7 @@ public class TerrainGenerator {
                     if (y == 0) {
                         level.placeVoxel(VoxelType.MANTLE, x, y, z);
                     } else {
-                        level.placeVoxel(VoxelType.ROCK, x, y, z);
+                        level.placeVoxel(VoxelType.STONE, x, y, z);
                     }
                 }
 
@@ -52,16 +52,16 @@ public class TerrainGenerator {
                     for (int i = 1; i <= DIRT_DEPTH; i++) {
                         level.placeVoxel(VoxelType.DIRT, x, terrainHeight - i, z);
                     }
-                    level.placeVoxel(VoxelType.ROCK, x, terrainHeight - DIRT_DEPTH - 1, z);
+                    level.placeVoxel(VoxelType.STONE, x, terrainHeight - DIRT_DEPTH - 1, z);
                 }
                 // rock hills
                 else if (terrainHeight < ROCK_LEVEL * level.getHeightInVoxels()) {
-                    level.placeVoxel(VoxelType.ROCK, x, terrainHeight, z);
+                    level.placeVoxel(VoxelType.STONE, x, terrainHeight, z);
                 }
                 // snowy peaks
                 else {
                     level.placeVoxel(VoxelType.SNOW, x, terrainHeight, z);
-                    level.placeVoxel(VoxelType.ROCK, x, terrainHeight - 1, z);
+                    level.placeVoxel(VoxelType.STONE, x, terrainHeight - 1, z);
                 }
             }
         }

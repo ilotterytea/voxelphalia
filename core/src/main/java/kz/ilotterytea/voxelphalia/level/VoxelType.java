@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public enum VoxelType {
     AIR(-1, -1),
     GRASS(0, 0),
-    ROCK(1, 0),
+    STONE(1, 0),
     DIRT(2, 0),
     SAND(3, 0),
     MANTLE(4, 0),
@@ -14,7 +14,13 @@ public enum VoxelType {
     WATER(0, 15),
     MISSING_VOXEL(15, 15),
     LOG(6, 0, 7, 0, 7, 0),
-    LEAVES(8, 0);
+    LEAVES(8, 0),
+    COBBLESTONE(0, 1),
+    COAL_VOXEL(0, 2),
+    IRON_VOXEL(1, 2),
+    GOLD_VOXEL(2, 2),
+    GEM_VOXEL(0, 3),
+    RUBY_VOXEL(1, 3);
 
     private final int sx, sy,
         tx, ty, bx, by;
