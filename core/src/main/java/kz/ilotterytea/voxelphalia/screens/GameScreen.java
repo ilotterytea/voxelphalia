@@ -184,7 +184,7 @@ public class GameScreen implements Screen {
 
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(camera),
-            new PlayerInputProcessor(playerEntity, camera)
+            new PlayerInputProcessor(playerEntity, level, camera)
         ));
     }
 

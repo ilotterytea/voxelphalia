@@ -7,16 +7,20 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.level.Level;
 
 public class PlayerInputProcessor implements InputProcessor {
+    private final Level level;
     private final PlayerEntity playerEntity;
     private final Camera camera;
 
     private int dragX, dragY;
 
-    public PlayerInputProcessor(PlayerEntity playerEntity, Camera camera) {
+    public PlayerInputProcessor(PlayerEntity playerEntity, Level level, Camera camera) {
         this.playerEntity = playerEntity;
         this.camera = camera;
+        this.level = level;
     }
 
     @Override
@@ -52,6 +56,61 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        boolean destroy = button == Input.Buttons.LEFT;
+        boolean place = button == Input.Buttons.RIGHT;
+
+        if (!destroy && !place) {
+            return false;
+        }
+
+        Vector3 pos = new Vector3(playerEntity.getPosition());
+        Vector3 dir = new Vector3(playerEntity.getDirection());
+        boolean collided = false;
+
+        if (destroy) {
+            for (float d = 0; d <= 5f; d += 0.1f) {
+                pos.set(playerEntity.getPosition()).mulAdd(dir, d).add(0f, playerEntity.getHeight(), 0f);
+
+                if (level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z))) {
+                    collided = true;
+                    break;
+                }
+            }
+        } else {
+            boolean foundSolidVoxel = false;
+
+            Vector3 lastPos = new Vector3();
+
+            for (float d = 5f; d > 1; d -= 0.1f) {
+                pos.set(playerEntity.getPosition()).mulAdd(dir, d).add(0f, playerEntity.getHeight(), 0f);
+
+                if (foundSolidVoxel) lastPos.set(pos);
+
+                foundSolidVoxel = level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
+            }
+
+            collided = !lastPos.isZero();
+            pos.set(lastPos);
+        }
+
+        if (collided) {
+            byte voxel = 0;
+            int x = (int) Math.floor(pos.x),
+                y = (int) Math.floor(pos.y), z = (int) Math.floor(pos.z);
+
+            if (place) {
+                Inventory.Slot slot = playerEntity.getInventory().getCurrentSlot();
+                voxel = slot.id;
+                if (playerEntity.getInventory().remove(voxel) > 0 || voxel == 0) return false;
+            } else if (playerEntity.getInventory().add(level.getVoxel(x, y, z)) > 0) {
+                // TODO: drop a voxel instead of just blocking the action
+                return false;
+            }
+
+            level.placeVoxel(voxel, x, y, z);
+            return true;
+        }
+
         return false;
     }
 

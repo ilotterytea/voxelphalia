@@ -158,4 +158,8 @@ public class RenderablePhysicalEntity extends RenderableEntity {
             v.z = 0;
         }
     }
+
+    public float getHeight() {
+        return height;
+    }
 }
