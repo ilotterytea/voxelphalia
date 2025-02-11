@@ -126,11 +126,26 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
+        return moveCamera(screenX, screenY);
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        return moveCamera(screenX, screenY);
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        if (!Gdx.input.isCursorCatched()) return false;
+        if (amountY > 0f) {
+            playerEntity.getInventory().previousSlotIndex();
+        } else {
+            playerEntity.getInventory().nextSlotIndex();
+        }
+        return true;
+    }
+
+    private boolean moveCamera(int screenX, int screenY) {
         if (!Gdx.input.isCursorCatched()) return false;
 
         float sensitivity = VoxelphaliaGame.getInstance().getPreferences().getFloat("mouse-sensitivity", 20f) / 100f;
@@ -150,17 +165,7 @@ public class PlayerInputProcessor implements InputProcessor {
         dragY = screenY;
 
         playerEntity.setDirection(camera.direction.x, camera.direction.y, camera.direction.z);
-        return true;
-    }
 
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        if (!Gdx.input.isCursorCatched()) return false;
-        if (amountY > 0f) {
-            playerEntity.getInventory().previousSlotIndex();
-        } else {
-            playerEntity.getInventory().nextSlotIndex();
-        }
         return true;
     }
 }
