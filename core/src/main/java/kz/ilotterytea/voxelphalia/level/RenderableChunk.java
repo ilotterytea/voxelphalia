@@ -24,13 +24,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RenderableChunk implements Disposable, Tickable, Renderable {
+    private final Level level;
     private final Chunk chunk;
     private final Vector3 offset;
     private ModelInstance modelInstance;
     private boolean rebuilding;
 
-    public RenderableChunk(Chunk chunk, Vector3 offset) {
+    public RenderableChunk(Chunk chunk, Level level, Vector3 offset) {
         this.chunk = chunk;
+        this.level = level;
         this.offset = offset;
     }
 
@@ -98,7 +100,7 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
                     TextureRegion topRegion = type.getTopTextureRegion(terrainTexture);
                     TextureRegion bottomRegion = type.getBottomTextureRegion(terrainTexture);
 
-                    boolean[] faces = getVisibleFaces(x, y, z);
+                    boolean[] faces = getVisibleFaces((int) (offset.x + x), (int) (offset.y + y), (int) (offset.z + z));
 
                     if (faces[0]) {
                         createTop(vertices, indices, x, y, z, topRegion, indexOffset);
@@ -284,41 +286,18 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
             false, false, false, false, false, false
         };
 
-        if (y < chunk.height - 1) {
-            if (chunk.getVoxel(x, y + 1, z) == 0) faces[0] = true;
-        } else {
+        if (level.getVoxel(x, y + 1, z) == 0)
             faces[0] = true;
-        }
-        if (y > 0) {
-            if (chunk.getVoxel(x, y - 1, z) == 0)
-                faces[1] = true;
-        } else {
+        if (level.getVoxel(x, y - 1, z) == 0)
             faces[1] = true;
-        }
-        if (x > 0) {
-            if (chunk.getVoxel(x - 1, y, z) == 0)
-                faces[2] = true;
-        } else {
+        if (level.getVoxel(x - 1, y, z) == 0)
             faces[2] = true;
-        }
-        if (x < chunk.width - 1) {
-            if (chunk.getVoxel(x + 1, y, z) == 0)
-                faces[3] = true;
-        } else {
+        if (level.getVoxel(x + 1, y, z) == 0)
             faces[3] = true;
-        }
-        if (z > 0) {
-            if (chunk.getVoxel(x, y, z - 1) == 0)
-                faces[4] = true;
-        } else {
+        if (level.getVoxel(x, y, z - 1) == 0)
             faces[4] = true;
-        }
-        if (z < chunk.depth - 1) {
-            if (chunk.getVoxel(x, y, z + 1) == 0)
-                faces[5] = true;
-        } else {
+        if (level.getVoxel(x, y, z + 1) == 0)
             faces[5] = true;
-        }
 
         return faces;
     }
