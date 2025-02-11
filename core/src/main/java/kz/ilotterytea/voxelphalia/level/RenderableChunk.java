@@ -94,37 +94,39 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
                     if (voxel == 0) continue;
 
                     VoxelType type = VoxelType.getById(voxel);
-                    TextureRegion region = type.getTextureRegion(terrainTexture);
+                    TextureRegion sideRegion = type.getSideTextureRegion(terrainTexture);
+                    TextureRegion topRegion = type.getTopTextureRegion(terrainTexture);
+                    TextureRegion bottomRegion = type.getBottomTextureRegion(terrainTexture);
 
                     boolean[] faces = getVisibleFaces(x, y, z);
 
                     if (faces[0]) {
-                        createTop(vertices, indices, x, y, z, region, indexOffset);
+                        createTop(vertices, indices, x, y, z, topRegion, indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[1]) {
-                        createBottom(vertices, indices, x, y, z, region, indexOffset);
+                        createBottom(vertices, indices, x, y, z, bottomRegion, indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[2]) {
-                        createLeft(vertices, indices, x, y, z, region, indexOffset);
+                        createLeft(vertices, indices, x, y, z, sideRegion, indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[3]) {
-                        createRight(vertices, indices, x, y, z, region, indexOffset);
+                        createRight(vertices, indices, x, y, z, sideRegion, indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[4]) {
-                        createFront(vertices, indices, x, y, z, region, indexOffset);
+                        createFront(vertices, indices, x, y, z, sideRegion, indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[5]) {
-                        createBack(vertices, indices, x, y, z, region, indexOffset);
+                        createBack(vertices, indices, x, y, z, sideRegion, indexOffset);
                         indexOffset += 4;
                     }
                 }
