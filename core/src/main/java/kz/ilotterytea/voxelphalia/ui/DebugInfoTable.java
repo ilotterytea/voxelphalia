@@ -6,20 +6,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 
 public class DebugInfoTable extends Table {
     private final RenderableLevel level;
+    private final Array<RenderableEntity> entities;
     private final Camera camera;
-    private final Label gameLabel, cameraLabel, chunkLabel, memoryLabel, jvmLabel;
+    private final Label gameLabel, cameraLabel, chunkLabel, entitiesLabel, memoryLabel, jvmLabel;
 
     public DebugInfoTable(Skin skin) {
-        this(skin, null, null);
+        this(skin, null, null, null);
     }
 
-    public DebugInfoTable(Skin skin, Camera camera, RenderableLevel level) {
+    public DebugInfoTable(Skin skin, Camera camera, RenderableLevel level, Array<RenderableEntity> entities) {
         super();
         setFillParent(true);
         align(Align.topLeft);
@@ -27,6 +30,7 @@ public class DebugInfoTable extends Table {
 
         this.level = level;
         this.camera = camera;
+        this.entities = entities;
 
         // --- GAME INFO ---
         Table gameTable = new Table();
@@ -38,6 +42,9 @@ public class DebugInfoTable extends Table {
 
         this.chunkLabel = new Label("", skin);
         gameTable.add(chunkLabel).growX().row();
+
+        this.entitiesLabel = new Label("", skin);
+        gameTable.add(entitiesLabel).growX().row();
 
         this.cameraLabel = new Label("", skin);
         gameTable.add(cameraLabel).growX().row();
@@ -68,6 +75,10 @@ public class DebugInfoTable extends Table {
 
             if (level != null) {
                 chunkLabel.setText(String.format("C: %s/%s", level.getRenderedChunkCount(), level.getLevel().getChunkCount()));
+            }
+
+            if (entities != null) {
+                entitiesLabel.setText(String.format("E: %s", entities.size));
             }
 
             if (camera != null) {

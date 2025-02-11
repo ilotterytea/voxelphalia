@@ -92,7 +92,7 @@ public class GameScreen implements Screen {
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
-        stage.addActor(new DebugInfoTable(skin, camera, renderableLevel));
+        stage.addActor(new DebugInfoTable(skin, camera, renderableLevel, renderableEntities));
 
         stage.addActor(new InventoryHotbarTable(skin, playerEntity.getInventory()));
 
