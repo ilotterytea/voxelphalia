@@ -187,9 +187,9 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
 
         vertices.addAll(Arrays.asList(
             offset.x + x, offset.y + y, offset.z + z, 0f, -1f, 0f, u1, v1,
-            offset.x + x, offset.y + y, offset.z + z + 1, 0f, -1f, 0f, u2, v1,
+            offset.x + x, offset.y + y, offset.z + z + 1, 0f, -1f, 0f, u1, v2,
             offset.x + x + 1, offset.y + y, offset.z + z + 1, 0f, -1f, 0f, u2, v2,
-            offset.x + x + 1, offset.y + y, offset.z + z, 0f, -1f, 0f, u1, v2
+            offset.x + x + 1, offset.y + y, offset.z + z, 0f, -1f, 0f, u2, v1
         ));
 
         indices.addAll(Arrays.asList(
@@ -205,10 +205,10 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z, -1f, 0f, 0f, u1, v1,
-            offset.x + x, offset.y + y + 1, offset.z + z, -1f, 0f, 0f, u2, v1,
-            offset.x + x, offset.y + y + 1, offset.z + z + 1, -1f, 0f, 0f, u2, v2,
-            offset.x + x, offset.y + y, offset.z + z + 1, -1f, 0f, 0f, u1, v2
+            offset.x + x, offset.y + y, offset.z + z, -1f, 0f, 0f, u1, v2,
+            offset.x + x, offset.y + y + 1, offset.z + z, -1f, 0f, 0f, u1, v1,
+            offset.x + x, offset.y + y + 1, offset.z + z + 1, -1f, 0f, 0f, u2, v1,
+            offset.x + x, offset.y + y, offset.z + z + 1, -1f, 0f, 0f, u2, v2
         ));
 
         indices.addAll(Arrays.asList(
@@ -224,10 +224,10 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x + 1, offset.y + y, offset.z + z, 1f, 0f, 0f, u1, v1,
-            offset.x + x + 1, offset.y + y, offset.z + z + 1, 1f, 0f, 0f, u2, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 1f, 0f, 0f, u2, v2,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z, 1f, 0f, 0f, u1, v2
+            offset.x + x + 1, offset.y + y, offset.z + z, 1f, 0f, 0f, u2, v2,
+            offset.x + x + 1, offset.y + y, offset.z + z + 1, 1f, 0f, 0f, u1, v2,
+            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 1f, 0f, 0f, u1, v1,
+            offset.x + x + 1, offset.y + y + 1, offset.z + z, 1f, 0f, 0f, u2, v1
         ));
 
         indices.addAll(Arrays.asList(
@@ -243,10 +243,10 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z, 0f, 0f, 1f, u1, v1,
-            offset.x + x + 1, offset.y + y, offset.z + z, 0f, 0f, 1f, u2, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z, 0f, 0f, 1f, u2, v2,
-            offset.x + x, offset.y + y + 1, offset.z + z, 0f, 0f, 1f, u1, v2
+            offset.x + x, offset.y + y, offset.z + z, 0f, 0f, 1f, u2, v2,
+            offset.x + x + 1, offset.y + y, offset.z + z, 0f, 0f, 1f, u1, v2,
+            offset.x + x + 1, offset.y + y + 1, offset.z + z, 0f, 0f, 1f, u1, v1,
+            offset.x + x, offset.y + y + 1, offset.z + z, 0f, 0f, 1f, u2, v1
         ));
 
         indices.addAll(Arrays.asList(
@@ -262,10 +262,10 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z + 1, 0f, 0f, -1f, u1, v1,
-            offset.x + x, offset.y + y + 1, offset.z + z + 1, 0f, 0f, -1f, u2, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 0f, 0f, -1f, u2, v2,
-            offset.x + x + 1, offset.y + y, offset.z + z + 1, 0f, 0f, -1f, u1, v2
+            offset.x + x, offset.y + y, offset.z + z + 1, 0f, 0f, -1f, u1, v2,
+            offset.x + x, offset.y + y + 1, offset.z + z + 1, 0f, 0f, -1f, u1, v1,
+            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 0f, 0f, -1f, u2, v1,
+            offset.x + x + 1, offset.y + y, offset.z + z + 1, 0f, 0f, -1f, u2, v2
         ));
 
         indices.addAll(Arrays.asList(
