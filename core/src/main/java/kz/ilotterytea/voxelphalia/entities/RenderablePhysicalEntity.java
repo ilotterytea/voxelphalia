@@ -50,6 +50,10 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     public void tick(float delta, Level level) {
         super.tick(delta, level);
 
+        if (position.y < -100f) {
+            position.y = 100f;
+        }
+
         // applying gravity
         float gravity = -9.81f;
         float fallSpeed = gravity * delta * weight * 0.6f;
