@@ -118,7 +118,7 @@ public class GameScreen implements Screen {
                 continue;
             }
 
-            TreeEntity entity = new TreeEntity(new Vector3(x, y + 2, z));
+            SaplingEntity entity = new SaplingEntity(new Vector3(x, y, z), 0);
             renderableEntities.add(entity);
         }
 
@@ -199,14 +199,27 @@ public class GameScreen implements Screen {
         renderableLevel.render(modelBatch, environment);
         modelBatch.end();
 
+        Array<RenderableEntity> removeEntities = new Array<>();
+
         for (RenderableEntity entity : renderableEntities) {
+            entity.tick(delta, level);
             entity.tick(delta, camera);
+
+            if (entity instanceof SaplingEntity tree) {
+                if (tree.hasGrown()) {
+                    removeEntities.add(entity);
+                    continue;
+                }
+            }
+
             entity.render(decalBatch);
         }
         decalBatch.flush();
 
         stage.act(delta);
         stage.draw();
+
+        this.renderableEntities.removeAll(removeEntities, false);
     }
 
     @Override
