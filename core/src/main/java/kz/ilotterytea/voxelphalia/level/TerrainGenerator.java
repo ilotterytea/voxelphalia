@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
+import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
+import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
 
 import java.util.Random;
 
@@ -17,6 +20,8 @@ public class TerrainGenerator {
         generateMinerals(level, VoxelType.GOLD_VOXEL, 2, 20, 10, seed + 4);
         generateMinerals(level, VoxelType.GEM_VOXEL, 1, 10, 5, seed + 8);
         generateMinerals(level, VoxelType.RUBY_VOXEL, 1, 5, 5, seed + 16);
+
+        generateMobs(level, MobType.PIG, seed + 18);
     }
 
     private static void applyGrid(Level level, Grid grid) {
@@ -135,5 +140,33 @@ public class TerrainGenerator {
         }
 
         Gdx.app.log("TerrainGenerator", "Generated " + mineral + " minerals");
+    }
+
+    private static void generateMobs(Level level, MobType mob, int seed) {
+        Random random = new Random(seed + 18);
+
+        try {
+            int amount = random.nextInt(50, 90);
+            for (int i = 0; i < amount; i++) {
+                int x = random.nextInt(20, level.getWidthInVoxels() - 40);
+                int z = random.nextInt(20, level.getDepthInVoxels() - 40);
+
+                MobEntity entity = switch (mob) {
+                    case PIG -> new MobPig();
+                    default -> null;
+                };
+
+                if (entity == null) {
+                    break;
+                }
+
+                entity.setPosition(x, level.getHighestY(x, z), z);
+                level.addEntity(entity);
+            }
+            
+            Gdx.app.log("TerrainGenerator", "Generated " + amount + " " + mob + " mob");
+        } catch (Exception e) {
+            Gdx.app.log("TerrainGenerator", "Failed to create a mob");
+        }
     }
 }
