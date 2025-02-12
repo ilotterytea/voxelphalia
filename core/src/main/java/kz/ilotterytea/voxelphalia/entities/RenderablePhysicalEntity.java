@@ -9,7 +9,7 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     protected final Vector2 velocity;
     protected final BoundingBox box;
     protected float width, height, depth, weight;
-    protected boolean onGround;
+    protected boolean onGround, collidingX, collidingZ;
 
     public RenderablePhysicalEntity() {
         super();
@@ -134,11 +134,14 @@ public class RenderablePhysicalEntity extends RenderableEntity {
             new Vector3(position.x + (width / 2f), position.y + height, position.z + v.z + (depth / 2f))
         );
 
-        if (isColliding(nextBoxX, level)) {
+        collidingX = isColliding(nextBoxX, level);
+        collidingZ = isColliding(nextBoxZ, level);
+
+        if (collidingX) {
             v.x = 0;
         }
 
-        if (isColliding(nextBoxZ, level)) {
+        if (collidingZ) {
             v.z = 0;
         }
     }
