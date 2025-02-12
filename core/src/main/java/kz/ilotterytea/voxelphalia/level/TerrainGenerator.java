@@ -1,12 +1,22 @@
 package kz.ilotterytea.voxelphalia.level;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+
+import java.util.Random;
 
 public class TerrainGenerator {
     public static void generateTerrain(Level level, int seed) {
         Grid grid = generateGrid(level.getWidthInVoxels(), level.getDepthInVoxels(), seed);
         applyGrid(level, grid);
+
+        generateMinerals(level, VoxelType.COAL_VOXEL, 3, 23, 30, seed);
+        generateMinerals(level, VoxelType.IRON_VOXEL, 2, 20, 20, seed + 2);
+        generateMinerals(level, VoxelType.GOLD_VOXEL, 2, 20, 10, seed + 4);
+        generateMinerals(level, VoxelType.GEM_VOXEL, 1, 10, 5, seed + 8);
+        generateMinerals(level, VoxelType.RUBY_VOXEL, 1, 5, 5, seed + 16);
     }
 
     private static void applyGrid(Level level, Grid grid) {
@@ -84,5 +94,46 @@ public class TerrainGenerator {
         noiseGenerator.setModifier(modifier);
         noiseGenerator.setSeed(seed);
         noiseGenerator.generate(grid);
+    }
+
+    private static void generateMinerals(Level level, VoxelType mineral, int minRadius, int minY, int minAmount, int seed) {
+        Random random = new Random(seed);
+
+        for (int i = 0; i < random.nextInt(minAmount, (int) Math.pow(minAmount, 2)); i++) {
+            int x, y, z, attempts = 0;
+            boolean pointFound;
+
+            do {
+                x = MathUtils.random(0, level.getWidthInVoxels());
+                z = MathUtils.random(0, level.getDepthInVoxels());
+                y = MathUtils.random(minY, minY + 5);
+
+                pointFound = level.getVoxel(x, y, z) == 2;
+
+                attempts++;
+                if (pointFound) break;
+            } while (attempts < 20);
+
+            if (!pointFound) continue;
+
+            int radius = MathUtils.random(minRadius, minRadius + 1);
+
+            for (int my = y - radius; my <= y + radius; my++) {
+                for (int mx = x - radius; mx <= x + radius; mx++) {
+                    for (int mz = z - radius; mz <= z + radius; mz++) {
+                        // sphere check
+                        if ((mx - x) * (mx - x) + (my - y) * (my - y) + (mz - z) * (mz - z) > radius * radius) {
+                            continue;
+                        }
+
+                        if (MathUtils.random(0, 100) > 20 && level.getVoxel(mx, my, mz) == 2) {
+                            level.placeVoxel(mineral, mx, my, mz);
+                        }
+                    }
+                }
+            }
+        }
+
+        Gdx.app.log("TerrainGenerator", "Generated " + mineral + " minerals");
     }
 }

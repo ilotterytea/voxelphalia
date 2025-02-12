@@ -26,7 +26,9 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
-import kz.ilotterytea.voxelphalia.entities.*;
+import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
+import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
@@ -119,66 +121,6 @@ public class GameScreen implements Screen {
             }
 
             SaplingEntity entity = new SaplingEntity(new Vector3(x, y, z), 0);
-            renderableEntities.add(entity);
-        }
-
-        random = new Random(seed + 2);
-
-        // rock generation
-        for (int i = 0; i < random.nextInt(200, 800); i++) {
-            int x = random.nextInt(0, level.getWidthInVoxels());
-            int z = random.nextInt(0, level.getDepthInVoxels());
-            int y = (int) level.getHighestY(x, z);
-
-            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
-
-            if (voxelBelow != VoxelType.STONE) {
-                continue;
-            }
-
-            RockEntity entity = new RockEntity(new Vector3(x, level.getHighestY(x, z) + 1, z));
-            renderableEntities.add(entity);
-        }
-
-        random = new Random(seed + 5);
-
-        // ore generation
-        for (int i = 0; i < random.nextInt(20, 100); i++) {
-            int x = random.nextInt(0, level.getWidthInVoxels());
-            int z = random.nextInt(0, level.getDepthInVoxels());
-            int y = (int) level.getHighestY(x, z);
-
-            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
-
-            if (voxelBelow != VoxelType.STONE) {
-                continue;
-            }
-
-            int typeRandom = random.nextInt() % 100;
-            int type;
-
-            // coal
-            if (70 <= typeRandom) {
-                type = 0;
-            }
-            // iron
-            else if (30 <= typeRandom) {
-                type = 1;
-            }
-            // gold
-            else if (10 <= typeRandom) {
-                type = 2;
-            }
-            // ruby
-            else if (0 < typeRandom) {
-                type = 3;
-            }
-            // gems
-            else {
-                type = 4;
-            }
-
-            OreEntity entity = new OreEntity(type, new Vector3(x, level.getHighestY(x, z) + 1, z));
             renderableEntities.add(entity);
         }
 
