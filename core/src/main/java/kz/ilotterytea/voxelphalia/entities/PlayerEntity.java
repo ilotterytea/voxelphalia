@@ -11,11 +11,11 @@ public class PlayerEntity extends RenderablePhysicalEntity {
     private final Camera camera;
 
     public PlayerEntity(Camera camera) {
-        super(null, 0, 0,
-            0.5f, 1.9f, 0.5f, 10f, 7f
-        );
         this.camera = camera;
         this.inventory = new Inventory(5, (byte) 100);
+        setSize(0.5f, 1.9f, 0.5f);
+        setWeight(10f);
+        setSpeed(7f);
     }
 
     @Override

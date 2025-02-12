@@ -16,26 +16,19 @@ public class SaplingEntity extends RenderableEntity {
     private float lifeTime;
     private final float adultLifeTime;
 
-    public SaplingEntity() {
-        this(new Vector3());
-    }
-
     public SaplingEntity(Vector3 position) {
         this(position, MathUtils.random(2800, 3600));
     }
 
     public SaplingEntity(Vector3 position, float adultLifeTime) {
-        super(new TextureRegion(
-                VoxelphaliaGame.getInstance()
-                    .getAssetManager().get("textures/entities/tree.png", Texture.class),
-                64 * new Random().nextInt(0, 2),
-                128 * new Random().nextInt(0, 2),
-                64, 128
-            ),
-            2, 4,
-            position
-        );
         this.adultLifeTime = adultLifeTime;
+        setDecal(new TextureRegion(
+            VoxelphaliaGame.getInstance()
+                .getAssetManager().get("textures/entities/tree.png", Texture.class),
+            64 * new Random().nextInt(0, 2),
+            128 * new Random().nextInt(0, 2),
+            64, 128
+        ), 2, 4);
         setPosition(position.x, position.y, position.z);
     }
 

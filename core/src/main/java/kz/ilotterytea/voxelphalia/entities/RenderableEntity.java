@@ -8,20 +8,11 @@ import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.utils.Renderable;
 
 public class RenderableEntity extends Entity implements Renderable {
-    protected final Decal decal;
+    protected Decal decal;
 
-    public RenderableEntity(TextureRegion region, float width, float height) {
-        this(region, width, height, new Vector3());
-    }
-
-    public RenderableEntity(TextureRegion region, float width, float height, Vector3 position) {
-        super(position, new Vector3());
-        if (region != null) {
-            this.decal = Decal.newDecal(width, height, region, true);
-            this.decal.setPosition(position);
-        } else {
-            this.decal = null;
-        }
+    public RenderableEntity() {
+        super();
+        this.decal = null;
     }
 
     @Override
@@ -50,5 +41,9 @@ public class RenderableEntity extends Entity implements Renderable {
     public void setPosition(float x, float y, float z) {
         super.setPosition(x, y, z);
         if (this.decal != null) this.decal.setPosition(position);
+    }
+
+    protected void setDecal(TextureRegion region, float width, float height) {
+        this.decal = Decal.newDecal(width, height, region, true);
     }
 }
