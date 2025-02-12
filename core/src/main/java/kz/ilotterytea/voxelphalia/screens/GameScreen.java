@@ -27,6 +27,7 @@ import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
+import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
@@ -118,6 +119,10 @@ public class GameScreen implements Screen {
             SaplingEntity entity = new SaplingEntity(new Vector3(x, y, z), 0);
             level.addEntity(entity);
         }
+
+        MobPig pig = new MobPig();
+        pig.setPosition(playerX, playerEntity.getPosition().y, playerZ);
+        level.addEntity(pig);
 
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(camera),
