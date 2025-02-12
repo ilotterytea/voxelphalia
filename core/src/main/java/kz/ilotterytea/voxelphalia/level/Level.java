@@ -2,10 +2,12 @@ package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import kz.ilotterytea.voxelphalia.entities.Entity;
 
 public class Level {
     protected final Array<Chunk> chunks;
     protected final int width, height, depth;
+    protected final Array<Entity> entities;
 
     public Level(int width, int height, int depth) {
         this.width = width;
@@ -18,6 +20,8 @@ public class Level {
         for (int i = 0; i < chunkCapacity; i++) {
             this.chunks.add(new Chunk(16, 16, 16));
         }
+
+        this.entities = new Array<>();
     }
 
     public byte getVoxel(int x, int y, int z) {
@@ -132,5 +136,31 @@ public class Level {
         VoxelType type = VoxelType.getById(voxel);
 
         return type != VoxelType.AIR && type != VoxelType.WATER;
+    }
+
+    public void addEntity(Entity entity) {
+        this.entities.add(entity);
+    }
+
+    public Entity getEntity(int x, int y, int z) {
+        for (Entity entity : this.entities) {
+            Vector3 pos = entity.getPosition();
+            if (pos.x == x && pos.y == y && pos.z == z) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
+    public void removeEntity(Entity entity) {
+        this.entities.removeValue(entity, false);
+    }
+
+    public boolean hasEntity(int x, int y, int z) {
+        return getEntity(x, y, z) != null;
+    }
+
+    public int getEntityCount() {
+        return this.entities.size;
     }
 }

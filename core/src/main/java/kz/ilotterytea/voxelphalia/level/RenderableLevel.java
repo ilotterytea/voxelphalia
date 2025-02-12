@@ -3,9 +3,12 @@ package kz.ilotterytea.voxelphalia.level;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import kz.ilotterytea.voxelphalia.entities.Entity;
+import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 
@@ -41,6 +44,15 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
     }
 
     @Override
+    public void render(DecalBatch batch) {
+        for (Entity entity : level.entities) {
+            if (entity instanceof Renderable e) {
+                e.render(batch);
+            }
+        }
+    }
+
+    @Override
     public void tick(float delta) {
         for (RenderableChunk chunk : renderableChunks) {
             if (isChunkVisible(chunk)) {
@@ -48,6 +60,25 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
             } else {
                 chunk.dispose();
             }
+        }
+    }
+
+    @Override
+    public void tick(float delta, Level level, Camera camera) {
+        Array<Entity> removeEntities = new Array<>();
+        for (Entity entity : level.entities) {
+            if (entity instanceof Tickable e) {
+                e.tick(delta, level);
+                e.tick(delta, camera);
+            }
+
+            if (entity instanceof SaplingEntity tree) {
+                if (tree.hasGrown()) removeEntities.add(entity);
+            }
+        }
+
+        for (Entity e : removeEntities) {
+            level.removeEntity(e);
         }
     }
 

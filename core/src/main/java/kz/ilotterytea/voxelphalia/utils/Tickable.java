@@ -8,10 +8,11 @@ public interface Tickable {
     }
 
     default void tick(float delta, Camera camera) {
-        tick(delta);
     }
 
     default void tick(float delta, Level level) {
-        tick(delta);
+    }
+
+    default void tick(float delta, Level level, Camera camera) {
     }
 }

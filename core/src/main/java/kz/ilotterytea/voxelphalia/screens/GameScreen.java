@@ -21,13 +21,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
-import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
@@ -53,8 +51,6 @@ public class GameScreen implements Screen {
     private RenderableLevel renderableLevel;
 
     private DecalBatch decalBatch;
-    private Array<RenderableEntity> renderableEntities;
-    private PlayerEntity playerEntity;
 
     @Override
     public void show() {
@@ -82,19 +78,18 @@ public class GameScreen implements Screen {
 
         renderableLevel = new RenderableLevel(camera, level);
 
-        renderableEntities = new Array<>();
-
-        playerEntity = new PlayerEntity(camera);
+        PlayerEntity playerEntity = new PlayerEntity(camera);
         float playerX = level.getWidthInVoxels() / 2.0f,
             playerZ = level.getDepthInVoxels() / 2.0f;
         playerEntity.setPosition(playerX,
             level.getHighestY(playerX, playerZ) + 1f,
             playerZ
         );
+        level.addEntity(playerEntity);
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
-        stage.addActor(new DebugInfoTable(skin, camera, renderableLevel, renderableEntities));
+        stage.addActor(new DebugInfoTable(skin, camera, renderableLevel));
 
         stage.addActor(new InventoryHotbarTable(skin, playerEntity.getInventory()));
 
@@ -121,7 +116,7 @@ public class GameScreen implements Screen {
             }
 
             SaplingEntity entity = new SaplingEntity(new Vector3(x, y, z), 0);
-            renderableEntities.add(entity);
+            level.addEntity(entity);
         }
 
         Gdx.input.setInputProcessor(new InputMultiplexer(
@@ -135,33 +130,17 @@ public class GameScreen implements Screen {
         ScreenUtils.clear(Color.SKY, true);
 
         renderableLevel.tick(delta);
-        playerEntity.tick(delta, level);
+        renderableLevel.tick(delta, level, camera);
 
         modelBatch.begin(camera);
         renderableLevel.render(modelBatch, environment);
         modelBatch.end();
 
-        Array<RenderableEntity> removeEntities = new Array<>();
-
-        for (RenderableEntity entity : renderableEntities) {
-            entity.tick(delta, level);
-            entity.tick(delta, camera);
-
-            if (entity instanceof SaplingEntity tree) {
-                if (tree.hasGrown()) {
-                    removeEntities.add(entity);
-                    continue;
-                }
-            }
-
-            entity.render(decalBatch);
-        }
+        renderableLevel.render(decalBatch);
         decalBatch.flush();
 
         stage.act(delta);
         stage.draw();
-
-        this.renderableEntities.removeAll(removeEntities, false);
     }
 
     @Override

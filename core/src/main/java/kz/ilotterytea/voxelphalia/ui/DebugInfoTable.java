@@ -6,23 +6,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
-import kz.ilotterytea.voxelphalia.entities.RenderableEntity;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 
 public class DebugInfoTable extends Table {
     private final RenderableLevel level;
-    private final Array<RenderableEntity> entities;
     private final Camera camera;
     private final Label gameLabel, cameraLabel, chunkLabel, entitiesLabel, memoryLabel, jvmLabel;
 
     public DebugInfoTable(Skin skin) {
-        this(skin, null, null, null);
+        this(skin, null, null);
     }
 
-    public DebugInfoTable(Skin skin, Camera camera, RenderableLevel level, Array<RenderableEntity> entities) {
+    public DebugInfoTable(Skin skin, Camera camera, RenderableLevel level) {
         super();
         setFillParent(true);
         align(Align.topLeft);
@@ -30,7 +27,6 @@ public class DebugInfoTable extends Table {
 
         this.level = level;
         this.camera = camera;
-        this.entities = entities;
 
         // --- GAME INFO ---
         Table gameTable = new Table();
@@ -75,10 +71,7 @@ public class DebugInfoTable extends Table {
 
             if (level != null) {
                 chunkLabel.setText(String.format("C: %s/%s", level.getRenderedChunkCount(), level.getLevel().getChunkCount()));
-            }
-
-            if (entities != null) {
-                entitiesLabel.setText(String.format("E: %s", entities.size));
+                entitiesLabel.setText(String.format("E: %s", level.getLevel().getEntityCount()));
             }
 
             if (camera != null) {
@@ -101,6 +94,7 @@ public class DebugInfoTable extends Table {
         chunkLabel.setVisible(isEnabled);
         cameraLabel.setVisible(isEnabled);
         memoryLabel.setVisible(isEnabled);
+        entitiesLabel.setVisible(isEnabled);
         jvmLabel.setVisible(isEnabled);
     }
 }
