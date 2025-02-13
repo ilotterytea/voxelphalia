@@ -16,7 +16,7 @@ public class DropEntity extends RenderablePhysicalEntity {
         this.voxel = type.getVoxelId();
 
         setWeight(0.5f);
-        setSize(1f, 1f, 1f);
+        setSize(0.8f, 0.8f, 0.8f);
         maxLifeTime = 60f * 7f;
 
         TextureAtlas atlas = VoxelphaliaGame.getInstance()
