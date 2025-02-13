@@ -3,12 +3,11 @@ package kz.ilotterytea.voxelphalia.entities.mobs;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.entities.Entity;
-import kz.ilotterytea.voxelphalia.entities.RenderablePhysicalEntity;
+import kz.ilotterytea.voxelphalia.entities.LivingEntity;
 import kz.ilotterytea.voxelphalia.level.Level;
 
-public class MobEntity extends RenderablePhysicalEntity {
-    protected int health, maxHealth;
-    protected boolean dead, walking, idling;
+public class MobEntity extends LivingEntity {
+    protected boolean walking, idling;
     private float walkingTime, idleTime;
 
     @Override
@@ -29,14 +28,16 @@ public class MobEntity extends RenderablePhysicalEntity {
         if (collidingX || collidingZ) {
             jump();
         }
+
+        setSize(width, height, depth);
     }
 
     public void wander(float delta, Level level) {
         if (walkingTime <= 0) {
             Vector3 newPos = new Vector3(
-                    position.x + MathUtils.random(-10, 10),
-                    0f,
-                    position.z + MathUtils.random(-10, 10)
+                position.x + MathUtils.random(-10, 10),
+                0f,
+                position.z + MathUtils.random(-10, 10)
             );
 
             newPos.sub(position).nor();
@@ -55,15 +56,9 @@ public class MobEntity extends RenderablePhysicalEntity {
 
     }
 
+    @Override
     public void takeDamage(int damage) {
-        health -= damage;
-        if (health <= 0) {
-            health = 0;
-            dead = true;
-        }
-    }
-
-    public boolean isDead() {
-        return dead;
+        super.takeDamage(damage);
+        jump();
     }
 }

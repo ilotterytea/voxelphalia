@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.DropEntity;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.VoxelType;
@@ -63,6 +64,10 @@ public class PlayerInputProcessor implements InputProcessor {
 
         if (!destroy && !place) {
             return false;
+        }
+
+        if (destroy && hitEntity()) {
+            return true;
         }
 
         Vector3 pos = new Vector3(playerEntity.getPosition());
@@ -171,5 +176,28 @@ public class PlayerInputProcessor implements InputProcessor {
         playerEntity.setDirection(camera.direction.x, camera.direction.y, camera.direction.z);
 
         return true;
+    }
+
+    private boolean hitEntity() {
+        Vector3 pos = new Vector3(playerEntity.getPosition());
+        Vector3 dir = new Vector3(playerEntity.getDirection());
+        boolean collided = false;
+
+        for (float d = 0; d <= 5f; d += 0.1f) {
+            pos.set(playerEntity.getPosition()).mulAdd(dir, d).add(0f, playerEntity.getHeight(), 0f);
+
+            if (level.hasEntityByHitBox((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z), MobEntity.class)) {
+                collided = true;
+                break;
+            }
+        }
+
+        if (collided) {
+            MobEntity entity = level.getEntityByHitBox((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z), MobEntity.class);
+            entity.takeDamage(playerEntity.getDamage());
+            return true;
+        }
+
+        return false;
     }
 }

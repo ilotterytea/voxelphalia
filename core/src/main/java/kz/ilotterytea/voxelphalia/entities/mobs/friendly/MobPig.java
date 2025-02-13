@@ -16,8 +16,12 @@ public class MobPig extends FriendlyMob {
 
         setWeight(8f);
         setSpeed(7f);
-        setSize(0.5f, 0.5f, 0.5f);
+        setSize(0.9f, 0.9f, 0.9f);
         setDecal(atlas.findRegion("front_idle"), 1.5f, 1.5f);
+
+        setHealth(10);
+        setMaxHealth(10);
+        setDamage(0);
     }
 
     @Override

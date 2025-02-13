@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import kz.ilotterytea.voxelphalia.entities.DropEntity;
-import kz.ilotterytea.voxelphalia.entities.Entity;
-import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
-import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
+import kz.ilotterytea.voxelphalia.entities.*;
 import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 
@@ -84,6 +81,9 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 }
                 case DropEntity drop -> {
                     if (drop.isDead()) removeEntities.add(drop);
+                }
+                case LivingEntity living -> {
+                    if (living.isDead()) removeEntities.add(living);
                 }
                 default -> {
                 }

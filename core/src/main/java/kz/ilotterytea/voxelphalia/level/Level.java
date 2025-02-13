@@ -3,6 +3,7 @@ package kz.ilotterytea.voxelphalia.level;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.entities.Entity;
+import kz.ilotterytea.voxelphalia.entities.LivingEntity;
 
 public class Level {
     protected final Array<Chunk> chunks;
@@ -152,12 +153,46 @@ public class Level {
         return null;
     }
 
+    public <T extends Entity> T getEntity(int x, int y, int z, Class<T> type) {
+        for (Entity entity : this.entities) {
+            Vector3 pos = entity.getPosition();
+            if (pos.x == x && pos.y == y && pos.z == z) {
+                if (type.isInstance(entity)) {
+                    return type.cast(entity);
+                }
+            }
+        }
+        return null;
+    }
+
+    public <T extends LivingEntity> T getEntityByHitBox(int x, int y, int z, Class<T> type) {
+        Vector3 p = new Vector3(x, y, z);
+        for (Entity entity : this.entities) {
+            if (entity instanceof LivingEntity e) {
+                if (e.getHitBox().contains(p)) {
+                    if (type.isInstance(entity)) {
+                        return type.cast(entity);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void removeEntity(Entity entity) {
         this.entities.removeValue(entity, false);
     }
 
     public boolean hasEntity(int x, int y, int z) {
         return getEntity(x, y, z) != null;
+    }
+
+    public <T extends Entity> boolean hasEntity(int x, int y, int z, Class<T> type) {
+        return getEntity(x, y, z, type) != null;
+    }
+
+    public <T extends LivingEntity> boolean hasEntityByHitBox(int x, int y, int z, Class<T> type) {
+        return getEntityByHitBox(x, y, z, type) != null;
     }
 
     public int getEntityCount() {
