@@ -6,9 +6,11 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.entities.DropEntity;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.level.VoxelType;
 
 public class PlayerInputProcessor implements InputProcessor {
     private final Level level;
@@ -102,9 +104,11 @@ public class PlayerInputProcessor implements InputProcessor {
                 Inventory.Slot slot = playerEntity.getInventory().getCurrentSlot();
                 voxel = slot.id;
                 if (playerEntity.getInventory().remove(voxel) > 0 || voxel == 0) return false;
-            } else if (playerEntity.getInventory().add(level.getVoxel(x, y, z)) > 0) {
-                // TODO: drop a voxel instead of just blocking the action
-                return false;
+            } else {
+                byte v = level.getVoxel(x, y, z);
+                DropEntity entity = new DropEntity(VoxelType.getById(v));
+                entity.setPosition(x + 0.5f, y, z + 0.5f);
+                level.addEntity(entity);
             }
 
             level.placeVoxel(voxel, x, y, z);

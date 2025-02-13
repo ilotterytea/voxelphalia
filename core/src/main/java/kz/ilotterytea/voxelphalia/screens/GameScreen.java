@@ -77,8 +77,6 @@ public class GameScreen implements Screen {
         level = new Level(40, 4, 40);
         TerrainGenerator.generateTerrain(level, seed);
 
-        renderableLevel = new RenderableLevel(camera, level);
-
         PlayerEntity playerEntity = new PlayerEntity(camera);
         float playerX = level.getWidthInVoxels() / 2.0f,
             playerZ = level.getDepthInVoxels() / 2.0f;
@@ -87,6 +85,8 @@ public class GameScreen implements Screen {
             playerZ
         );
         level.addEntity(playerEntity);
+
+        renderableLevel = new RenderableLevel(camera, playerEntity, level);
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");

@@ -167,4 +167,8 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     protected void setSpeed(float xSpeed) {
         this.velocity.x = xSpeed;
     }
+
+    public BoundingBox getBox() {
+        return box;
+    }
 }
