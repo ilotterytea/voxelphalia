@@ -1,6 +1,7 @@
 package kz.ilotterytea.voxelphalia.utils;
 
 import com.badlogic.gdx.graphics.Camera;
+import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.level.Level;
 
 public interface Tickable {
@@ -14,5 +15,8 @@ public interface Tickable {
     }
 
     default void tick(float delta, Level level, Camera camera) {
+    }
+
+    default void tick(float delta, PlayerEntity playerEntity) {
     }
 }
