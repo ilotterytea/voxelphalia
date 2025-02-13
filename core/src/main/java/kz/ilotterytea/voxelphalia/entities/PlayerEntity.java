@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Camera;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 
-public class PlayerEntity extends RenderablePhysicalEntity {
+public class PlayerEntity extends LivingEntity {
     private final Inventory inventory;
     private final Camera camera;
 
@@ -16,6 +16,10 @@ public class PlayerEntity extends RenderablePhysicalEntity {
         setSize(0.5f, 1.9f, 0.5f);
         setWeight(10f);
         setSpeed(7f);
+
+        setHealth(20);
+        setMaxHealth(20);
+        setDamage(1);
     }
 
     @Override
