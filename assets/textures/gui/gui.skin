@@ -6,7 +6,7 @@
   com.badlogic.gdx.graphics.g2d.BitmapFont: {
     default: {
       file: fonts/FontText.fnt,
-      scaledSize: 16
+      scaledSize: 20
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
