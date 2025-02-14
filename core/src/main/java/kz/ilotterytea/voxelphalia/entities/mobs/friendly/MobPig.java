@@ -48,7 +48,7 @@ public class MobPig extends FriendlyMob {
 
         if (idling) {
             name += "_idle";
-        } else if (walking) {
+        } else {
             name += "_walk";
             index = (int) ((velocity.x * stateTime) % 2 + 1);
         }
