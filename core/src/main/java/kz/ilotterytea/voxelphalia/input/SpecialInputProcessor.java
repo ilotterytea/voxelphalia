@@ -43,6 +43,19 @@ public class SpecialInputProcessor implements InputProcessor {
                 processed = true;
                 break;
             }
+            // render mode
+            case Input.Keys.F5: {
+                int mode = preferences.getInteger("render-mode", 0);
+
+                if (mode == 0) mode = 1;
+                else mode = 0;
+
+                preferences.putInteger("render-mode", mode);
+                preferences.flush();
+
+                processed = true;
+                break;
+            }
             // full screen
             case Input.Keys.F12: {
                 boolean fullscreen = preferences.getBoolean("fullscreen", false);
@@ -93,7 +106,7 @@ public class SpecialInputProcessor implements InputProcessor {
             Gdx.input.setCursorCatched(true);
             return true;
         }
-        
+
         return false;
     }
 
