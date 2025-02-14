@@ -40,7 +40,7 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
         renderedVertexCount = 0;
         for (RenderableChunk chunk : renderableChunks) {
             if (isChunkVisible(chunk)) {
-                chunk.render(batch, environment);
+                batch.render(chunk, environment);
                 renderedChunkCount++;
                 renderedIndexCount += chunk.getMeshIndexCount();
                 renderedVertexCount += chunk.getMeshVertexCount();
