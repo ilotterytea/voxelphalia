@@ -2,20 +2,19 @@ package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.RenderableProvider;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Pool;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
-import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
 
@@ -23,11 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class RenderableChunk implements Disposable, Tickable, Renderable {
+public class RenderableChunk implements Disposable, Tickable, RenderableProvider {
     private final Level level;
     private final Chunk chunk;
     private final Vector3 offset;
-    private ModelInstance modelInstance;
+    private Mesh mesh;
+    private final Material material;
     private boolean rebuilding;
     private int meshVertexCount, meshIndexCount;
 
@@ -35,31 +35,29 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         this.chunk = chunk;
         this.level = level;
         this.offset = offset;
+
+        Texture terrainTexture = VoxelphaliaGame.getInstance()
+            .getAssetManager().get("textures/terrain.png", Texture.class);
+        this.material = new Material(TextureAttribute.createDiffuse(terrainTexture));
     }
 
     @Override
     public void tick(float delta) {
-        if (chunk.isDirty || modelInstance == null) {
-            runRebuildModelThread();
+        if (chunk.isDirty || mesh == null) {
+            runRebuildMeshThread();
             chunk.isDirty = false;
         }
     }
 
     @Override
-    public void render(ModelBatch batch, Environment environment) {
-        if (modelInstance == null) return;
-        batch.render(modelInstance, environment);
-    }
-
-    @Override
     public void dispose() {
-        if (modelInstance != null) {
-            modelInstance.model.dispose();
-            modelInstance = null;
+        if (mesh != null) {
+            mesh.dispose();
+            mesh = null;
         }
     }
 
-    private void runRebuildModelThread() {
+    private void runRebuildMeshThread() {
         if (rebuilding) return;
         rebuilding = true;
         meshVertexCount = 0;
@@ -69,19 +67,19 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
             Gdx.app.log("RenderableChunk" + offset, "Rebuilding chunk mesh...");
             long startTimestamp = System.currentTimeMillis();
 
-            Pair<List<Float>, List<Short>> data = generateMeshData();
-            meshVertexCount = data.first.size();
-            meshIndexCount = data.second.size();
+            Pair<Pair<List<Float>, List<Short>>, Integer> data = generateMeshData();
+            meshVertexCount = data.first.first.size();
+            meshIndexCount = data.first.second.size();
 
             Gdx.app.postRunnable(() -> {
-                rebuildModel(data);
+                rebuildMesh(data);
                 rebuilding = false;
                 Gdx.app.log("RenderableChunk" + offset, String.format("Finished in %sms!", System.currentTimeMillis() - startTimestamp));
             });
         }).start();
     }
 
-    private Pair<List<Float>, List<Short>> generateMeshData() {
+    private Pair<Pair<List<Float>, List<Short>>, Integer> generateMeshData() {
         Texture terrainTexture = VoxelphaliaGame.getInstance()
             .getAssetManager().get("textures/terrain.png", Texture.class);
 
@@ -93,6 +91,7 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
         int depth = chunk.depth;
 
         short indexOffset = 0;
+        int faceCount = 0;
 
         for (int y = 0; y < height; y++) {
             for (int z = 0; z < depth; z++) {
@@ -106,6 +105,7 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
                     TextureRegion bottomRegion = type.getBottomTextureRegion(terrainTexture);
 
                     boolean[] faces = getVisibleFaces((int) (offset.x + x), (int) (offset.y + y), (int) (offset.z + z));
+                    faceCount += faces.length;
 
                     if (faces[0]) {
                         createTop(vertices, indices, x, y, z, topRegion, indexOffset);
@@ -140,31 +140,24 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
             }
         }
 
-        return new Pair<>(vertices, indices);
+        return new Pair<>(new Pair<>(vertices, indices), faceCount);
     }
 
-    private void rebuildModel(Pair<List<Float>, List<Short>> data) {
-        float[] v = new float[data.first.size()];
-        for (int i = 0; i < data.first.size(); i++) v[i] = data.first.get(i);
-        short[] i = new short[data.second.size()];
-        for (int j = 0; j < data.second.size(); j++) i[j] = data.second.get(j);
-
-        Texture terrainTexture = VoxelphaliaGame.getInstance()
-            .getAssetManager().get("textures/terrain.png", Texture.class);
-
-        ModelBuilder modelBuilder = new ModelBuilder();
-        int attr = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
-        modelBuilder.begin();
-        MeshPartBuilder builder = modelBuilder.part(
-            "chunk",
-            GL20.GL_TRIANGLES,
-            attr,
-            new Material(TextureAttribute.createDiffuse(terrainTexture))
-        );
-        builder.addMesh(v, i);
+    private void rebuildMesh(Pair<Pair<List<Float>, List<Short>>, Integer> data) {
+        float[] v = new float[data.first.first.size()];
+        for (int i = 0; i < data.first.first.size(); i++) v[i] = data.first.first.get(i);
+        short[] i = new short[data.first.second.size()];
+        for (int j = 0; j < data.first.second.size(); j++) i[j] = data.first.second.get(j);
 
         dispose();
-        modelInstance = new ModelInstance(modelBuilder.end());
+        mesh = new Mesh(true, data.second * 4, data.second * 6,
+            VertexAttribute.Position(),
+            VertexAttribute.Normal(),
+            VertexAttribute.TexCoords(0)
+        );
+
+        mesh.setVertices(v);
+        mesh.setIndices(i);
     }
 
     private void createTop(List<Float> vertices, List<Short> indices, int x, int y, int z, TextureRegion region, short indexOffset) {
@@ -313,5 +306,19 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
 
     public int getMeshVertexCount() {
         return meshVertexCount;
+    }
+
+    @Override
+    public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
+        if (mesh == null) return;
+
+        Renderable renderable = pool.obtain();
+        renderable.meshPart.mesh = mesh;
+        renderable.meshPart.offset = 0;
+        renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
+        renderable.meshPart.size = mesh.getNumIndices();
+
+        renderable.material = material;
+        renderables.add(renderable);
     }
 }
