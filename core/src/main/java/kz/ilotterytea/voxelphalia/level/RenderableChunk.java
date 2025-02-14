@@ -1,6 +1,7 @@
 package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
@@ -312,10 +313,12 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
     public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
         if (mesh == null) return;
 
+        Preferences p = VoxelphaliaGame.getInstance().getPreferences();
+
         Renderable renderable = pool.obtain();
         renderable.meshPart.mesh = mesh;
         renderable.meshPart.offset = 0;
-        renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
+        renderable.meshPart.primitiveType = p.getInteger("render-mode", 0) == 0 ? GL20.GL_TRIANGLES : GL20.GL_LINE_STRIP;
         renderable.meshPart.size = mesh.getNumIndices();
 
         renderable.material = material;
