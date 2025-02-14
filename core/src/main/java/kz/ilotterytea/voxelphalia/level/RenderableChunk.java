@@ -29,6 +29,7 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
     private final Vector3 offset;
     private ModelInstance modelInstance;
     private boolean rebuilding;
+    private int meshVertexCount, meshIndexCount;
 
     public RenderableChunk(Chunk chunk, Level level, Vector3 offset) {
         this.chunk = chunk;
@@ -61,12 +62,16 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
     private void runRebuildModelThread() {
         if (rebuilding) return;
         rebuilding = true;
+        meshVertexCount = 0;
+        meshIndexCount = 0;
 
         new Thread(() -> {
             Gdx.app.log("RenderableChunk" + offset, "Rebuilding chunk mesh...");
             long startTimestamp = System.currentTimeMillis();
 
             Pair<List<Float>, List<Short>> data = generateMeshData();
+            meshVertexCount = data.first.size();
+            meshIndexCount = data.second.size();
 
             Gdx.app.postRunnable(() -> {
                 rebuildModel(data);
@@ -300,5 +305,13 @@ public class RenderableChunk implements Disposable, Tickable, Renderable {
             faces[5] = true;
 
         return faces;
+    }
+
+    public int getMeshIndexCount() {
+        return meshIndexCount;
+    }
+
+    public int getMeshVertexCount() {
+        return meshVertexCount;
     }
 }

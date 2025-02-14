@@ -4,34 +4,35 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 
-public class DebugInfoTable extends Table {
+public class DebugInfoStack extends Stack {
     private final RenderableLevel level;
     private final Camera camera;
     private final Label gameLabel, cameraLabel, chunkLabel, entitiesLabel, memoryLabel, jvmLabel;
 
-    public DebugInfoTable(Skin skin) {
+    public DebugInfoStack(Skin skin) {
         this(skin, null, null);
     }
 
-    public DebugInfoTable(Skin skin, Camera camera, RenderableLevel level) {
+    public DebugInfoStack(Skin skin, Camera camera, RenderableLevel level) {
         super();
         setFillParent(true);
-        align(Align.topLeft);
-        pad(5f);
 
         this.level = level;
         this.camera = camera;
 
         // --- GAME INFO ---
         Table gameTable = new Table();
+        gameTable.setFillParent(true);
+        gameTable.pad(5f);
         gameTable.align(Align.topLeft);
-        add(gameTable).grow();
+        add(gameTable);
 
         this.gameLabel = new Label("", skin);
         gameTable.add(gameLabel).growX().row();
@@ -48,7 +49,9 @@ public class DebugInfoTable extends Table {
         // --- DEVICE INFO ---
         Table deviceTable = new Table();
         deviceTable.align(Align.topRight);
-        add(deviceTable).grow();
+        deviceTable.setFillParent(true);
+        deviceTable.pad(5f);
+        add(deviceTable);
 
         this.memoryLabel = new Label("", skin);
         memoryLabel.setAlignment(Align.right);
@@ -70,7 +73,7 @@ public class DebugInfoTable extends Table {
             gameText += String.format(" (%s fps)", Gdx.graphics.getFramesPerSecond());
 
             if (level != null) {
-                chunkLabel.setText(String.format("C: %s/%s", level.getRenderedChunkCount(), level.getLevel().getChunkCount()));
+                chunkLabel.setText(String.format("C: %s/%s, V: %s, I: %s", level.getRenderedChunkCount(), level.getLevel().getChunkCount(), level.getRenderedVertexCount(), level.getRenderedIndexCount()));
                 entitiesLabel.setText(String.format("E: %s", level.getLevel().getEntityCount()));
             }
 
