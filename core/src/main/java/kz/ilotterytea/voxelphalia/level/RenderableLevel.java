@@ -16,7 +16,7 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
     private final Camera camera;
     private final Array<RenderableChunk> renderableChunks;
     private final PlayerEntity player;
-    private int renderedChunkCount;
+    private int renderedChunkCount, renderedVertexCount, renderedIndexCount;
 
     public RenderableLevel(Camera camera, PlayerEntity player, Level level) {
         this.level = level;
@@ -36,10 +36,14 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
     @Override
     public void render(ModelBatch batch, Environment environment) {
         renderedChunkCount = 0;
+        renderedIndexCount = 0;
+        renderedVertexCount = 0;
         for (RenderableChunk chunk : renderableChunks) {
             if (isChunkVisible(chunk)) {
                 chunk.render(batch, environment);
                 renderedChunkCount++;
+                renderedIndexCount += chunk.getMeshIndexCount();
+                renderedVertexCount += chunk.getMeshVertexCount();
             }
         }
     }
@@ -115,6 +119,14 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
 
     public int getRenderedChunkCount() {
         return renderedChunkCount;
+    }
+
+    public int getRenderedIndexCount() {
+        return renderedIndexCount;
+    }
+
+    public int getRenderedVertexCount() {
+        return renderedVertexCount;
     }
 
     public Level getLevel() {

@@ -34,7 +34,7 @@ import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.level.VoxelType;
-import kz.ilotterytea.voxelphalia.ui.DebugInfoTable;
+import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.inventory.InventoryHotbarTable;
 
 import java.util.Random;
@@ -90,7 +90,7 @@ public class GameScreen implements Screen {
 
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
-        stage.addActor(new DebugInfoTable(skin, camera, renderableLevel));
+        stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
 
         stage.addActor(new InventoryHotbarTable(skin, playerEntity.getInventory()));
 
