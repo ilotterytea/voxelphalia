@@ -27,7 +27,7 @@ import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
-import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
+import kz.ilotterytea.voxelphalia.environment.SkyClouds;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
@@ -47,6 +47,7 @@ public class GameScreen implements Screen {
 
     private ModelBatch modelBatch;
     private Environment environment;
+    private SkyClouds clouds;
 
     private Level level;
     private RenderableLevel renderableLevel;
@@ -120,9 +121,10 @@ public class GameScreen implements Screen {
             level.addEntity(entity);
         }
 
-        MobPig pig = new MobPig();
-        pig.setPosition(playerX, playerEntity.getPosition().y, playerZ);
-        level.addEntity(pig);
+        this.clouds = new SkyClouds(
+            new Vector3(level.getWidthInVoxels() / 2f, level.getHeightInVoxels() + 10f, level.getDepthInVoxels() / 2f),
+            new Vector3(1000f, 0f, 1000f)
+        );
 
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(camera),
@@ -136,6 +138,9 @@ public class GameScreen implements Screen {
 
         renderableLevel.tick(delta);
         renderableLevel.tick(delta, level, camera);
+
+        clouds.tick(delta, camera);
+        clouds.render(modelBatch, environment);
 
         modelBatch.begin(camera);
         renderableLevel.render(modelBatch, environment);
@@ -178,5 +183,6 @@ public class GameScreen implements Screen {
         renderableLevel.dispose();
         decalBatch.dispose();
         modelBatch.dispose();
+        clouds.dispose();
     }
 }
