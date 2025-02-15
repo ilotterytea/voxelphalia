@@ -7,6 +7,7 @@ import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
+import kz.ilotterytea.voxelphalia.entities.mobs.hostile.MobFish;
 
 import java.util.Random;
 
@@ -22,6 +23,7 @@ public class TerrainGenerator {
         generateMinerals(level, VoxelType.RUBY_VOXEL, 1, 5, 5, seed + 16);
 
         generateMobs(level, MobType.PIG, seed + 18);
+        generateMobs(level, MobType.FISH, seed + 19);
     }
 
     private static void applyGrid(Level level, Grid grid) {
@@ -153,17 +155,13 @@ public class TerrainGenerator {
 
                 MobEntity entity = switch (mob) {
                     case PIG -> new MobPig();
-                    default -> null;
+                    case FISH -> new MobFish();
                 };
-
-                if (entity == null) {
-                    break;
-                }
 
                 entity.setPosition(x, level.getHighestY(x, z), z);
                 level.addEntity(entity);
             }
-            
+
             Gdx.app.log("TerrainGenerator", "Generated " + amount + " " + mob + " mob");
         } catch (Exception e) {
             Gdx.app.log("TerrainGenerator", "Failed to create a mob");

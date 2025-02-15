@@ -1,0 +1,9 @@
+fish.png
+size:64,16
+repeat:none
+back_idle
+bounds:16,0,16,16
+front_idle
+bounds:32,0,16,16
+side_idle
+bounds:0,0,16,16
