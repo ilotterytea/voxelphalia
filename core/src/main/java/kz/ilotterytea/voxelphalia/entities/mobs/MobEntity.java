@@ -8,7 +8,7 @@ import kz.ilotterytea.voxelphalia.level.Level;
 
 public class MobEntity extends LivingEntity {
     protected boolean walking, idling;
-    private float walkingTime, idleTime;
+    protected float walkingTime, idleTime;
 
     @Override
     public void tick(float delta, Level level) {
@@ -53,7 +53,14 @@ public class MobEntity extends LivingEntity {
     }
 
     public void followEntity(Entity entity) {
+        Vector3 pos = new Vector3(entity.getPosition());
+        pos.sub(position).nor();
+        pos.y = 0;
 
+        setDirection(pos.x, pos.y, pos.z);
+
+        walkingTime = 1f;
+        idleTime = 0f;
     }
 
     @Override
