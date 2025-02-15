@@ -8,6 +8,8 @@ public class LivingEntity extends RenderablePhysicalEntity {
     protected int health, maxHealth, damage;
     protected boolean dead;
 
+    private float damageInDelay;
+
     public LivingEntity() {
         this.hitBox = new BoundingBox();
     }
@@ -21,11 +23,15 @@ public class LivingEntity extends RenderablePhysicalEntity {
     }
 
     public void takeDamage(int damage) {
+        if (damageInDelay > 0f) return;
+
         health -= damage;
         if (health <= 0) {
             health = 0;
             dead = true;
         }
+
+        damageInDelay = 0.25f;
     }
 
     public int getHealth() {
@@ -58,6 +64,12 @@ public class LivingEntity extends RenderablePhysicalEntity {
             new Vector3(position.x - (w / 2f), position.y, position.z - (d / 2f)),
             new Vector3(position.x + (w / 2f), position.y + h, position.z + (d / 2f))
         );
+    }
+
+    @Override
+    public void tick(float delta) {
+        super.tick(delta);
+        damageInDelay -= delta;
     }
 
     public BoundingBox getHitBox() {
