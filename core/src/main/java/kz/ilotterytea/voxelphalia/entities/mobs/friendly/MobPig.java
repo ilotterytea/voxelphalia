@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.entities.mobs.friendly;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.math.MathUtils;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 
@@ -54,6 +55,11 @@ public class MobPig extends FriendlyMob {
         }
 
         decal.setTextureRegion(index < 0 ? atlas.findRegion(name) : atlas.findRegion(name, index));
+    }
+
+    @Override
+    public void render(DecalBatch batch) {
+        super.render(batch);
         decal.setPosition(position.x, position.y + 0.8f, position.z);
     }
 }
