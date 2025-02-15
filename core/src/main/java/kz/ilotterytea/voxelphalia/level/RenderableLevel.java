@@ -74,9 +74,9 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
         for (Entity entity : level.entities) {
             if (entity instanceof Tickable e) {
                 e.tick(delta);
+                e.tick(delta, player);
                 e.tick(delta, level);
                 e.tick(delta, camera);
-                e.tick(delta, player);
             }
 
             switch (entity) {
