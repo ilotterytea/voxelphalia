@@ -1,4 +1,4 @@
-package kz.ilotterytea.voxelphalia.ui.inventory;
+package kz.ilotterytea.voxelphalia.ui.game.inventory;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -53,7 +53,7 @@ public class InventorySlotStack extends Stack {
                     .get("textures/gui/gui_voxels.atlas");
 
                 TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(slot.id));
-                
+
                 if (region == null) {
                     region = atlas.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
                 }

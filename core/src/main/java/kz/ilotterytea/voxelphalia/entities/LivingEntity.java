@@ -32,6 +32,10 @@ public class LivingEntity extends RenderablePhysicalEntity {
         return health;
     }
 
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
     protected void setDamage(int damage) {
         this.damage = damage;
     }

@@ -1,4 +1,4 @@
-package kz.ilotterytea.voxelphalia.ui.inventory;
+package kz.ilotterytea.voxelphalia.ui.game.inventory;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;

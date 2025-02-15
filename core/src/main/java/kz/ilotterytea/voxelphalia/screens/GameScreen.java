@@ -35,7 +35,7 @@ import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
-import kz.ilotterytea.voxelphalia.ui.inventory.InventoryHotbarTable;
+import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 
 import java.util.Random;
 
@@ -93,7 +93,7 @@ public class GameScreen implements Screen {
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
         stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
 
-        stage.addActor(new InventoryHotbarTable(skin, playerEntity.getInventory()));
+        stage.addActor(new HotbarTable(skin, playerEntity));
 
         // Crosshair
         Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
