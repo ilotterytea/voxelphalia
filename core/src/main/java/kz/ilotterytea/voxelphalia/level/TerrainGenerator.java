@@ -8,6 +8,7 @@ import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
 import kz.ilotterytea.voxelphalia.entities.mobs.hostile.MobFish;
+import kz.ilotterytea.voxelphalia.entities.mobs.neutral.MobPenguin;
 
 import java.util.Random;
 
@@ -24,6 +25,7 @@ public class TerrainGenerator {
 
         generateMobs(level, MobType.PIG, seed + 18);
         generateMobs(level, MobType.FISH, seed + 19);
+        generateMobs(level, MobType.PENGUIN, seed + 20);
     }
 
     private static void applyGrid(Level level, Grid grid) {
@@ -156,6 +158,7 @@ public class TerrainGenerator {
                 MobEntity entity = switch (mob) {
                     case PIG -> new MobPig();
                     case FISH -> new MobFish();
+                    case PENGUIN -> new MobPenguin();
                 };
 
                 entity.setPosition(x, level.getHighestY(x, z), z);
