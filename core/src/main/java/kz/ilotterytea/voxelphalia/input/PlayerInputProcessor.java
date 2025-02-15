@@ -35,8 +35,8 @@ public class PlayerInputProcessor implements InputProcessor {
             return true;
         }
 
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_1 + playerEntity.getInventory().getSize()) {
-            for (int i = 0; i < playerEntity.getInventory().getSize(); i++) {
+        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+            for (int i = 0; i < 9; i++) {
                 if (keycode == Input.Keys.NUM_1 + i) {
                     playerEntity.getInventory().setSlotIndex(i);
                     return true;
@@ -146,10 +146,13 @@ public class PlayerInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         if (!Gdx.input.isCursorCatched()) return false;
-        if (amountY > 0f) {
-            playerEntity.getInventory().previousSlotIndex();
-        } else {
-            playerEntity.getInventory().nextSlotIndex();
+
+        Inventory inv = playerEntity.getInventory();
+
+        if (amountY > 0f && inv.getSlotIndex() != 0) {
+            inv.previousSlotIndex();
+        } else if (amountY < 0f && inv.getSlotIndex() < 8f) {
+            inv.nextSlotIndex();
         }
         return true;
     }
