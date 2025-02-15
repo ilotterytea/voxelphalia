@@ -1,7 +1,12 @@
 gui.png
-size:128,128
+size:256,128
 repeat:none
+heart-empty
+bounds:128,64,32,32
+heart-full
+bounds:160,96,32,32
+heart-half
+bounds:128,96,32,32
 rectangle
 bounds:0,0,128,128
 split:16,16,16,16
-pad:16,16,16,16
