@@ -59,8 +59,8 @@ public class MobEntity extends LivingEntity {
 
         setDirection(pos.x, pos.y, pos.z);
 
-        walkingTime = 1f;
-        idleTime = 0f;
+        walkingTime = 2f;
+        idleTime = -1f;
     }
 
     @Override

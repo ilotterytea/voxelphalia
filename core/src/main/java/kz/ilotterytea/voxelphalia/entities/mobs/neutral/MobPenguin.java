@@ -27,6 +27,7 @@ public class MobPenguin extends NeutralMob {
 
     @Override
     public void tick(float delta, Camera camera) {
+        super.tick(delta, camera);
         stateTime += delta;
 
         double angle = MathUtils.atan2(direction.z, direction.x) - MathUtils.atan2(camera.direction.z, camera.direction.x);
@@ -54,7 +55,6 @@ public class MobPenguin extends NeutralMob {
         }
 
         decal.setTextureRegion(index < 0 ? atlas.findRegion(name) : atlas.findRegion(name, index));
-        super.tick(delta, camera);
     }
 
     @Override
