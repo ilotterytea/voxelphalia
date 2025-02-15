@@ -12,7 +12,7 @@ public class PlayerEntity extends LivingEntity {
 
     public PlayerEntity(Camera camera) {
         this.camera = camera;
-        this.inventory = new Inventory(5, (byte) 100);
+        this.inventory = new Inventory(49, (byte) 100);
         setSize(0.5f, 1.7f, 0.5f);
         setWeight(10f);
         setSpeed(7f);

@@ -16,7 +16,7 @@ public class InventoryHotbarTable extends Table {
         pad(8f);
 
         this.inventory = inventory;
-        this.slots = new InventorySlotStack[inventory.getSize()];
+        this.slots = new InventorySlotStack[9];
 
         float size = 48f;
 
