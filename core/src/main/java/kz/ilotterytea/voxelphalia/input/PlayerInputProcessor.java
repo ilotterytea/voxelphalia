@@ -35,6 +35,11 @@ public class PlayerInputProcessor implements InputProcessor {
             return true;
         }
 
+        if (keycode == Input.Keys.NUM_0) {
+            playerEntity.getInventory().setSlotIndex(9);
+            return true;
+        }
+
         if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
             for (int i = 0; i < 9; i++) {
                 if (keycode == Input.Keys.NUM_1 + i) {
@@ -153,7 +158,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
         if (amountY > 0f && inv.getSlotIndex() != 0) {
             inv.previousSlotIndex();
-        } else if (amountY < 0f && inv.getSlotIndex() < 8f) {
+        } else if (amountY < 0f && inv.getSlotIndex() < 9f) {
             inv.nextSlotIndex();
         }
         return true;
