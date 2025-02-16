@@ -31,6 +31,7 @@ public class PlayerEntity extends LivingEntity {
 
     @Override
     public void setPosition(float x, float y, float z) {
+        if (dead) return;
         super.setPosition(x, y, z);
         camera.position.set(x, y + height, z);
         camera.update();
@@ -72,11 +73,11 @@ public class PlayerEntity extends LivingEntity {
     }
 
     public void respawn() {
+        dead = false;
         inventory.clear();
         setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
         setDirection(0f, 0f, 0f);
         setHealth(maxHealth);
-        dead = false;
     }
 
     @Override
@@ -97,6 +98,9 @@ public class PlayerEntity extends LivingEntity {
         // auto respawn
         if (dead && respawnTime <= 0.1f) {
             respawn();
+        } else if (dead && camera.position.y > position.y + 0.2f) {
+            camera.position.y -= 2f * delta;
+            camera.update();
         }
     }
 
