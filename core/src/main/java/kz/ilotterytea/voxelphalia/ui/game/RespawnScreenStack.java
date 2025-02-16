@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.ui.game;
 
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
@@ -7,6 +8,7 @@ import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 public class RespawnScreenStack extends Stack {
     private final PlayerEntity entity;
     private final Label timerTitle;
+    private final Image gradientImage;
 
     public RespawnScreenStack(Skin skin, PlayerEntity entity) {
         super();
@@ -19,6 +21,10 @@ public class RespawnScreenStack extends Stack {
         Image backgroundImage = new Image(skin.getDrawable("respawn-background"));
         backgroundImage.setFillParent(true);
         add(backgroundImage);
+
+        gradientImage = new Image(skin.getDrawable("respawn-gradient"));
+        gradientImage.setFillParent(true);
+        add(gradientImage);
 
         // table
         Table table = new Table();
@@ -40,6 +46,14 @@ public class RespawnScreenStack extends Stack {
 
         if (entity.isDead()) {
             timerTitle.setText("Respawn in " + (int) (entity.getRespawnTime() * 10f) / 10f + "...");
+            if (!gradientImage.hasActions()) {
+                gradientImage.addAction(Actions.sequence(
+                    Actions.alpha(0f),
+                    Actions.alpha(1f, 10f)
+                ));
+            }
+        } else {
+            gradientImage.clearActions();
         }
     }
 }
