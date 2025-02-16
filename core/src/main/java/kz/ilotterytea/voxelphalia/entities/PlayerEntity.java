@@ -16,7 +16,7 @@ public class PlayerEntity extends LivingEntity {
 
     public PlayerEntity(Vector3 spawnPoint, Camera camera) {
         this.camera = camera;
-        this.inventory = new Inventory(49, (byte) 100);
+        this.inventory = new Inventory(50, (byte) 100);
         this.spawnPoint = spawnPoint;
         setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
 

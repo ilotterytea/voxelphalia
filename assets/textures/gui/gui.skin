@@ -63,5 +63,12 @@
       background: bar-background,
       knobBefore: bar-foreground
     }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+    default: {
+      background: hotbar-background,
+      titleFont: default,
+      titleFontColor: white
+    }
   }
 }
