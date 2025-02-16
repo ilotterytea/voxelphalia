@@ -6,14 +6,17 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Camera;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 
 public class SpecialInputProcessor implements InputProcessor {
     private final Preferences preferences;
     private final Camera camera;
+    private final PlayerEntity playerEntity;
 
-    public SpecialInputProcessor(Camera camera) {
+    public SpecialInputProcessor(PlayerEntity playerEntity, Camera camera) {
         preferences = VoxelphaliaGame.getInstance().getPreferences();
         this.camera = camera;
+        this.playerEntity = playerEntity;
     }
 
     @Override
@@ -102,7 +105,7 @@ public class SpecialInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!Gdx.input.isCursorCatched()) {
+        if (!Gdx.input.isCursorCatched() && !playerEntity.isDead()) {
             Gdx.input.setCursorCatched(true);
             return true;
         }

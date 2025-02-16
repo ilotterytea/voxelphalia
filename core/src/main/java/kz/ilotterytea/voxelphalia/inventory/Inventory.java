@@ -151,6 +151,13 @@ public class Inventory {
         return currentSlotIndex;
     }
 
+    public void clear() {
+        for (Slot slot : slots) {
+            slot.id = 0;
+            slot.quantity = 0;
+        }
+    }
+
     @Override
     public String toString() {
         return "Inventory{" +

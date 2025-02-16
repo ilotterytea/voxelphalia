@@ -59,6 +59,8 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (!Gdx.input.isCursorCatched()) return false;
+
         boolean destroy = button == Input.Buttons.LEFT;
         boolean place = button == Input.Buttons.RIGHT;
 

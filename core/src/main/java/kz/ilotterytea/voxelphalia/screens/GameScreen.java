@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -36,6 +37,7 @@ import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
+import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
 
 import java.util.Random;
 
@@ -78,13 +80,15 @@ public class GameScreen implements Screen {
         level = new Level(40, 4, 40);
         TerrainGenerator.generateTerrain(level, seed);
 
-        PlayerEntity playerEntity = new PlayerEntity(camera);
-        float playerX = level.getWidthInVoxels() / 2.0f,
-            playerZ = level.getDepthInVoxels() / 2.0f;
-        playerEntity.setPosition(playerX,
-            level.getHighestY(playerX, playerZ) + 1f,
-            playerZ
+        Vector3 playerSpawnPoint = new Vector3(
+            MathUtils.random(20, level.getWidthInVoxels() - 40),
+            0f,
+            MathUtils.random(20, level.getDepthInVoxels() - 40)
         );
+
+        playerSpawnPoint.y = level.getHighestY(playerSpawnPoint.x, playerSpawnPoint.z) + 1f;
+
+        PlayerEntity playerEntity = new PlayerEntity(playerSpawnPoint, camera);
         level.addEntity(playerEntity);
 
         renderableLevel = new RenderableLevel(camera, playerEntity, level);
@@ -94,6 +98,7 @@ public class GameScreen implements Screen {
         stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
 
         stage.addActor(new HotbarTable(skin, playerEntity));
+        stage.addActor(new RespawnScreenStack(skin, playerEntity));
 
         // Crosshair
         Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
@@ -127,8 +132,9 @@ public class GameScreen implements Screen {
         );
 
         Gdx.input.setInputProcessor(new InputMultiplexer(
-            new SpecialInputProcessor(camera),
-            new PlayerInputProcessor(playerEntity, level, camera)
+            new SpecialInputProcessor(playerEntity, camera),
+            new PlayerInputProcessor(playerEntity, level, camera),
+            stage
         ));
     }
 
