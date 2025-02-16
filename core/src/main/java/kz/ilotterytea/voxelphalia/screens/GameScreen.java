@@ -24,22 +24,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
-import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.environment.SkyClouds;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
-import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
-import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
-
-import java.util.Random;
 
 public class GameScreen implements Screen {
     private VoxelphaliaGame game;
@@ -55,6 +49,10 @@ public class GameScreen implements Screen {
     private RenderableLevel renderableLevel;
 
     private DecalBatch decalBatch;
+
+    public GameScreen(Level level) {
+        this.level = level;
+    }
 
     @Override
     public void show() {
@@ -74,11 +72,6 @@ public class GameScreen implements Screen {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
         environment.set(new ColorAttribute(ColorAttribute.Fog, Color.SKY));
         environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, 0, -1, 0));
-
-        int seed = Generators.rollSeed();
-
-        level = new Level(40, 4, 40);
-        TerrainGenerator.generateTerrain(level, seed);
 
         Vector3 playerSpawnPoint = new Vector3(
             MathUtils.random(20, level.getWidthInVoxels() - 40),
@@ -107,24 +100,6 @@ public class GameScreen implements Screen {
         stage.addActor(crosshairContainer);
 
         decalBatch = new DecalBatch(new CameraGroupStrategy(camera));
-
-        Random random = new Random(seed);
-
-        // tree generation
-        for (int i = 0; i < random.nextInt(800, 2000); i++) {
-            int x = random.nextInt(0, level.getWidthInVoxels());
-            int z = random.nextInt(0, level.getDepthInVoxels());
-            int y = (int) level.getHighestY(x, z);
-
-            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
-
-            if (voxelBelow != VoxelType.GRASS) {
-                continue;
-            }
-
-            SaplingEntity entity = new SaplingEntity(new Vector3(x, y, z), 0);
-            level.addEntity(entity);
-        }
 
         this.clouds = new SkyClouds(
             new Vector3(level.getWidthInVoxels() / 2f, level.getHeightInVoxels() + 10f, level.getDepthInVoxels() / 2f),

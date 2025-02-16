@@ -4,16 +4,20 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.entities.Entity;
 import kz.ilotterytea.voxelphalia.entities.LivingEntity;
+import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
+import kz.ilotterytea.voxelphalia.utils.Tickable;
 
-public class Level {
+public class Level implements Tickable {
     protected final Array<Chunk> chunks;
     protected final int width, height, depth;
     protected final Array<Entity> entities;
+    protected final int seed;
 
-    public Level(int width, int height, int depth) {
+    public Level(int width, int height, int depth, int seed) {
         this.width = width;
         this.height = height;
         this.depth = depth;
+        this.seed = seed;
 
         int chunkCapacity = width * height * depth;
         this.chunks = new Array<>(chunkCapacity);
@@ -197,5 +201,28 @@ public class Level {
 
     public int getEntityCount() {
         return this.entities.size;
+    }
+
+    public int getSeed() {
+        return seed;
+    }
+
+    @Override
+    public void tick(float delta) {
+        Array<Entity> removeEntities = new Array<>();
+        for (Entity entity : entities) {
+            if (entity instanceof Tickable e) {
+                e.tick(delta);
+                e.tick(delta, this);
+            }
+
+            if (entity instanceof SaplingEntity tree) {
+                if (tree.hasGrown()) removeEntities.add(entity);
+            }
+        }
+
+        for (Entity e : removeEntities) {
+            removeEntity(e);
+        }
     }
 }
