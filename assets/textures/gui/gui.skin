@@ -27,6 +27,10 @@
       color: { hex: "#250000aa" },
       name: rectangle
     },
+    respawn-gradient: {
+      color: { hex: "#700000aa" },
+      name: gradient
+    },
     black-transparent: {
       color: { hex: "#00000099" },
       name: rectangle
