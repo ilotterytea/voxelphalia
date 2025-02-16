@@ -22,7 +22,7 @@ public class SplashScreen implements Screen {
 
         if (game.getAssetManager().update()) {
             Gdx.app.log(SplashScreen.class.getSimpleName(), "Loaded all assets");
-            game.setScreen(new GameScreen());
+            game.setScreen(new LevelLoadingScreen());
         }
     }
 

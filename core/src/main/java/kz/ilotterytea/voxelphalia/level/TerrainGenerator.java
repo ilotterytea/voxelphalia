@@ -2,8 +2,10 @@ package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
@@ -13,22 +15,7 @@ import kz.ilotterytea.voxelphalia.entities.mobs.neutral.MobPenguin;
 import java.util.Random;
 
 public class TerrainGenerator {
-    public static void generateTerrain(Level level, int seed) {
-        Grid grid = generateGrid(level.getWidthInVoxels(), level.getDepthInVoxels(), seed);
-        applyGrid(level, grid);
-
-        generateMinerals(level, VoxelType.COAL_VOXEL, 3, 23, 30, seed);
-        generateMinerals(level, VoxelType.IRON_VOXEL, 2, 20, 20, seed + 2);
-        generateMinerals(level, VoxelType.GOLD_VOXEL, 2, 20, 10, seed + 4);
-        generateMinerals(level, VoxelType.GEM_VOXEL, 1, 10, 5, seed + 8);
-        generateMinerals(level, VoxelType.RUBY_VOXEL, 1, 5, 5, seed + 16);
-
-        generateMobs(level, MobType.PIG, seed + 18);
-        generateMobs(level, MobType.FISH, seed + 19);
-        generateMobs(level, MobType.PENGUIN, seed + 20);
-    }
-
-    private static void applyGrid(Level level, Grid grid) {
+    public static void applyGrid(Level level, Grid grid) {
         final float WATER_HEIGHT = 20f;
         final float SAND_LEVEL = 0.35f;
         final float GRASS_LEVEL = 0.6f;
@@ -86,7 +73,7 @@ public class TerrainGenerator {
         }
     }
 
-    private static Grid generateGrid(int width, int height, int seed) {
+    public static Grid generateGrid(int width, int height, int seed) {
         NoiseGenerator noiseGenerator = new NoiseGenerator();
         Grid grid = new Grid(width, height);
         noiseStage(grid, noiseGenerator, 32, 0.6f, seed);
@@ -105,7 +92,7 @@ public class TerrainGenerator {
         noiseGenerator.generate(grid);
     }
 
-    private static void generateMinerals(Level level, VoxelType mineral, int minRadius, int minY, int minAmount, int seed) {
+    public static void generateMinerals(Level level, VoxelType mineral, int minRadius, int minY, int minAmount, int seed) {
         Random random = new Random(seed);
 
         for (int i = 0; i < random.nextInt(minAmount, (int) Math.pow(minAmount, 2)); i++) {
@@ -146,7 +133,7 @@ public class TerrainGenerator {
         Gdx.app.log("TerrainGenerator", "Generated " + mineral + " minerals");
     }
 
-    private static void generateMobs(Level level, MobType mob, int seed) {
+    public static void generateMobs(Level level, MobType mob, int seed) {
         Random random = new Random(seed + 18);
 
         try {
@@ -168,6 +155,25 @@ public class TerrainGenerator {
             Gdx.app.log("TerrainGenerator", "Generated " + amount + " " + mob + " mob");
         } catch (Exception e) {
             Gdx.app.log("TerrainGenerator", "Failed to create a mob");
+        }
+    }
+
+    public static void generateTrees(Level level, int minAmount, int seed) {
+        Random random = new Random(seed);
+
+        for (int i = 0; i < random.nextInt(minAmount, (int) Math.pow(minAmount, 2)); i++) {
+            int x = random.nextInt(0, level.getWidthInVoxels());
+            int z = random.nextInt(0, level.getDepthInVoxels());
+            int y = (int) level.getHighestY(x, z);
+
+            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
+
+            if (voxelBelow != VoxelType.GRASS) {
+                continue;
+            }
+
+            SaplingEntity entity = new SaplingEntity(new Vector3(x, y, z), 0);
+            level.addEntity(entity);
         }
     }
 }
