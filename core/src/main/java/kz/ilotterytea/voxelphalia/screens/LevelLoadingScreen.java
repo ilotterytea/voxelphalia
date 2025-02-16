@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.Grid;
@@ -30,6 +27,7 @@ public class LevelLoadingScreen implements Screen {
 
     private Stage stage;
     private Label stepLabel;
+    private ProgressBar stepBar;
 
     private int step;
 
@@ -90,10 +88,13 @@ public class LevelLoadingScreen implements Screen {
         stage.addActor(table);
 
         Label titleLabel = new Label("Loading level", skin);
-        table.add(titleLabel).padBottom(30f).row();
+        table.add(titleLabel).padBottom(15f).row();
 
         stepLabel = new Label("", skin);
-        table.add(stepLabel).row();
+        table.add(stepLabel).padBottom(30f).row();
+
+        stepBar = new ProgressBar(0f, 6f, 1f, false, skin);
+        table.add(stepBar).width(300f);
 
         level = new Level(30, 4, 30, Generators.rollSeed());
         runGenerationThread();
@@ -114,6 +115,7 @@ public class LevelLoadingScreen implements Screen {
         };
 
         stepLabel.setText(status);
+        stepBar.setValue(step);
 
         stage.act(delta);
         stage.draw();

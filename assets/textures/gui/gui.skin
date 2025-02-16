@@ -34,6 +34,14 @@
     loading-screen-background: {
       color: { hex: "#00000088" },
       name: gradient
+    },
+    bar-background: {
+      color: { hex: "#3c3c3cff" },
+      name: rectangle8
+    },
+    bar-foreground: {
+      color: { hex: "#00ff1bff" },
+      name: rectangle8
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
@@ -44,6 +52,12 @@
     respawn-title: {
       font: large-default,
       fontColor: yellow
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+    default-horizontal: {
+      background: bar-background,
+      knobBefore: bar-foreground
     }
   }
 }

@@ -11,3 +11,5 @@ heart-half
 bounds:128,32,32,32
 rectangle
 bounds:0,0,128,128
+rectangle8
+bounds:160,56,8,8
