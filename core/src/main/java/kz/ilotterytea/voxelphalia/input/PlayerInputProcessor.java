@@ -30,11 +30,6 @@ public class PlayerInputProcessor implements InputProcessor {
     public boolean keyDown(int keycode) {
         if (!Gdx.input.isCursorCatched()) return false;
 
-        if (keycode == Input.Keys.SPACE) {
-            playerEntity.jump();
-            return true;
-        }
-
         if (keycode == Input.Keys.NUM_0) {
             playerEntity.getInventory().setSlotIndex(9);
             return true;
@@ -59,6 +54,10 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
+        if (character == ' ') {
+            playerEntity.jump();
+            return true;
+        }
         return false;
     }
 
