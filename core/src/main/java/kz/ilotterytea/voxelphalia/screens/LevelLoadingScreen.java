@@ -3,7 +3,12 @@ package kz.ilotterytea.voxelphalia.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -20,6 +25,9 @@ import kz.ilotterytea.voxelphalia.level.VoxelType;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LevelLoadingScreen implements Screen {
+    private Texture backgroundTexture;
+    private TextureRegion backgroundRegion;
+
     private Stage stage;
     private Label stepLabel;
 
@@ -35,6 +43,46 @@ public class LevelLoadingScreen implements Screen {
         Skin skin = VoxelphaliaGame.getInstance()
             .getAssetManager()
             .get("textures/gui/gui.skin");
+
+        // generating texture from terrain.png
+        VoxelType voxel;
+
+        do {
+            voxel = VoxelType.values()[MathUtils.random(0, VoxelType.values().length - 1)];
+        } while (voxel == VoxelType.MISSING_VOXEL);
+
+        TextureRegion region = voxel.getSideTextureRegion(VoxelphaliaGame.getInstance()
+            .getAssetManager().get("textures/terrain.png", Texture.class));
+
+        if (!region.getTexture().getTextureData().isPrepared()) {
+            region.getTexture().getTextureData().prepare();
+        }
+
+        Pixmap terrainPixmap = region.getTexture().getTextureData().consumePixmap();
+
+        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        pixmap.drawPixmap(terrainPixmap, 0, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight());
+
+        backgroundTexture = new Texture(pixmap);
+        terrainPixmap.dispose();
+        pixmap.dispose();
+
+        backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        backgroundRegion = new TextureRegion(backgroundTexture, 0, 0, backgroundTexture.getWidth() * 16, backgroundTexture.getHeight() * 16);
+
+        // background
+        Image backgroundImage = new Image(backgroundRegion);
+        backgroundImage.setFillParent(true);
+        stage.addActor(backgroundImage);
+
+        // tinting the background
+        Image tintImage = new Image(skin.getDrawable("black-transparent"));
+        tintImage.setFillParent(true);
+        stage.addActor(tintImage);
+
+        Image gradientImage = new Image(skin.getDrawable("loading-screen-background"));
+        gradientImage.setFillParent(true);
+        stage.addActor(gradientImage);
 
         // status
         Table table = new Table();
@@ -78,6 +126,8 @@ public class LevelLoadingScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+        backgroundRegion.setRegionWidth(width / 6);
+        backgroundRegion.setRegionHeight(height / 6);
     }
 
     @Override
@@ -98,6 +148,8 @@ public class LevelLoadingScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+        backgroundTexture.dispose();
+
         generationThread.interrupt();
         generationThread = null;
     }
@@ -142,9 +194,7 @@ public class LevelLoadingScreen implements Screen {
                         }
                     }
                     // placing trees
-                    case 3 -> {
-                        TerrainGenerator.generateTrees(level, 50, level.getSeed() + 19);
-                    }
+                    case 3 -> TerrainGenerator.generateTrees(level, 50, level.getSeed() + 19);
                     // spawning mobs
                     case 4 -> {
                         MobType[] mobs = {
