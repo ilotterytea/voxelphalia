@@ -29,7 +29,7 @@ public class Lwjgl3Launcher {
         configuration.setWindowedMode(800, 600);
         configuration.setWindowSizeLimits(800, 600, 32767, 32767);
         //// You can change these files; they are in lwjgl3/src/main/resources/ .
-        configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png");
+        configuration.setWindowIcon("icon128.png", "icon64.png", "icon32.png", "icon16.png");
         return configuration;
     }
 }
