@@ -3,7 +3,9 @@ package kz.ilotterytea.voxelphalia.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 
@@ -12,7 +14,7 @@ public class PlayerEntity extends LivingEntity {
     private final Camera camera;
     private final Vector3 spawnPoint;
 
-    private float respawnTime;
+    private float respawnTime, bobbingY, time;
 
     public PlayerEntity(Vector3 spawnPoint, Camera camera) {
         this.camera = camera;
@@ -33,13 +35,17 @@ public class PlayerEntity extends LivingEntity {
     public void setPosition(float x, float y, float z) {
         if (dead) return;
         super.setPosition(x, y, z);
-        camera.position.set(x, y + height, z);
+
+        float bobbing = MathUtils.sin(time * velocity.x * 2f) * bobbingY * 0.1f;
+
+        camera.position.set(x, y + height + bobbing, z);
         camera.update();
     }
 
     @Override
     public void tick(float delta, Level level) {
         super.tick(delta, level);
+        time += delta;
 
         if (Gdx.input.isCursorCatched()) {
             processMovement(delta, level);
@@ -65,6 +71,11 @@ public class PlayerEntity extends LivingEntity {
 
         if (forward || back || left || right) {
             setPosition(position.x, position.y, position.z);
+            if (VoxelphaliaGame.getInstance().getPreferences().getBoolean("view-bobbing", true)) {
+                bobbingY = 1f;
+            }
+        } else {
+            bobbingY = 0f;
         }
     }
 
