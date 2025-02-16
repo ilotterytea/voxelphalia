@@ -3,16 +3,23 @@ package kz.ilotterytea.voxelphalia.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 
 public class PlayerEntity extends LivingEntity {
     private final Inventory inventory;
     private final Camera camera;
+    private final Vector3 spawnPoint;
 
-    public PlayerEntity(Camera camera) {
+    private float respawnTime;
+
+    public PlayerEntity(Vector3 spawnPoint, Camera camera) {
         this.camera = camera;
         this.inventory = new Inventory(49, (byte) 100);
+        this.spawnPoint = spawnPoint;
+        setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
+
         setSize(0.5f, 1.7f, 0.5f);
         setWeight(10f);
         setSpeed(7f);
@@ -62,5 +69,38 @@ public class PlayerEntity extends LivingEntity {
 
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public void respawn() {
+        inventory.clear();
+        setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
+        setDirection(0f, 0f, 0f);
+        setHealth(maxHealth);
+        dead = false;
+    }
+
+    @Override
+    public void takeDamage(int damage) {
+        super.takeDamage(damage);
+
+        if (dead && respawnTime <= 0f) {
+            Gdx.input.setCursorCatched(false);
+            respawnTime = 10f;
+        }
+    }
+
+    @Override
+    public void tick(float delta) {
+        super.tick(delta);
+        respawnTime -= delta;
+
+        // auto respawn
+        if (dead && respawnTime <= 0.1f) {
+            respawn();
+        }
+    }
+
+    public float getRespawnTime() {
+        return respawnTime;
     }
 }

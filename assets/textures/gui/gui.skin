@@ -1,12 +1,17 @@
 {
   com.badlogic.gdx.graphics.Color: {
     black: { hex: "#000000" },
-    white: { hex: "#fff1e8" }
+    white: { hex: "#fff1e8" },
+    yellow: { hex: "#ffec27" }
   },
   com.badlogic.gdx.graphics.g2d.BitmapFont: {
     default: {
       file: fonts/FontText.fnt,
       scaledSize: 20
+    },
+    large-default: {
+      file: fonts/FontText.fnt,
+      scaledSize: 40
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -18,11 +23,19 @@
       color: { hex: "#000000aa" },
       name: rectangle
     },
+    respawn-background: {
+      color: { hex: "#250000aa" },
+      name: rectangle
+    }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
     default: {
       font: default,
       fontColor: white
     },
+    respawn-title: {
+      font: large-default,
+      fontColor: yellow
+    }
   }
 }

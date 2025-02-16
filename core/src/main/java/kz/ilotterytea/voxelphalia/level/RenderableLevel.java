@@ -86,6 +86,9 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 case DropEntity drop -> {
                     if (drop.isDead()) removeEntities.add(drop);
                 }
+                // we need this empty clause because we don't want player to be deleted, right?
+                case PlayerEntity ignored -> {
+                }
                 case LivingEntity living -> {
                     if (living.isDead()) removeEntities.add(living);
                 }
