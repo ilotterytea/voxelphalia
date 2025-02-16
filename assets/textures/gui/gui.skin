@@ -26,6 +26,14 @@
     respawn-background: {
       color: { hex: "#250000aa" },
       name: rectangle
+    },
+    black-transparent: {
+      color: { hex: "#00000099" },
+      name: rectangle
+    },
+    loading-screen-background: {
+      color: { hex: "#00000088" },
+      name: gradient
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
