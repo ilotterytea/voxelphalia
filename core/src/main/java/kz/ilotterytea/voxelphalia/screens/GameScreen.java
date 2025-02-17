@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -46,8 +47,10 @@ public class GameScreen implements Screen {
     private Environment environment;
     private SkyClouds clouds;
 
-    private Level level;
+    private final Level level;
     private RenderableLevel renderableLevel;
+
+    private PlayerEntity playerEntity;
 
     private DecalBatch decalBatch;
 
@@ -82,24 +85,11 @@ public class GameScreen implements Screen {
 
         playerSpawnPoint.y = level.getHighestY(playerSpawnPoint.x, playerSpawnPoint.z) + 1f;
 
-        PlayerEntity playerEntity = new PlayerEntity(playerSpawnPoint, camera);
+        playerEntity = new PlayerEntity(playerSpawnPoint, camera);
+        playerEntity.setFocused(true);
         level.addEntity(playerEntity);
 
         renderableLevel = new RenderableLevel(camera, playerEntity, level);
-
-        stage = new Stage(new ScreenViewport());
-        Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
-        stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
-
-        stage.addActor(new HotbarTable(skin, playerEntity));
-        stage.addActor(new RespawnScreenStack(skin, playerEntity));
-        stage.addActor(new InventoryWindow(skin, playerEntity));
-
-        // Crosshair
-        Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
-        crosshairContainer.setFillParent(true);
-        crosshairContainer.align(Align.center);
-        stage.addActor(crosshairContainer);
 
         decalBatch = new DecalBatch(new CameraGroupStrategy(camera));
 
@@ -107,6 +97,8 @@ public class GameScreen implements Screen {
             new Vector3(level.getWidthInVoxels() / 2f, level.getHeightInVoxels() + 10f, level.getDepthInVoxels() / 2f),
             new Vector3(1000f, 0f, 1000f)
         );
+
+        showStage();
 
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(playerEntity, camera),
@@ -167,5 +159,23 @@ public class GameScreen implements Screen {
         decalBatch.dispose();
         modelBatch.dispose();
         clouds.dispose();
+    }
+
+    private void showStage() {
+        stage = new Stage(new ScreenViewport());
+        Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
+        stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
+
+        DragAndDrop dragAndDrop = new DragAndDrop();
+
+        stage.addActor(new HotbarTable(skin, dragAndDrop, playerEntity));
+        stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
+        stage.addActor(new RespawnScreenStack(skin, playerEntity));
+
+        // Crosshair
+        Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
+        crosshairContainer.setFillParent(true);
+        crosshairContainer.align(Align.center);
+        stage.addActor(crosshairContainer);
     }
 }

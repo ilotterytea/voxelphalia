@@ -16,6 +16,7 @@ public class PlayerEntity extends LivingEntity {
     private final Vector3 spawnPoint;
 
     private float respawnTime, bobbingY, time;
+    private boolean focused;
 
     public PlayerEntity(Vector3 spawnPoint, Camera camera) {
         this.camera = camera;
@@ -48,7 +49,7 @@ public class PlayerEntity extends LivingEntity {
         super.tick(delta, level);
         time += delta;
 
-        if (Gdx.input.isCursorCatched()) {
+        if (focused) {
             processMovement(delta, level);
         }
     }
@@ -112,7 +113,7 @@ public class PlayerEntity extends LivingEntity {
         super.takeDamage(damage);
 
         if (dead && respawnTime <= 0f) {
-            Gdx.input.setCursorCatched(false);
+            setFocused(false);
             respawnTime = 10f;
         }
     }
@@ -124,6 +125,7 @@ public class PlayerEntity extends LivingEntity {
 
         // auto respawn
         if (dead && respawnTime <= 0.1f) {
+            setFocused(true);
             respawn();
         } else if (dead && camera.position.y > position.y + 0.2f) {
             camera.position.y -= 2f * delta;
@@ -133,5 +135,14 @@ public class PlayerEntity extends LivingEntity {
 
     public float getRespawnTime() {
         return respawnTime;
+    }
+
+    public void setFocused(boolean focused) {
+        this.focused = focused;
+        Gdx.input.setCursorCatched(focused);
+    }
+
+    public boolean isFocused() {
+        return focused;
     }
 }
