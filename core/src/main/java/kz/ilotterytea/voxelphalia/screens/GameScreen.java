@@ -34,12 +34,14 @@ import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
+import kz.ilotterytea.voxelphalia.ui.game.PauseScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.InventoryWindow;
 
 public class GameScreen implements Screen {
     private VoxelphaliaGame game;
     private Stage stage;
+    private PauseScreenStack pauseScreenStack;
 
     private PerspectiveCamera camera;
 
@@ -111,6 +113,10 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Color.SKY, true);
 
+        if (pauseScreenStack.isVisible()) {
+            delta = 0f;
+        }
+
         renderableLevel.tick(delta);
         renderableLevel.tick(delta, level, camera);
 
@@ -164,7 +170,12 @@ public class GameScreen implements Screen {
     private void showStage() {
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
-        stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
+
+        // Crosshair
+        Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
+        crosshairContainer.setFillParent(true);
+        crosshairContainer.align(Align.center);
+        stage.addActor(crosshairContainer);
 
         DragAndDrop dragAndDrop = new DragAndDrop();
 
@@ -172,10 +183,9 @@ public class GameScreen implements Screen {
         stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
         stage.addActor(new RespawnScreenStack(skin, playerEntity));
 
-        // Crosshair
-        Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
-        crosshairContainer.setFillParent(true);
-        crosshairContainer.align(Align.center);
-        stage.addActor(crosshairContainer);
+        pauseScreenStack = new PauseScreenStack(skin, playerEntity);
+        stage.addActor(pauseScreenStack);
+
+        stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
     }
 }
