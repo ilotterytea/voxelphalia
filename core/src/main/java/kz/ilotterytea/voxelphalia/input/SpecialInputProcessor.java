@@ -78,14 +78,6 @@ public class SpecialInputProcessor implements InputProcessor {
                 processed = true;
                 break;
             }
-            // press two times to close the game, press one time to unfocus
-            case Input.Keys.ESCAPE: {
-                if (playerEntity.isFocused()) {
-                    playerEntity.setFocused(false);
-                } else {
-                    Gdx.app.exit();
-                }
-            }
             default:
                 break;
         }

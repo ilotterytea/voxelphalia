@@ -12,6 +12,10 @@
     large-default: {
       file: fonts/FontText.fnt,
       scaledSize: 40
+    },
+    medium-default: {
+      file: fonts/FontText.fnt,
+      scaledSize: 25
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -31,6 +35,14 @@
       color: { hex: "#700000aa" },
       name: gradient
     },
+    pause-background: {
+      color: { hex: "#000000aa" },
+      name: rectangle
+    },
+    pause-gradient: {
+      color: { hex: "#4b4770aa" },
+      name: gradient
+    },
     black-transparent: {
       color: { hex: "#00000099" },
       name: rectangle
@@ -46,7 +58,27 @@
     bar-foreground: {
       color: { hex: "#00ff1bff" },
       name: rectangle8
+    },
+    window-background: {
+      color: { hex: "#221414ff" },
+      name: window-background
     }
+    button-up: {
+      color: { hex: "#462a22ff" },
+      name: button-idle
+    },
+    button-down: {
+      color: { hex: "#3d261cff" },
+      name: button-pressed
+    },
+    button-over: {
+      color: { hex: "#5e3a2cff" },
+      name: button-idle
+    },
+    button-disabled: {
+      color: { hex: "#303030ff" },
+      name: button-pressed
+    },
   },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
     default: {
@@ -56,6 +88,10 @@
     respawn-title: {
       font: large-default,
       fontColor: yellow
+    },
+    pause-title: {
+      parent: default,
+      font: medium-default
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
@@ -66,9 +102,22 @@
   },
   com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
     default: {
-      background: hotbar-background,
+      background: window-background,
       titleFont: default,
       titleFontColor: white
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+    default: {
+      font: default,
+      up: button-up,
+      fontColor: { hex: "#ecb48fff" },
+      down: button-down,
+      downFontColor: { hex: "#975e3fff" },
+      over: button-over,
+      overFontColor: { hex: "#ffdac4ff" },
+      disabled: button-disabled,
+      disabledFontColor: { hex: "#4b4c4eff" },
     }
   }
 }
