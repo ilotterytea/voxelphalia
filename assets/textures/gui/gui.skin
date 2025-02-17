@@ -62,7 +62,19 @@
     window-background: {
       color: { hex: "#221414ff" },
       name: window-background
-    }
+    },
+    window-foreground: {
+      color: { hex: "#331e1eff" },
+      name: window-background
+    },
+    scrollpane-background: {
+      color: { hex: "#311e1eff" },
+      name: window-background
+    },
+    scrollpane-foreground: {
+      color: { hex: "#462a22ff" },
+      name: button-idle
+    },
     button-up: {
       color: { hex: "#462a22ff" },
       name: button-idle
@@ -118,6 +130,12 @@
       overFontColor: { hex: "#ffdac4ff" },
       disabled: button-disabled,
       disabledFontColor: { hex: "#4b4c4eff" },
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+    default: {
+      vScroll: scrollpane-background,
+      vScrollKnob: scrollpane-foreground
     }
   }
 }
