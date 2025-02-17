@@ -2,13 +2,14 @@ package kz.ilotterytea.voxelphalia.ui.game.inventory;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 
 public class InventoryHotbarTable extends Table {
     private final Inventory inventory;
     private final InventorySlotStack[] slots;
 
-    public InventoryHotbarTable(Skin skin, Inventory inventory) {
+    public InventoryHotbarTable(Skin skin, DragAndDrop dragAndDrop, Inventory inventory) {
         super(skin);
         setBackground("hotbar-background");
         this.inventory = inventory;
@@ -17,7 +18,7 @@ public class InventoryHotbarTable extends Table {
         float size = 48f;
 
         for (int i = 0; i < this.slots.length; i++) {
-            InventorySlotStack stack = new InventorySlotStack(skin, inventory.getSlot(i));
+            InventorySlotStack stack = new InventorySlotStack(skin, dragAndDrop, inventory, inventory.getSlot(i));
             add(stack).size(size, size);
             this.slots[i] = stack;
         }

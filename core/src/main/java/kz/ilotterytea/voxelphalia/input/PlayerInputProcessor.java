@@ -1,6 +1,5 @@
 package kz.ilotterytea.voxelphalia.input;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
@@ -28,7 +27,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (!Gdx.input.isCursorCatched()) return false;
+        if (!playerEntity.isFocused()) return false;
 
         if (keycode == Input.Keys.NUM_0) {
             playerEntity.getInventory().setSlotIndex(9);
@@ -63,7 +62,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!Gdx.input.isCursorCatched()) return false;
+        if (!playerEntity.isFocused()) return false;
 
         boolean destroy = button == Input.Buttons.LEFT;
         boolean place = button == Input.Buttons.RIGHT;
@@ -151,7 +150,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        if (!Gdx.input.isCursorCatched()) return false;
+        if (!playerEntity.isFocused()) return false;
 
         Inventory inv = playerEntity.getInventory();
 
@@ -164,7 +163,7 @@ public class PlayerInputProcessor implements InputProcessor {
     }
 
     private boolean moveCamera(int screenX, int screenY) {
-        if (!Gdx.input.isCursorCatched()) return false;
+        if (!playerEntity.isFocused()) return false;
 
         float sensitivity = VoxelphaliaGame.getInstance().getPreferences().getFloat("mouse-sensitivity", 20f) / 100f;
         float x = dragX - screenX;
