@@ -36,6 +36,7 @@ import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 import kz.ilotterytea.voxelphalia.ui.game.PauseScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
+import kz.ilotterytea.voxelphalia.ui.game.crafting.CraftingWindow;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.InventoryWindow;
 
 public class GameScreen implements Screen {
@@ -181,6 +182,8 @@ public class GameScreen implements Screen {
 
         stage.addActor(new HotbarTable(skin, dragAndDrop, playerEntity));
         stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
+        stage.addActor(new CraftingWindow(skin, playerEntity));
+
         stage.addActor(new RespawnScreenStack(skin, playerEntity));
 
         pauseScreenStack = new PauseScreenStack(skin, playerEntity);
