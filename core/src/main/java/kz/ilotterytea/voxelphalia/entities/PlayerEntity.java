@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -71,8 +72,23 @@ public class PlayerEntity extends LivingEntity {
 
         if (forward || back || left || right) {
             setPosition(position.x, position.y, position.z);
-            if (VoxelphaliaGame.getInstance().getPreferences().getBoolean("view-bobbing", true)) {
+
+            Preferences prefs = VoxelphaliaGame.getInstance().getPreferences();
+            if (prefs.getBoolean("view-bobbing", true)) {
                 bobbingY = 1f;
+            }
+            // auto jump
+            if (prefs.getBoolean("auto-jump", true)) {
+                Vector3 nextVoxelPos = position.cpy().add(direction);
+                nextVoxelPos.y = position.y;
+
+                if ((collidingX || collidingZ) &&
+                    !level.hasSolidVoxel((int) nextVoxelPos.x, (int) nextVoxelPos.y + 1, (int) nextVoxelPos.z) &&
+                    !level.hasSolidVoxel((int) nextVoxelPos.x, (int) nextVoxelPos.y + 2, (int) nextVoxelPos.z) &&
+                    level.hasSolidVoxel((int) nextVoxelPos.x, (int) nextVoxelPos.y, (int) nextVoxelPos.z)
+                ) {
+                    jump();
+                }
             }
         } else {
             bobbingY = 0f;
