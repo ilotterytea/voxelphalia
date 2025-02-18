@@ -2,8 +2,8 @@ package kz.ilotterytea.voxelphalia.inventory;
 
 import java.util.Arrays;
 
-public class Inventory {
-    public static class Slot {
+public class Inventory implements Cloneable {
+    public static class Slot implements Cloneable {
         public byte id, size;
         public byte quantity;
 
@@ -40,11 +40,24 @@ public class Inventory {
                 ", quantity=" + quantity +
                 '}';
         }
+
+        @Override
+        public Slot clone() {
+            try {
+                Slot clone = (Slot) super.clone();
+                clone.id = id;
+                clone.size = size;
+                clone.quantity = quantity;
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
     }
 
-    private final Slot[] slots;
-    private final byte stackSize;
-    private final int size;
+    private Slot[] slots;
+    private byte stackSize;
+    private int size;
     private int currentSlotIndex;
 
     public Inventory(int size, byte stackSize) {
@@ -176,5 +189,24 @@ public class Inventory {
             "slots=" + Arrays.toString(slots) +
             ", currentSlotIndex=" + currentSlotIndex +
             '}';
+    }
+
+    @Override
+    public Inventory clone() {
+        try {
+            Inventory clone = (Inventory) super.clone();
+            clone.size = size;
+            clone.stackSize = stackSize;
+            clone.currentSlotIndex = currentSlotIndex;
+            clone.slots = new Slot[size];
+
+            for (int i = 0; i < size; i++) {
+                clone.slots[i] = slots[i].clone();
+            }
+            
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
