@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.ui.game.crafting;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -95,7 +96,6 @@ public class CraftingWindow extends Window {
         // product ingredients
         productIngredients = new Table(skin);
         productIngredients.setBackground("window-foreground");
-        productIngredients.setDebug(true);
         ScrollPane ingredientsScrollpane = new ScrollPane(productIngredients, skin);
         ingredientsScrollpane.setScrollingDisabled(true, false);
         ingredientsScrollpane.setFadeScrollBars(false);
@@ -143,6 +143,8 @@ public class CraftingWindow extends Window {
             byte ingredientId = data.ingredients()[i][0];
             byte ingredientAmount = data.ingredients()[i][1];
 
+            int totalAmount = playerEntity.getInventory().getTotalVoxelAmount(ingredientId);
+
             Table ingredient = new Table();
             ingredient.align(Align.center);
             ingredient.pad(8f);
@@ -150,9 +152,19 @@ public class CraftingWindow extends Window {
             Image icon = new Image(voxels.findRegion(String.valueOf(ingredientId)));
             ingredient.add(icon).size(32f, 32f).row();
 
-            Label amount = new Label(String.valueOf(ingredientAmount), skin);
+            Label amount = new Label(String.format("%s/%s", totalAmount, ingredientAmount), skin);
             amount.setAlignment(Align.center);
             ingredient.add(amount).row();
+
+            if (totalAmount < ingredientAmount) {
+                amount.setColor(Color.SALMON);
+                icon.setColor(Color.SALMON);
+            } else {
+                amount.setColor(Color.WHITE);
+                icon.setColor(Color.WHITE);
+            }
+
+            ingredient.addListener(new TextTooltip(String.valueOf(ingredientId), skin));
 
             productIngredients.add(ingredient).grow();
 

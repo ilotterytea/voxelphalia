@@ -145,5 +145,11 @@
       vScroll: scrollpane-background,
       vScrollKnob: scrollpane-foreground
     }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
+    default: {
+      background: window-foreground,
+      label: default
+    }
   }
 }
