@@ -9,6 +9,8 @@ button-pressed
 bounds:192,192,64,64
 split:12,12,12,12
 pad:12,12,12,12
+cross
+bounds:96,96,32,32
 gradient
 bounds:0,64,64,64
 heart-empty
@@ -20,7 +22,7 @@ bounds:64,96,32,32
 rectangle
 bounds:0,128,128,128
 rectangle8
-bounds:96,120,8,8
+bounds:128,152,8,8
 window-background
 bounds:128,192,64,64
 split:4,4,4,4

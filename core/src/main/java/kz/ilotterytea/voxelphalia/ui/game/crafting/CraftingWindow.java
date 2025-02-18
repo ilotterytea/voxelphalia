@@ -38,12 +38,27 @@ public class CraftingWindow extends Window {
         setSize(600, 450);
         setVisible(false);
 
+        // HEADER
+        Table header = new Table();
+        add(header).growX().padBottom(15f).row();
+
         // title
         Table title = new Table();
         title.align(Align.left);
         titleLabel = new Label("Crafting", skin);
         title.add(titleLabel);
-        add(title).growX().padBottom(15f).row();
+        header.add(title).growX();
+
+        // close button
+        ImageButton closeButton = new ImageButton(skin, "close");
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                setVisible(false, RecipeWorkbenchLevel.HANDS);
+            }
+        });
+        header.add(closeButton);
 
         // body
         Table body = new Table();
