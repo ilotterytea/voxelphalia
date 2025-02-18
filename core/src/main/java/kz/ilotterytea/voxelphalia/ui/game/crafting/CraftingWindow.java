@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.recipes.RecipeData;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
 
@@ -62,8 +63,14 @@ public class CraftingWindow extends Window {
 
         for (RecipeData data : VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries()) {
             String id = String.valueOf(data.resultId());
+
+            TextureAtlas.AtlasRegion region = voxels.findRegion(id);
+            if (region == null) {
+                region = voxels.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
+            }
+
             IconButton btn = new IconButton(id,
-                new Image(voxels.findRegion(id)),
+                new Image(region),
                 skin
             );
 
@@ -127,7 +134,7 @@ public class CraftingWindow extends Window {
         });
         product.add(craftButton).growX();
 
-        showRecipe((byte) 2);
+        showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().first().resultId());
     }
 
     @Override
@@ -153,7 +160,11 @@ public class CraftingWindow extends Window {
         TextureAtlas voxels = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
 
         // recipe name and icon
-        productImage.setDrawable(new TextureRegionDrawable(voxels.findRegion(String.valueOf(id))));
+        TextureAtlas.AtlasRegion region = voxels.findRegion(String.valueOf(id));
+        if (region == null) {
+            region = voxels.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
+        }
+        productImage.setDrawable(new TextureRegionDrawable(region));
         productLabel.setText(String.valueOf(id));
 
         productIngredients.clear();
