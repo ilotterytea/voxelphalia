@@ -30,7 +30,13 @@ public class RecipeRegistry extends Registry<Recipe> {
 
             byte resultAmount = json.getByte("resultAmount");
 
-            addEntry(new Recipe(ingredientData, resultAmount, resultId, RecipeWorkbenchLevel.values()[json.getInt("level")]));
+            float craftingTime = 0f;
+
+            if (json.has("craftingTime")) {
+                craftingTime = json.getFloat("craftingTime");
+            }
+
+            addEntry(new Recipe(ingredientData, resultAmount, resultId, craftingTime, RecipeWorkbenchLevel.values()[json.getInt("level")]));
         }
     }
 
