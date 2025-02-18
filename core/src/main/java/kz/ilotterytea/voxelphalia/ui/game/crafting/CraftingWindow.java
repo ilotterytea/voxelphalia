@@ -13,6 +13,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.recipes.RecipeData;
+import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
 
 public class CraftingWindow extends Window {
@@ -20,7 +21,7 @@ public class CraftingWindow extends Window {
     private final Skin skin;
 
     private final Image productImage;
-    private final Label productLabel;
+    private final Label productLabel, titleLabel;
     private final Table productIngredients;
     private final TextButton craftButton;
 
@@ -40,7 +41,8 @@ public class CraftingWindow extends Window {
         // title
         Table title = new Table();
         title.align(Align.left);
-        title.add(new Label("Crafting", skin));
+        titleLabel = new Label("Crafting", skin);
+        title.add(titleLabel);
         add(title).growX().padBottom(15f).row();
 
         // body
@@ -141,13 +143,7 @@ public class CraftingWindow extends Window {
         super.act(delta);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            setVisible(!isVisible());
-            playerEntity.setFocused(!isVisible());
-            showRecipe(selectedRecipe.resultId());
-
-            if (isVisible()) {
-                setPosition(getStage().getWidth() / 2f - getWidth() / 2f, getStage().getHeight() / 2f - getHeight() / 2f);
-            }
+            setVisible(!isVisible(), RecipeWorkbenchLevel.HANDS);
         }
     }
 
@@ -208,5 +204,21 @@ public class CraftingWindow extends Window {
         }
 
         craftButton.setDisabled(!craftable);
+    }
+
+    public void setVisible(boolean visible, RecipeWorkbenchLevel level) {
+        super.setVisible(visible);
+        playerEntity.setFocused(!isVisible());
+        showRecipe(selectedRecipe.resultId());
+
+        if (level == RecipeWorkbenchLevel.HANDS) {
+            titleLabel.setText("Hand-made crafting");
+        } else {
+            titleLabel.setText("Basic crafting");
+        }
+
+        if (isVisible()) {
+            setPosition(getStage().getWidth() / 2f - getWidth() / 2f, getStage().getHeight() / 2f - getHeight() / 2f);
+        }
     }
 }
