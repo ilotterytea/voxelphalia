@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.voxels.specialvoxels;
 
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.screens.GameScreen;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -41,7 +42,17 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
     public void setVoxelToSmelt(Voxel voxel) {
         this.voxel = voxel;
         this.smeltTime = 0f;
-        this.maxSmeltTime = 10f;
+
+        this.maxSmeltTime = 0f;
+
+        if (voxel != null) {
+            Recipe recipe = VoxelphaliaGame.getInstance()
+                .getRecipeRegistry()
+                .getEntryById(voxel.getId());
+
+            this.maxSmeltTime = recipe.craftingTime();
+        }
+
         this.finished = false;
     }
 
