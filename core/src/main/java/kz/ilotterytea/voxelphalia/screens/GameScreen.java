@@ -43,6 +43,7 @@ public class GameScreen implements Screen {
     private VoxelphaliaGame game;
     private Stage stage;
     private PauseScreenStack pauseScreenStack;
+    private CraftingWindow craftingWindow;
 
     private PerspectiveCamera camera;
 
@@ -182,7 +183,8 @@ public class GameScreen implements Screen {
 
         stage.addActor(new HotbarTable(skin, dragAndDrop, playerEntity));
         stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
-        stage.addActor(new CraftingWindow(skin, playerEntity));
+        craftingWindow = new CraftingWindow(skin, playerEntity);
+        stage.addActor(craftingWindow);
 
         stage.addActor(new RespawnScreenStack(skin, playerEntity));
 
@@ -190,5 +192,9 @@ public class GameScreen implements Screen {
         stage.addActor(pauseScreenStack);
 
         stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
+    }
+
+    public CraftingWindow getCraftingWindow() {
+        return craftingWindow;
     }
 }
