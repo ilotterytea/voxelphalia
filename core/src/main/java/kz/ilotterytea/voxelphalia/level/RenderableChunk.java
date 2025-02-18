@@ -49,6 +49,11 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
             runRebuildMeshThread();
             chunk.isDirty = false;
         }
+
+        for (Voxel voxel : chunk.voxelStates) {
+            if (voxel == null) continue;
+            voxel.tick(delta);
+        }
     }
 
     @Override

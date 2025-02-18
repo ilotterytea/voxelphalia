@@ -1,6 +1,8 @@
 package kz.ilotterytea.voxelphalia.voxels;
 
-public class Voxel implements Cloneable {
+import kz.ilotterytea.voxelphalia.utils.Tickable;
+
+public class Voxel implements Cloneable, Tickable {
     private byte id;
     private VoxelMaterial material;
 
