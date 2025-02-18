@@ -119,6 +119,14 @@
       titleFontColor: white
     }
   },
+  com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+    default: {
+      up: button-up,
+      down: button-down,
+      over: button-over,
+      disabled: button-disabled
+    }
+  },
   com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
     default: {
       font: default,
