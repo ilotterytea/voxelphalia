@@ -5,11 +5,11 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
-import kz.ilotterytea.voxelphalia.entities.DropEntity;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.voxels.DestroyableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
@@ -128,10 +128,18 @@ public class PlayerInputProcessor implements InputProcessor {
                     .getVoxelRegistry().getEntryById(slot.id);
                 if (playerEntity.getInventory().remove(voxel.getId()) > 0 || voxel.getId() == 0) return false;
             } else {
-                byte v = level.getVoxel(x, y, z);
-                DropEntity entity = new DropEntity(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(v));
-                entity.setPosition(x + 0.5f, y, z + 0.5f);
-                level.addEntity(entity);
+                Voxel v = VoxelphaliaGame.getInstance()
+                    .getVoxelRegistry().getEntryById(level.getVoxel(x, y, z));
+
+                if (v instanceof DestroyableVoxel vv) {
+                    Voxel vvv = v;
+                    
+                    if (level.hasInteractableVoxel(x, y, z)) {
+                        vvv = level.getVoxelState(x, y, z);
+                    }
+
+                    vv.onDestroy(vvv, playerEntity, level, new Vector3(x, y, z));
+                }
             }
 
             if (voxel instanceof InteractableVoxel) {
