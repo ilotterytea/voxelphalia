@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 
@@ -32,6 +33,17 @@ public class LivingEntity extends RenderablePhysicalEntity {
         }
 
         damageInDelay = 0.25f;
+
+        if (decal != null) {
+            new Thread(() -> {
+                decal.setColor(Color.SALMON);
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException ignored) {
+                }
+                decal.setColor(Color.WHITE);
+            }).start();
+        }
     }
 
     public int getHealth() {
