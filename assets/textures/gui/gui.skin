@@ -140,6 +140,11 @@
       disabledFontColor: { hex: "#4b4c4eff" },
     }
   },
+  com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+    close: {
+      up: cross
+    }
+  }
   com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
     default: {
       vScroll: scrollpane-background,

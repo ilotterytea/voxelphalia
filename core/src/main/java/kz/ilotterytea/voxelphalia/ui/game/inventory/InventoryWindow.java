@@ -2,9 +2,9 @@ package kz.ilotterytea.voxelphalia.ui.game.inventory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
@@ -13,7 +13,7 @@ public class InventoryWindow extends Window {
     private final PlayerEntity playerEntity;
 
     public InventoryWindow(Skin skin, DragAndDrop dragAndDrop, PlayerEntity playerEntity) {
-        super("inventory", skin);
+        super("", skin);
         setMovable(true);
         setPosition(200, 200);
         setSize(572f, 260f);
@@ -21,6 +21,24 @@ public class InventoryWindow extends Window {
 
         this.playerEntity = playerEntity;
 
+        // HEADER
+        Table header = new Table();
+        add(header).growX().row();
+
+        header.add(new Label("Inventory", skin)).growX();
+
+        // close button
+        ImageButton closeButton = new ImageButton(skin, "close");
+        closeButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                setVisible(false);
+            }
+        });
+        header.add(closeButton);
+
+        // inventory
         Inventory inventory = playerEntity.getInventory();
 
         Table inventoryGrid = new Table();
@@ -45,7 +63,14 @@ public class InventoryWindow extends Window {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
             setVisible(!isVisible());
-            playerEntity.setFocused(!isVisible());
+        }
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (playerEntity != null) {
+            playerEntity.setFocused(!visible);
         }
     }
 }
