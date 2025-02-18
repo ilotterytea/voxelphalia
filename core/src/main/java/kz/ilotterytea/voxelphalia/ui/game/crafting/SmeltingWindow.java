@@ -15,19 +15,24 @@ import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
+import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
 
-public class CraftingWindow extends Window {
+import java.util.List;
+
+public class SmeltingWindow extends Window {
     private final PlayerEntity playerEntity;
     private final Skin skin;
 
+    private final IconButton[] recipeButtons;
     private final Image productImage;
     private final Label productLabel, titleLabel;
     private final Table productIngredients;
-    private final TextButton craftButton;
+    private final TextButton smeltButton;
 
     private Recipe selectedRecipe;
+    private FurnaceVoxel furnace;
 
-    public CraftingWindow(Skin skin, PlayerEntity playerEntity) {
+    public SmeltingWindow(Skin skin, PlayerEntity playerEntity) {
         super("", skin);
         setModal(true);
         setMovable(true);
@@ -45,7 +50,7 @@ public class CraftingWindow extends Window {
         // title
         Table title = new Table();
         title.align(Align.left);
-        titleLabel = new Label("Crafting", skin);
+        titleLabel = new Label("Smelting", skin);
         title.add(titleLabel);
         header.add(title).growX();
 
@@ -55,7 +60,7 @@ public class CraftingWindow extends Window {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                setVisible(false, RecipeWorkbenchLevel.HANDS);
+                setVisible(false, null);
             }
         });
         header.add(closeButton);
@@ -76,8 +81,16 @@ public class CraftingWindow extends Window {
 
         // loading recipes
         TextureAtlas voxels = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
+        List<Recipe> recipeDatas = VoxelphaliaGame.getInstance()
+            .getRecipeRegistry()
+            .getEntries()
+            .stream().filter((x) -> x.level() == RecipeWorkbenchLevel.FURNACE)
+            .toList();
 
-        for (Recipe data : VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries()) {
+        recipeButtons = new IconButton[recipeDatas.size()];
+
+        for (int i = 0; i < recipeDatas.size(); i++) {
+            Recipe data = recipeDatas.get(i);
             String id = String.valueOf(data.resultId());
 
             TextureAtlas.AtlasRegion region = voxels.findRegion(id);
@@ -90,10 +103,13 @@ public class CraftingWindow extends Window {
                 skin
             );
 
+            recipeButtons[i] = btn;
+
             btn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
+                    if (btn.isDisabled()) return;
                     showRecipe(data.resultId());
                 }
             });
@@ -128,12 +144,12 @@ public class CraftingWindow extends Window {
         product.add(ingredientsScrollpane).grow().padBottom(15f).row();
 
         // product creation
-        craftButton = new TextButton("Craft", skin);
-        craftButton.addListener(new ClickListener() {
+        smeltButton = new TextButton("Smelt", skin);
+        smeltButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if (craftButton.isDisabled()) return;
+                if (smeltButton.isDisabled()) return;
 
                 Inventory inventory = playerEntity.getInventory();
 
@@ -144,27 +160,50 @@ public class CraftingWindow extends Window {
                     inventory.remove(ingredientId, ingredientAmount);
                 }
 
-                inventory.add(selectedRecipe.resultId(), selectedRecipe.resultAmount());
+                furnace.setVoxelToSmelt(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(selectedRecipe.resultId()));
                 showRecipe(selectedRecipe.resultId());
             }
         });
-        product.add(craftButton).growX();
+        product.add(smeltButton).growX();
 
-        showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().getFirst().resultId());
+        showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().stream().filter((x) -> x.level() == RecipeWorkbenchLevel.FURNACE).findFirst().get().resultId());
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            setVisible(!isVisible(), RecipeWorkbenchLevel.HANDS);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+            setVisible(!isVisible(), null);
+        }
+
+        if (isVisible()) {
+            if (furnace.getVoxel() != null && selectedRecipe.resultId() == furnace.getVoxel().getId() && furnace.isVoxelSmelting()) {
+                smeltButton.setText("Remaining " + (int) ((furnace.getMaxSmeltTime() - furnace.getSmeltTime()) * 10f) / 10f + "s...");
+            } else {
+                smeltButton.setText("Smelt");
+            }
+
+            if (furnace.isFinished()) {
+                Inventory inventory = playerEntity.getInventory();
+
+                Recipe recipe = VoxelphaliaGame.getInstance()
+                    .getRecipeRegistry()
+                    .getEntries()
+                    .stream()
+                    .filter((x) -> x.resultId() == furnace.getVoxel().getId())
+                    .findFirst().get();
+
+                inventory.add(recipe.resultId(), recipe.resultAmount());
+                furnace.setVoxelToSmelt(null);
+                showRecipe(recipe.resultId());
+            }
         }
     }
 
     private void showRecipe(byte id) {
         Recipe data = VoxelphaliaGame.getInstance().getRecipeRegistry().getEntryById(id);
-        if (data == null) return;
+        if (data == null || data.level() != RecipeWorkbenchLevel.FURNACE) return;
         this.selectedRecipe = data;
 
         TextureAtlas atlas = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
@@ -180,7 +219,7 @@ public class CraftingWindow extends Window {
         productIngredients.clear();
         productIngredients.layout();
 
-        boolean craftable = true;
+        boolean smeltable = true;
 
         // ingredients
         for (int i = 0; i < data.ingredients().length; i++) {
@@ -203,7 +242,7 @@ public class CraftingWindow extends Window {
             if (totalAmount < ingredientAmount) {
                 amount.setColor(Color.SALMON);
                 icon.setColor(Color.SALMON);
-                craftable = false;
+                smeltable = false;
             } else {
                 amount.setColor(Color.WHITE);
                 icon.setColor(Color.WHITE);
@@ -218,22 +257,37 @@ public class CraftingWindow extends Window {
             }
         }
 
-        craftButton.setDisabled(!craftable);
+        if (furnace != null && furnace.isVoxelSmelting()) {
+            smeltable = false;
+        }
+
+        for (IconButton recipeButton : recipeButtons) {
+            recipeButton.setDisabled(!smeltable);
+        }
+
+        smeltButton.setDisabled(!smeltable);
     }
 
-    public void setVisible(boolean visible, RecipeWorkbenchLevel level) {
+    public void setVisible(boolean visible, FurnaceVoxel voxel) {
         super.setVisible(visible);
         playerEntity.setFocused(!isVisible());
         showRecipe(selectedRecipe.resultId());
 
-        if (level == RecipeWorkbenchLevel.HANDS) {
-            titleLabel.setText("Hand-made crafting");
+        if (voxel != null) {
+            if (voxel.isVoxelSmelting()) {
+                showRecipe(voxel.getId());
+            } else {
+                showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().stream().filter((x) -> x.level() == RecipeWorkbenchLevel.FURNACE).findFirst().get().resultId());
+            }
         } else {
-            titleLabel.setText("Basic crafting");
+            showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().stream().filter((x) -> x.level() == RecipeWorkbenchLevel.FURNACE).findFirst().get().resultId());
         }
 
         if (isVisible()) {
             setPosition(getStage().getWidth() / 2f - getWidth() / 2f, getStage().getHeight() / 2f - getHeight() / 2f);
+            furnace = voxel;
+        } else {
+            furnace = null;
         }
     }
 }

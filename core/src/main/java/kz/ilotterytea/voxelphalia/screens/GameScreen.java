@@ -37,6 +37,7 @@ import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 import kz.ilotterytea.voxelphalia.ui.game.PauseScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.crafting.CraftingWindow;
+import kz.ilotterytea.voxelphalia.ui.game.crafting.SmeltingWindow;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.InventoryWindow;
 
 public class GameScreen implements Screen {
@@ -44,6 +45,7 @@ public class GameScreen implements Screen {
     private Stage stage;
     private PauseScreenStack pauseScreenStack;
     private CraftingWindow craftingWindow;
+    private SmeltingWindow smeltingWindow;
 
     private PerspectiveCamera camera;
 
@@ -183,8 +185,12 @@ public class GameScreen implements Screen {
 
         stage.addActor(new HotbarTable(skin, dragAndDrop, playerEntity));
         stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
+
         craftingWindow = new CraftingWindow(skin, playerEntity);
         stage.addActor(craftingWindow);
+
+        smeltingWindow = new SmeltingWindow(skin, playerEntity);
+        stage.addActor(smeltingWindow);
 
         stage.addActor(new RespawnScreenStack(skin, playerEntity));
 
@@ -196,5 +202,9 @@ public class GameScreen implements Screen {
 
     public CraftingWindow getCraftingWindow() {
         return craftingWindow;
+    }
+
+    public SmeltingWindow getSmeltingWindow() {
+        return smeltingWindow;
     }
 }
