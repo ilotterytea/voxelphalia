@@ -23,7 +23,12 @@ public class DropEntity extends RenderablePhysicalEntity {
             .getAssetManager()
             .get("textures/gui/gui_voxels.atlas");
 
-        setDecal(atlas.findRegion(String.valueOf(type.getVoxelId())), 0.5f, 0.5f);
+        TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(type.getVoxelId()));
+        if (region == null) {
+            region = atlas.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
+        }
+
+        setDecal(region, 0.5f, 0.5f);
     }
 
     @Override
