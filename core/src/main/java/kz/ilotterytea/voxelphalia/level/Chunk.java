@@ -1,7 +1,10 @@
 package kz.ilotterytea.voxelphalia.level;
 
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
+
 public class Chunk {
     protected final byte[] voxels;
+    protected final Voxel[] voxelStates;
     protected final int width, height, depth;
     protected boolean isDirty;
 
@@ -17,12 +20,20 @@ public class Chunk {
         for (int i = 0; i < voxelCapacity; i++) {
             this.voxels[i] = 0;
         }
+
+        this.voxelStates = new Voxel[voxelCapacity];
     }
 
     public byte getVoxel(int x, int y, int z) {
         int index = getIndex(x, y, z);
         if (index < 0 || index >= voxels.length) return 0;
         return this.voxels[index];
+    }
+
+    public Voxel getVoxelState(int x, int y, int z) {
+        int index = getIndex(x, y, z);
+        if (index < 0 || index >= voxelStates.length) return null;
+        return this.voxelStates[index];
     }
 
     public void placeVoxel(byte voxel, int x, int y, int z) {
@@ -32,8 +43,19 @@ public class Chunk {
         this.isDirty = true;
     }
 
+    public void placeVoxelState(Voxel voxel, int x, int y, int z) {
+        int index = getIndex(x, y, z);
+        if (index < 0 || index >= voxelStates.length) return;
+        this.voxelStates[index] = voxel;
+        this.isDirty = true;
+    }
+
     public boolean hasVoxel(int x, int y, int z) {
         return getVoxel(x, y, z) != 0;
+    }
+
+    public boolean hasVoxelState(int x, int y, int z) {
+        return getVoxelState(x, y, z) != null;
     }
 
     public int getWidth() {

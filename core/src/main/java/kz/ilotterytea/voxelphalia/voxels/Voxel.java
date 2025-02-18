@@ -1,8 +1,8 @@
 package kz.ilotterytea.voxelphalia.voxels;
 
-public class Voxel {
-    private final byte id;
-    private final VoxelMaterial material;
+public class Voxel implements Cloneable {
+    private byte id;
+    private VoxelMaterial material;
 
     public Voxel(byte id, VoxelMaterial material) {
         this.id = id;
@@ -22,5 +22,17 @@ public class Voxel {
         return "Voxel{" +
             "id=" + id +
             '}';
+    }
+
+    @Override
+    public Voxel clone() {
+        try {
+            Voxel clone = (Voxel) super.clone();
+            clone.id = id;
+            clone.material = material.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

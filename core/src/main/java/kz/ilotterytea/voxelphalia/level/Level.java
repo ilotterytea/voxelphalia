@@ -41,8 +41,38 @@ public class Level implements Tickable {
         return chunk.getVoxel(cx, cy, cz);
     }
 
+    public Voxel getVoxelState(int x, int y, int z) {
+        Chunk chunk = getChunk(x, y, z);
+        if (chunk == null) return null;
+        int cx = x % 16;
+        int cy = y % 16;
+        int cz = z % 16;
+        return chunk.getVoxelState(cx, cy, cz);
+    }
+
     public void placeVoxel(Voxel voxel, int x, int y, int z) {
         placeVoxel(voxel.getId(), x, y, z);
+    }
+
+    public void placeVoxelState(Voxel voxel, int x, int y, int z) {
+        for (int xy = -1; xy < 2; xy++) {
+            for (int xc = -1; xc < 2; xc++) {
+                for (int xz = -1; xz < 2; xz++) {
+                    Chunk chunk = getChunk(x + xc, y + xy, z + xz);
+                    if (chunk == null) continue;
+                    int cx = x % 16;
+                    int cy = y % 16;
+                    int cz = z % 16;
+
+                    if (xc == 0 && xy == 0 && xz == 0) {
+                        chunk.placeVoxelState(voxel, cx, cy, cz);
+                    } else {
+                        // update cross chunks
+                        chunk.isDirty = true;
+                    }
+                }
+            }
+        }
     }
 
     public void placeVoxel(byte voxel, int x, int y, int z) {
@@ -144,6 +174,10 @@ public class Level implements Tickable {
         Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(voxel);
 
         return !type.getMaterial().isTranslucent();
+    }
+
+    public boolean hasVoxelState(int x, int y, int z) {
+        return getVoxelState(x, y, z) != null;
     }
 
     public boolean hasInteractableVoxel(int x, int y, int z) {

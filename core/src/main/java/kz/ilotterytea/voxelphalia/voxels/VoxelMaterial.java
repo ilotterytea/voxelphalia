@@ -3,9 +3,9 @@ package kz.ilotterytea.voxelphalia.voxels;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class VoxelMaterial {
-    private final int topX, topY, sideX, sideY, bottomX, bottomY;
-    private boolean translucent;
+public class VoxelMaterial implements Cloneable {
+    private int topX, topY, sideX, sideY, bottomX, bottomY;
+    private boolean translucent, stateSave;
 
     public VoxelMaterial(int sideX, int sideY) {
         this.topX = sideX;
@@ -88,5 +88,31 @@ public class VoxelMaterial {
 
     public boolean isTranslucent() {
         return translucent;
+    }
+
+    public void setStateSave(boolean stateSave) {
+        this.stateSave = stateSave;
+    }
+
+    public boolean isStateSave() {
+        return stateSave;
+    }
+
+    @Override
+    public VoxelMaterial clone() {
+        try {
+            VoxelMaterial clone = (VoxelMaterial) super.clone();
+            clone.topX = topX;
+            clone.topY = topY;
+            clone.sideX = sideX;
+            clone.sideY = sideY;
+            clone.bottomX = bottomX;
+            clone.bottomY = bottomY;
+            clone.translucent = translucent;
+            clone.stateSave = stateSave;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

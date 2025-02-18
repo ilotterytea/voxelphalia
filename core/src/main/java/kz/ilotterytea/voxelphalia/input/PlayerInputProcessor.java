@@ -11,6 +11,7 @@ import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class PlayerInputProcessor implements InputProcessor {
     private final Level level;
@@ -111,23 +112,30 @@ public class PlayerInputProcessor implements InputProcessor {
         }
 
         if (collided && place && level.hasInteractableVoxel(x, y, z)) {
-            InteractableVoxel voxel = (InteractableVoxel) VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(level.getVoxel(x, y, z));
-            voxel.onInteract(playerEntity);
+            if (level.getVoxelState(x, y, z) instanceof InteractableVoxel v) {
+                v.onInteract(playerEntity);
+            }
             return true;
         }
 
         if (collided) {
-            byte voxel = 0;
+            Voxel voxel = VoxelphaliaGame.getInstance()
+                .getVoxelRegistry().getEntryById((byte) 0);
 
             if (place) {
                 Inventory.Slot slot = playerEntity.getInventory().getCurrentSlot();
-                voxel = slot.id;
-                if (playerEntity.getInventory().remove(voxel) > 0 || voxel == 0) return false;
+                voxel = VoxelphaliaGame.getInstance()
+                    .getVoxelRegistry().getEntryById(slot.id);
+                if (playerEntity.getInventory().remove(voxel.getId()) > 0 || voxel.getId() == 0) return false;
             } else {
                 byte v = level.getVoxel(x, y, z);
                 DropEntity entity = new DropEntity(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(v));
                 entity.setPosition(x + 0.5f, y, z + 0.5f);
                 level.addEntity(entity);
+            }
+
+            if (voxel instanceof InteractableVoxel) {
+                level.placeVoxelState(voxel.clone(), x, y, z);
             }
 
             level.placeVoxel(voxel, x, y, z);
