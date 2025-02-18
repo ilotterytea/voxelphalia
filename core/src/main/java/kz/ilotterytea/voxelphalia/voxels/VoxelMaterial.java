@@ -2,50 +2,65 @@ package kz.ilotterytea.voxelphalia.voxels;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 
 public class VoxelMaterial implements Cloneable {
-    private int topX, topY, sideX, sideY, bottomX, bottomY;
+    private Vector2 top, bottom, left, right, back, front;
     private boolean translucent, stateSave;
 
-    public VoxelMaterial(int sideX, int sideY) {
-        this.topX = sideX;
-        this.topY = sideY;
-        this.sideX = sideX;
-        this.sideY = sideY;
-        this.bottomX = sideX;
-        this.bottomY = sideY;
+    public VoxelMaterial() {
+        this(new Vector2());
     }
 
-    public VoxelMaterial(int sideX, int sideY, int topX, int topY) {
-        this.topX = topX;
-        this.topY = topY;
-        this.sideX = sideX;
-        this.sideY = sideY;
-        this.bottomX = topX;
-        this.bottomY = topY;
+    public VoxelMaterial(Vector2 side) {
+        this.top = side;
+        this.bottom = side;
+        this.left = side;
+        this.right = side;
+        this.back = side;
+        this.front = side;
     }
 
-    public VoxelMaterial(int sideX, int sideY, int topX, int topY, int bottomX, int bottomY) {
-        this.topX = topX;
-        this.topY = topY;
-        this.sideX = sideX;
-        this.sideY = sideY;
-        this.bottomX = bottomX;
-        this.bottomY = bottomY;
+    public VoxelMaterial(Vector2 side, Vector2 top) {
+        this.top = top;
+        this.bottom = top;
+        this.left = side;
+        this.right = side;
+        this.back = side;
+        this.front = side;
     }
 
-    public TextureRegion getSideTextureRegion(Texture texture) {
-        return new TextureRegion(
-            texture,
-            sideX * 16, sideY * 16,
-            16, 16
-        );
+    public VoxelMaterial(Vector2 side, Vector2 top, Vector2 bottom) {
+        this.top = top;
+        this.bottom = bottom;
+        this.left = side;
+        this.right = side;
+        this.back = side;
+        this.front = side;
+    }
+
+    public VoxelMaterial(Vector2 side, Vector2 top, Vector2 bottom, Vector2 front) {
+        this.top = top;
+        this.bottom = bottom;
+        this.left = side;
+        this.right = side;
+        this.back = side;
+        this.front = front;
+    }
+
+    public VoxelMaterial(Vector2 top, Vector2 bottom, Vector2 left, Vector2 right, Vector2 back, Vector2 front) {
+        this.top = top;
+        this.bottom = bottom;
+        this.left = left;
+        this.right = right;
+        this.back = back;
+        this.front = front;
     }
 
     public TextureRegion getTopTextureRegion(Texture texture) {
         return new TextureRegion(
             texture,
-            topX * 16, topY * 16,
+            (int) top.x * 16, (int) top.y * 16,
             16, 16
         );
     }
@@ -53,33 +68,41 @@ public class VoxelMaterial implements Cloneable {
     public TextureRegion getBottomTextureRegion(Texture texture) {
         return new TextureRegion(
             texture,
-            bottomX * 16, bottomY * 16,
+            (int) bottom.x * 16, (int) bottom.y * 16,
             16, 16
         );
     }
 
-    public int getTopX() {
-        return topX;
+    public TextureRegion getLeftTextureRegion(Texture texture) {
+        return new TextureRegion(
+            texture,
+            (int) left.x * 16, (int) left.y * 16,
+            16, 16
+        );
     }
 
-    public int getTopY() {
-        return topY;
+    public TextureRegion getRightTextureRegion(Texture texture) {
+        return new TextureRegion(
+            texture,
+            (int) right.x * 16, (int) right.y * 16,
+            16, 16
+        );
     }
 
-    public int getSideX() {
-        return sideX;
+    public TextureRegion getBackTextureRegion(Texture texture) {
+        return new TextureRegion(
+            texture,
+            (int) back.x * 16, (int) back.y * 16,
+            16, 16
+        );
     }
 
-    public int getSideY() {
-        return sideY;
-    }
-
-    public int getBottomX() {
-        return bottomX;
-    }
-
-    public int getBottomY() {
-        return bottomY;
+    public TextureRegion getFrontTextureRegion(Texture texture) {
+        return new TextureRegion(
+            texture,
+            (int) front.x * 16, (int) front.y * 16,
+            16, 16
+        );
     }
 
     public void setTranslucent(boolean translucent) {
@@ -102,12 +125,12 @@ public class VoxelMaterial implements Cloneable {
     public VoxelMaterial clone() {
         try {
             VoxelMaterial clone = (VoxelMaterial) super.clone();
-            clone.topX = topX;
-            clone.topY = topY;
-            clone.sideX = sideX;
-            clone.sideY = sideY;
-            clone.bottomX = bottomX;
-            clone.bottomY = bottomY;
+            clone.top = new Vector2(top.x, top.y);
+            clone.bottom = new Vector2(bottom.x, bottom.y);
+            clone.left = new Vector2(left.x, left.y);
+            clone.right = new Vector2(right.x, right.y);
+            clone.back = new Vector2(back.x, back.y);
+            clone.front = new Vector2(front.x, front.y);
             clone.translucent = translucent;
             clone.stateSave = stateSave;
             return clone;

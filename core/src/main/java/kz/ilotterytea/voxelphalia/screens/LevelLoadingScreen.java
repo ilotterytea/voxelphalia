@@ -52,7 +52,7 @@ public class LevelLoadingScreen implements Screen {
             voxel = game.getVoxelRegistry().getEntryById((byte) MathUtils.random(1, game.getVoxelRegistry().getEntries().size() - 1));
         } while (voxel.getId() == 8);
 
-        TextureRegion region = voxel.getMaterial().getSideTextureRegion(VoxelphaliaGame.getInstance()
+        TextureRegion region = voxel.getMaterial().getFrontTextureRegion(VoxelphaliaGame.getInstance()
             .getAssetManager().get("textures/terrain.png", Texture.class));
 
         if (!region.getTexture().getTextureData().isPrepared()) {
