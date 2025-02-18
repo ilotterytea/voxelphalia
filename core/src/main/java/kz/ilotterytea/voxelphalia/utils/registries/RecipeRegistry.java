@@ -33,4 +33,13 @@ public class RecipeRegistry extends Registry<RecipeData> {
             addEntry(new RecipeData(ingredientData, resultAmount, resultId, RecipeWorkbenchLevel.values()[json.getInt("level")]));
         }
     }
+
+    @Override
+    public RecipeData getEntryById(byte id) {
+        for (RecipeData data : entries) {
+            if (data.resultId() == id) return data;
+        }
+
+        return null;
+    }
 }
