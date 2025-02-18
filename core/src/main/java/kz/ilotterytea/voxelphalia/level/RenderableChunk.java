@@ -66,7 +66,7 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         meshIndexCount = 0;
 
         new Thread(() -> {
-            Gdx.app.log("RenderableChunk" + offset, "Rebuilding chunk mesh...");
+            Gdx.app.debug("RenderableChunk" + offset, "Rebuilding chunk mesh...");
             long startTimestamp = System.currentTimeMillis();
 
             Pair<Pair<List<Float>, List<Short>>, Integer> data = generateMeshData();
@@ -76,7 +76,7 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
             Gdx.app.postRunnable(() -> {
                 rebuildMesh(data);
                 rebuilding = false;
-                Gdx.app.log("RenderableChunk" + offset, String.format("Finished in %sms!", System.currentTimeMillis() - startTimestamp));
+                Gdx.app.debug("RenderableChunk" + offset, String.format("Finished in %sms!", System.currentTimeMillis() - startTimestamp));
             });
         }).start();
     }
