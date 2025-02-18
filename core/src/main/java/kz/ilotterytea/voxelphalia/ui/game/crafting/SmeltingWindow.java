@@ -1,7 +1,5 @@
 package kz.ilotterytea.voxelphalia.ui.game.crafting;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -172,10 +170,6 @@ public class SmeltingWindow extends Window {
     @Override
     public void act(float delta) {
         super.act(delta);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
-            setVisible(!isVisible(), null);
-        }
 
         if (isVisible()) {
             if (furnace.getVoxel() != null && selectedRecipe.resultId() == furnace.getVoxel().getId() && furnace.isVoxelSmelting()) {
