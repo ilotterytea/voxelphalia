@@ -10,6 +10,7 @@ import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 
 public class PlayerInputProcessor implements InputProcessor {
     private final Level level;
@@ -74,40 +75,49 @@ public class PlayerInputProcessor implements InputProcessor {
             return true;
         }
 
-        Vector3 pos = new Vector3(playerEntity.getPosition());
+        Vector3 pos = new Vector3(playerEntity.getPosition()), lastPos = new Vector3();
         Vector3 dir = new Vector3(playerEntity.getDirection());
         boolean collided = false;
 
-        if (destroy) {
-            for (float d = 0; d <= 5f; d += 0.1f) {
-                pos.set(playerEntity.getPosition()).mulAdd(dir, d).add(0f, playerEntity.getHeight(), 0f);
+        int x = (int) Math.floor(pos.x),
+            y = (int) Math.floor(pos.y), z = (int) Math.floor(pos.z);
 
-                if (level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z))) {
+        for (float d = destroy ? 0f : 1f; d <= 5f; d += 0.1f) {
+            pos.set(playerEntity.getPosition()).mulAdd(dir, d).add(0f, playerEntity.getHeight(), 0f);
+            x = (int) Math.floor(pos.x);
+            y = (int) Math.floor(pos.y);
+            z = (int) Math.floor(pos.z);
+
+            if (destroy) {
+                if (level.hasSolidVoxel(x, y, z)) {
                     collided = true;
                     break;
                 }
+            } else {
+                if (level.hasInteractableVoxel(x, y, z)) {
+                    collided = true;
+                    break;
+                } else if (level.hasSolidVoxel(x, y, z)) {
+                    collided = true;
+                    pos.set(lastPos);
+                    x = (int) Math.floor(pos.x);
+                    y = (int) Math.floor(pos.y);
+                    z = (int) Math.floor(pos.z);
+                    break;
+                }
             }
-        } else {
-            boolean foundSolidVoxel = false;
 
-            Vector3 lastPos = new Vector3();
+            lastPos.set(pos);
+        }
 
-            for (float d = 5f; d > 1; d -= 0.1f) {
-                pos.set(playerEntity.getPosition()).mulAdd(dir, d).add(0f, playerEntity.getHeight(), 0f);
-
-                if (foundSolidVoxel) lastPos.set(pos);
-
-                foundSolidVoxel = level.hasSolidVoxel((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
-            }
-
-            collided = !lastPos.isZero();
-            pos.set(lastPos);
+        if (collided && place && level.hasInteractableVoxel(x, y, z)) {
+            InteractableVoxel voxel = (InteractableVoxel) VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(level.getVoxel(x, y, z));
+            voxel.onInteract(playerEntity);
+            return true;
         }
 
         if (collided) {
             byte voxel = 0;
-            int x = (int) Math.floor(pos.x),
-                y = (int) Math.floor(pos.y), z = (int) Math.floor(pos.z);
 
             if (place) {
                 Inventory.Slot slot = playerEntity.getInventory().getCurrentSlot();
