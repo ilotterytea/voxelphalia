@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.recipes.RecipeData;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
 
@@ -21,6 +22,7 @@ public class CraftingWindow extends Window {
     private final Image productImage;
     private final Label productLabel;
     private final Table productIngredients;
+    private final TextButton craftButton;
 
     private RecipeData selectedRecipe;
 
@@ -103,8 +105,27 @@ public class CraftingWindow extends Window {
         product.add(ingredientsScrollpane).grow().padBottom(15f).row();
 
         // product creation
-        TextButton productCreationButton = new TextButton("Craft", skin);
-        product.add(productCreationButton).growX();
+        craftButton = new TextButton("Craft", skin);
+        craftButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if (craftButton.isDisabled()) return;
+
+                Inventory inventory = playerEntity.getInventory();
+
+                for (int i = 0; i < selectedRecipe.ingredients().length; i++) {
+                    byte ingredientId = selectedRecipe.ingredients()[i][0];
+                    byte ingredientAmount = selectedRecipe.ingredients()[i][1];
+
+                    inventory.remove(ingredientId, ingredientAmount);
+                }
+
+                inventory.add(selectedRecipe.resultId(), selectedRecipe.resultAmount());
+                showRecipe(selectedRecipe.resultId());
+            }
+        });
+        product.add(craftButton).growX();
 
         showRecipe((byte) 2);
     }
@@ -138,6 +159,8 @@ public class CraftingWindow extends Window {
         productIngredients.clear();
         productIngredients.layout();
 
+        boolean craftable = true;
+
         // ingredients
         for (int i = 0; i < data.ingredients().length; i++) {
             byte ingredientId = data.ingredients()[i][0];
@@ -159,6 +182,7 @@ public class CraftingWindow extends Window {
             if (totalAmount < ingredientAmount) {
                 amount.setColor(Color.SALMON);
                 icon.setColor(Color.SALMON);
+                craftable = false;
             } else {
                 amount.setColor(Color.WHITE);
                 icon.setColor(Color.WHITE);
@@ -172,5 +196,7 @@ public class CraftingWindow extends Window {
                 productIngredients.row();
             }
         }
+
+        craftButton.setDisabled(!craftable);
     }
 }
