@@ -18,8 +18,13 @@ public class WorkbenchVoxel extends Voxel implements InteractableVoxel {
         if (!VoxelphaliaGame.getInstance().getScreen().getClass().equals(GameScreen.class)) {
             return;
         }
-        
+
         GameScreen screen = (GameScreen) VoxelphaliaGame.getInstance().getScreen();
         screen.getCraftingWindow().setVisible(true, RecipeWorkbenchLevel.WORKBENCH);
+    }
+
+    @Override
+    public WorkbenchVoxel clone() {
+        return (WorkbenchVoxel) super.clone();
     }
 }
