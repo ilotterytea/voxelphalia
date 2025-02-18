@@ -7,6 +7,7 @@ import kz.ilotterytea.voxelphalia.entities.Entity;
 import kz.ilotterytea.voxelphalia.entities.LivingEntity;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
+import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class Level implements Tickable {
@@ -143,6 +144,13 @@ public class Level implements Tickable {
         Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(voxel);
 
         return !type.getMaterial().isTranslucent();
+    }
+
+    public boolean hasInteractableVoxel(int x, int y, int z) {
+        byte voxel = getVoxel(x, y, z);
+        Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(voxel);
+
+        return type instanceof InteractableVoxel;
     }
 
     public void addEntity(Entity entity) {
