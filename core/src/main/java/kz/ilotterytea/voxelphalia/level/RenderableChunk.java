@@ -19,6 +19,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
+import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,40 +111,38 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
                         .getVoxelRegistry()
                         .getEntryById(v);
 
-                    TextureRegion sideRegion = voxel.getMaterial().getSideTextureRegion(terrainTexture);
-                    TextureRegion topRegion = voxel.getMaterial().getTopTextureRegion(terrainTexture);
-                    TextureRegion bottomRegion = voxel.getMaterial().getBottomTextureRegion(terrainTexture);
+                    VoxelMaterial vm = voxel.getMaterial();
 
                     boolean[] faces = getVisibleFaces((int) (offset.x + x), (int) (offset.y + y), (int) (offset.z + z));
                     faceCount += faces.length;
 
                     if (faces[0]) {
-                        createTop(vertices, indices, x, y, z, topRegion, indexOffset);
+                        createTop(vertices, indices, x, y, z, vm.getTopTextureRegion(terrainTexture), indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[1]) {
-                        createBottom(vertices, indices, x, y, z, bottomRegion, indexOffset);
+                        createBottom(vertices, indices, x, y, z, vm.getBottomTextureRegion(terrainTexture), indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[2]) {
-                        createLeft(vertices, indices, x, y, z, sideRegion, indexOffset);
+                        createLeft(vertices, indices, x, y, z, vm.getLeftTextureRegion(terrainTexture), indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[3]) {
-                        createRight(vertices, indices, x, y, z, sideRegion, indexOffset);
+                        createRight(vertices, indices, x, y, z, vm.getRightTextureRegion(terrainTexture), indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[4]) {
-                        createFront(vertices, indices, x, y, z, sideRegion, indexOffset);
+                        createFront(vertices, indices, x, y, z, vm.getFrontTextureRegion(terrainTexture), indexOffset);
                         indexOffset += 4;
                     }
 
                     if (faces[5]) {
-                        createBack(vertices, indices, x, y, z, sideRegion, indexOffset);
+                        createBack(vertices, indices, x, y, z, vm.getBackTextureRegion(terrainTexture), indexOffset);
                         indexOffset += 4;
                     }
                 }
