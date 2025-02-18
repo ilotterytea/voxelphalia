@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.level.Level;
-import kz.ilotterytea.voxelphalia.level.VoxelType;
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 import java.util.Random;
 
@@ -40,26 +40,29 @@ public class SaplingEntity extends RenderableEntity {
 
         int h = MathUtils.random(3, 4);
 
+        Voxel leaves = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 10);
+        Voxel log = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 9);
+
         // hat
         for (int y = 0; y < 2; y++) {
             for (int z = -2; z < 3; z++) {
                 for (int x = -2; x < 3; x++) {
-                    level.placeVoxel(VoxelType.LEAVES, (int) (position.x + x), (int) (position.y + h + y), (int) (position.z + z));
+                    level.placeVoxel(leaves, (int) (position.x + x), (int) (position.y + h + y), (int) (position.z + z));
                 }
             }
         }
 
         for (int z = -1; z < 2; z++) {
             for (int x = -1; x < 2; x++) {
-                level.placeVoxel(VoxelType.LEAVES, (int) (position.x + x), (int) (position.y + h + 2), (int) (position.z + z));
+                level.placeVoxel(leaves, (int) (position.x + x), (int) (position.y + h + 2), (int) (position.z + z));
             }
         }
 
-        level.placeVoxel(VoxelType.LEAVES, (int) position.x, (int) (position.y + h + 3), (int) position.z);
+        level.placeVoxel(leaves, (int) position.x, (int) (position.y + h + 3), (int) position.z);
 
         // root
         for (int i = 0; i < h + 3; i++) {
-            level.placeVoxel(VoxelType.LOG, (int) position.x, (int) position.y + i, (int) position.z);
+            level.placeVoxel(log, (int) position.x, (int) position.y + i, (int) position.z);
         }
 
         grown = true;

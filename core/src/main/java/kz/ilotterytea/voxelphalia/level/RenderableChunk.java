@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Pool;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,13 +98,16 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         for (int y = 0; y < height; y++) {
             for (int z = 0; z < depth; z++) {
                 for (int x = 0; x < width; x++) {
-                    byte voxel = chunk.getVoxel(x, y, z);
-                    if (voxel == 0) continue;
+                    byte v = chunk.getVoxel(x, y, z);
+                    if (v == 0) continue;
 
-                    VoxelType type = VoxelType.getById(voxel);
-                    TextureRegion sideRegion = type.getSideTextureRegion(terrainTexture);
-                    TextureRegion topRegion = type.getTopTextureRegion(terrainTexture);
-                    TextureRegion bottomRegion = type.getBottomTextureRegion(terrainTexture);
+                    Voxel voxel = VoxelphaliaGame.getInstance()
+                        .getVoxelRegistry()
+                        .getEntryById(v);
+
+                    TextureRegion sideRegion = voxel.getMaterial().getSideTextureRegion(terrainTexture);
+                    TextureRegion topRegion = voxel.getMaterial().getTopTextureRegion(terrainTexture);
+                    TextureRegion bottomRegion = voxel.getMaterial().getBottomTextureRegion(terrainTexture);
 
                     boolean[] faces = getVisibleFaces((int) (offset.x + x), (int) (offset.y + y), (int) (offset.z + z));
                     faceCount += faces.length;

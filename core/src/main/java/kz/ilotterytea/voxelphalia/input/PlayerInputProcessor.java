@@ -10,7 +10,6 @@ import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
-import kz.ilotterytea.voxelphalia.level.VoxelType;
 
 public class PlayerInputProcessor implements InputProcessor {
     private final Level level;
@@ -116,7 +115,7 @@ public class PlayerInputProcessor implements InputProcessor {
                 if (playerEntity.getInventory().remove(voxel) > 0 || voxel == 0) return false;
             } else {
                 byte v = level.getVoxel(x, y, z);
-                DropEntity entity = new DropEntity(VoxelType.getById(v));
+                DropEntity entity = new DropEntity(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(v));
                 entity.setPosition(x + 0.5f, y, z + 0.5f);
                 level.addEntity(entity);
             }
