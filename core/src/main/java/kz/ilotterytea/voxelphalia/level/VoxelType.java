@@ -20,7 +20,8 @@ public enum VoxelType {
     IRON_VOXEL(1, 2),
     GOLD_VOXEL(2, 2),
     GEM_VOXEL(0, 3),
-    RUBY_VOXEL(1, 3);
+    RUBY_VOXEL(1, 3),
+    PLANKS(6, 1);
 
     private final int sx, sy,
         tx, ty, bx, by;
