@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.ui.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -70,8 +71,22 @@ public class PauseScreenStack extends Stack {
         super.act(delta);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            setVisible(!isVisible());
-            playerEntity.setFocused(!isVisible());
+            boolean areWindowsInactive = true;
+
+            for (Actor actor : getStage().getActors()) {
+                if (actor instanceof Window) {
+                    if (actor.isVisible()) {
+                        actor.setVisible(false);
+                        playerEntity.setFocused(true);
+                        areWindowsInactive = false;
+                    }
+                }
+            }
+
+            if (areWindowsInactive) {
+                setVisible(!isVisible());
+                playerEntity.setFocused(!isVisible());
+            }
         }
     }
 }
