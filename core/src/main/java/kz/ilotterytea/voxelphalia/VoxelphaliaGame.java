@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import kz.ilotterytea.voxelphalia.screens.SplashScreen;
+import kz.ilotterytea.voxelphalia.utils.registries.RecipeRegistry;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
@@ -15,10 +16,13 @@ public class VoxelphaliaGame extends Game {
     private AssetManager assetManager;
     private Preferences preferences;
 
+    private RecipeRegistry recipeRegistry;
+
     @Override
     public void create() {
         assetManager = new AssetManager();
         preferences = Gdx.app.getPreferences(VoxelphaliaConstants.Metadata.APP_PACKAGE);
+        recipeRegistry = new RecipeRegistry();
 
         if (preferences.getBoolean("fullscreen", false)) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
@@ -46,5 +50,9 @@ public class VoxelphaliaGame extends Game {
 
     public AssetManager getAssetManager() {
         return assetManager;
+    }
+
+    public RecipeRegistry getRecipeRegistry() {
+        return recipeRegistry;
     }
 }
