@@ -18,5 +18,7 @@ public abstract class Registry<T> {
         return entries;
     }
 
+    public abstract T getEntryById(byte id);
+
     protected abstract void load();
 }
