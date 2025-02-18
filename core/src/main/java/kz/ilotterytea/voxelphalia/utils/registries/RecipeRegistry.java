@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import kz.ilotterytea.voxelphalia.recipes.RecipeData;
+import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 
-public class RecipeRegistry extends Registry<RecipeData> {
+public class RecipeRegistry extends Registry<Recipe> {
     @Override
     protected void load() {
         FileHandle recipesHandle = Gdx.files.internal("data/recipes");
@@ -30,13 +30,13 @@ public class RecipeRegistry extends Registry<RecipeData> {
 
             byte resultAmount = json.getByte("resultAmount");
 
-            addEntry(new RecipeData(ingredientData, resultAmount, resultId, RecipeWorkbenchLevel.values()[json.getInt("level")]));
+            addEntry(new Recipe(ingredientData, resultAmount, resultId, RecipeWorkbenchLevel.values()[json.getInt("level")]));
         }
     }
 
     @Override
-    public RecipeData getEntryById(byte id) {
-        for (RecipeData data : entries) {
+    public Recipe getEntryById(byte id) {
+        for (Recipe data : entries) {
             if (data.resultId() == id) return data;
         }
 

@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.utils.registries;
 
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
+import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.WorkbenchVoxel;
 
 public class VoxelRegistry extends Registry<Voxel> {
@@ -49,6 +50,10 @@ public class VoxelRegistry extends Registry<Voxel> {
         addEntry(new Voxel((byte) 17, new VoxelMaterial(6, 1)));
         // workbench
         addEntry(new WorkbenchVoxel((byte) 18, new VoxelMaterial(15, 1, 14, 1, 15, 2)));
+        // furnace
+        VoxelMaterial furnace = new VoxelMaterial(14, 2, 13, 2);
+        furnace.setStateSave(true);
+        addEntry(new FurnaceVoxel((byte) 19, furnace));
     }
 
     @Override
