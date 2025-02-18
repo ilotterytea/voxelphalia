@@ -151,6 +151,18 @@ public class Inventory {
         return currentSlotIndex;
     }
 
+    public int getTotalVoxelAmount(byte voxel) {
+        int amount = 0;
+
+        for (Slot slot : slots) {
+            if (slot.id == voxel) {
+                amount += slot.quantity;
+            }
+        }
+
+        return amount;
+    }
+
     public void clear() {
         for (Slot slot : slots) {
             slot.id = 0;
