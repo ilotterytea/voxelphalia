@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
-import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.utils.tuples.Triple;
 
 public class InventorySlotStack extends Stack {
@@ -129,9 +128,8 @@ public class InventorySlotStack extends Stack {
                     .get("textures/gui/gui_voxels.atlas");
 
                 TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(slot.id));
-
                 if (region == null) {
-                    region = atlas.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
+                    region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
                 }
 
                 icon.setDrawable(new TextureRegionDrawable(region));

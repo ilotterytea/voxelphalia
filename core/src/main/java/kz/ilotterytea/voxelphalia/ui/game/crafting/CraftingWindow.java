@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
-import kz.ilotterytea.voxelphalia.level.VoxelType;
 import kz.ilotterytea.voxelphalia.recipes.RecipeData;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
 
@@ -66,7 +65,7 @@ public class CraftingWindow extends Window {
 
             TextureAtlas.AtlasRegion region = voxels.findRegion(id);
             if (region == null) {
-                region = voxels.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
+                region = voxels.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
             }
 
             IconButton btn = new IconButton(id,
@@ -134,7 +133,7 @@ public class CraftingWindow extends Window {
         });
         product.add(craftButton).growX();
 
-        showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().first().resultId());
+        showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().getFirst().resultId());
     }
 
     @Override
@@ -157,12 +156,12 @@ public class CraftingWindow extends Window {
         if (data == null) return;
         this.selectedRecipe = data;
 
-        TextureAtlas voxels = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
+        TextureAtlas atlas = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
 
         // recipe name and icon
-        TextureAtlas.AtlasRegion region = voxels.findRegion(String.valueOf(id));
+        TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(id));
         if (region == null) {
-            region = voxels.findRegion(String.valueOf(VoxelType.MISSING_VOXEL.getVoxelId()));
+            region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
         }
         productImage.setDrawable(new TextureRegionDrawable(region));
         productLabel.setText(String.valueOf(id));
@@ -183,7 +182,7 @@ public class CraftingWindow extends Window {
             ingredient.align(Align.center);
             ingredient.pad(8f);
 
-            Image icon = new Image(voxels.findRegion(String.valueOf(ingredientId)));
+            Image icon = new Image(atlas.findRegion(String.valueOf(ingredientId)));
             ingredient.add(icon).size(32f, 32f).row();
 
             Label amount = new Label(String.format("%s/%s", totalAmount, ingredientAmount), skin);

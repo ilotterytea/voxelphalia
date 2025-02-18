@@ -1,12 +1,12 @@
 package kz.ilotterytea.voxelphalia.utils.registries;
 
-import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
 
 public abstract class Registry<T> {
-    protected final Array<T> entries;
+    protected final ArrayList<T> entries;
 
     public Registry() {
-        this.entries = new Array<>();
+        this.entries = new ArrayList<>();
         load();
     }
 
@@ -14,7 +14,7 @@ public abstract class Registry<T> {
         this.entries.add(entry);
     }
 
-    public Array<T> getEntries() {
+    public ArrayList<T> getEntries() {
         return entries;
     }
 

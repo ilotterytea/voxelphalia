@@ -2,10 +2,12 @@ package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.Entity;
 import kz.ilotterytea.voxelphalia.entities.LivingEntity;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class Level implements Tickable {
     protected final Array<Chunk> chunks;
@@ -38,8 +40,8 @@ public class Level implements Tickable {
         return chunk.getVoxel(cx, cy, cz);
     }
 
-    public void placeVoxel(VoxelType voxel, int x, int y, int z) {
-        placeVoxel(voxel.getVoxelId(), x, y, z);
+    public void placeVoxel(Voxel voxel, int x, int y, int z) {
+        placeVoxel(voxel.getId(), x, y, z);
     }
 
     public void placeVoxel(byte voxel, int x, int y, int z) {
@@ -138,9 +140,9 @@ public class Level implements Tickable {
 
     public boolean hasSolidVoxel(int x, int y, int z) {
         byte voxel = getVoxel(x, y, z);
-        VoxelType type = VoxelType.getById(voxel);
+        Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(voxel);
 
-        return type != VoxelType.AIR && type != VoxelType.WATER;
+        return !type.getMaterial().isTranslucent();
     }
 
     public void addEntity(Entity entity) {

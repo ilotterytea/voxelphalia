@@ -5,12 +5,15 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
 import kz.ilotterytea.voxelphalia.entities.mobs.hostile.MobFish;
 import kz.ilotterytea.voxelphalia.entities.mobs.neutral.MobPenguin;
+import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 import java.util.Random;
 
@@ -22,6 +25,15 @@ public class TerrainGenerator {
         final float ROCK_LEVEL = 0.7f;
         final int DIRT_DEPTH = 4;
 
+        VoxelRegistry voxelRegistry = VoxelphaliaGame.getInstance().getVoxelRegistry();
+        Voxel mantle = voxelRegistry.getEntryById((byte) 5);
+        Voxel stone = voxelRegistry.getEntryById((byte) 2);
+        Voxel water = voxelRegistry.getEntryById((byte) 7);
+        Voxel sand = voxelRegistry.getEntryById((byte) 4);
+        Voxel dirt = voxelRegistry.getEntryById((byte) 3);
+        Voxel grass = voxelRegistry.getEntryById((byte) 1);
+        Voxel snow = voxelRegistry.getEntryById((byte) 6);
+
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int z = 0; z < grid.getHeight(); z++) {
                 float heightValue = grid.get(x, z) * level.getHeightInVoxels();
@@ -30,9 +42,9 @@ public class TerrainGenerator {
                 // base layer
                 for (int y = 0; y < terrainHeight; y++) {
                     if (y == 0) {
-                        level.placeVoxel(VoxelType.MANTLE, x, y, z);
+                        level.placeVoxel(mantle, x, y, z);
                     } else {
-                        level.placeVoxel(VoxelType.STONE, x, y, z);
+                        level.placeVoxel(stone, x, y, z);
                     }
                 }
 
@@ -40,34 +52,34 @@ public class TerrainGenerator {
                 if (terrainHeight < WATER_HEIGHT) {
                     // filling with the water
                     for (int y = terrainHeight; y <= WATER_HEIGHT; y++) {
-                        level.placeVoxel(VoxelType.WATER, x, y, z);
+                        level.placeVoxel(water, x, y, z);
                     }
                     for (int i = 0; i <= DIRT_DEPTH; i++) {
-                        level.placeVoxel(VoxelType.SAND, x, terrainHeight - i, z);
+                        level.placeVoxel(sand, x, terrainHeight - i, z);
                     }
                 }
                 //beach
                 else if (terrainHeight < SAND_LEVEL * level.getHeightInVoxels()) {
                     for (int i = 0; i <= DIRT_DEPTH; i++) {
-                        level.placeVoxel(VoxelType.SAND, x, terrainHeight - i, z);
+                        level.placeVoxel(sand, x, terrainHeight - i, z);
                     }
                 }
                 // grass
                 else if (terrainHeight < GRASS_LEVEL * level.getHeightInVoxels()) {
-                    level.placeVoxel(VoxelType.GRASS, x, terrainHeight, z);
+                    level.placeVoxel(grass, x, terrainHeight, z);
                     for (int i = 1; i <= DIRT_DEPTH; i++) {
-                        level.placeVoxel(VoxelType.DIRT, x, terrainHeight - i, z);
+                        level.placeVoxel(dirt, x, terrainHeight - i, z);
                     }
-                    level.placeVoxel(VoxelType.STONE, x, terrainHeight - DIRT_DEPTH - 1, z);
+                    level.placeVoxel(stone, x, terrainHeight - DIRT_DEPTH - 1, z);
                 }
                 // rock hills
                 else if (terrainHeight < ROCK_LEVEL * level.getHeightInVoxels()) {
-                    level.placeVoxel(VoxelType.STONE, x, terrainHeight, z);
+                    level.placeVoxel(stone, x, terrainHeight, z);
                 }
                 // snowy peaks
                 else {
-                    level.placeVoxel(VoxelType.SNOW, x, terrainHeight, z);
-                    level.placeVoxel(VoxelType.STONE, x, terrainHeight - 1, z);
+                    level.placeVoxel(snow, x, terrainHeight, z);
+                    level.placeVoxel(stone, x, terrainHeight - 1, z);
                 }
             }
         }
@@ -92,7 +104,7 @@ public class TerrainGenerator {
         noiseGenerator.generate(grid);
     }
 
-    public static void generateMinerals(Level level, VoxelType mineral, int minRadius, int minY, int minAmount, int seed) {
+    public static void generateMinerals(Level level, Voxel mineral, int minRadius, int minY, int minAmount, int seed) {
         Random random = new Random(seed);
 
         for (int i = 0; i < random.nextInt(minAmount, (int) Math.pow(minAmount, 2)); i++) {
@@ -166,9 +178,11 @@ public class TerrainGenerator {
             int z = random.nextInt(0, level.getDepthInVoxels());
             int y = (int) level.getHighestY(x, z);
 
-            VoxelType voxelBelow = VoxelType.getById(level.getVoxel(x, y - 1, z));
+            VoxelRegistry voxelRegistry = VoxelphaliaGame.getInstance().getVoxelRegistry();
 
-            if (voxelBelow != VoxelType.GRASS) {
+            Voxel voxelBelow = voxelRegistry.getEntryById(level.getVoxel(x, y - 1, z));
+
+            if (voxelBelow.getId() != 1) {
                 continue;
             }
 
