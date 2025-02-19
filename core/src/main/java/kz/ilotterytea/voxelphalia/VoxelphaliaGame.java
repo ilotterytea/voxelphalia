@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
+import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.screens.SplashScreen;
 import kz.ilotterytea.voxelphalia.utils.registries.RecipeRegistry;
 import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
@@ -20,12 +21,15 @@ public class VoxelphaliaGame extends Game {
     private RecipeRegistry recipeRegistry;
     private VoxelRegistry voxelRegistry;
 
+    private LocalizationManager localizationManager;
+
     @Override
     public void create() {
         assetManager = new AssetManager();
         preferences = Gdx.app.getPreferences(VoxelphaliaConstants.Metadata.APP_PACKAGE);
         recipeRegistry = new RecipeRegistry();
         voxelRegistry = new VoxelRegistry();
+        localizationManager = new LocalizationManager();
 
         if (preferences.getBoolean("fullscreen", false)) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
@@ -61,5 +65,9 @@ public class VoxelphaliaGame extends Game {
 
     public VoxelRegistry getVoxelRegistry() {
         return voxelRegistry;
+    }
+
+    public LocalizationManager getLocalizationManager() {
+        return localizationManager;
     }
 }
