@@ -187,7 +187,7 @@ public class GameScreen implements Screen {
 
         DragAndDrop dragAndDrop = new DragAndDrop();
 
-        stage.addActor(new HotbarTable(skin, dragAndDrop, playerEntity));
+        stage.addActor(new HotbarTable(skin, playerEntity));
         stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
 
         stage.addActor(new HandWorkbenchWindow(skin, playerEntity));

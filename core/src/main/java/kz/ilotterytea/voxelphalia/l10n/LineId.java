@@ -17,6 +17,8 @@ public enum LineId {
     DEATH_TITLE,
     DEATH_RESPAWN,
 
+    HOTBAR_HEALTH_TITLE,
+
     SMELTING_TITLE,
     SMELTING_SMELT,
 

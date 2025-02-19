@@ -28,8 +28,8 @@ public class PlayerEntity extends LivingEntity {
         setWeight(10f);
         setSpeed(7f);
 
-        setHealth(20);
-        setMaxHealth(20);
+        setHealth(60);
+        setMaxHealth(60);
         setDamage(1);
     }
 
