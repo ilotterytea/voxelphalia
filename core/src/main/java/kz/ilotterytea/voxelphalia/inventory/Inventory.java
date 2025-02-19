@@ -99,7 +99,7 @@ public class Inventory implements Cloneable {
         int index;
 
         while (quantity > 0) {
-            if (getCurrentSlot().id.equals(voxel)) {
+            if (getCurrentSlot().id != null && getCurrentSlot().id.equals(voxel)) {
                 index = currentSlotIndex;
             } else {
                 index = getSlotIndex(voxel, quantity);
