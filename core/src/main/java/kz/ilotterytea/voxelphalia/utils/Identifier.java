@@ -18,7 +18,6 @@ public class Identifier implements Identifiable {
         try {
             String[] parts = value.split(":");
             String namespace = parts[0];
-            System.out.println(value);
             String name = value.substring(namespace.length() + 1);
 
             return new Identifier(namespace, name);
