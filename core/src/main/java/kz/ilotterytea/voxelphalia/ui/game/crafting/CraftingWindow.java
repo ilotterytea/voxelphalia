@@ -26,7 +26,7 @@ public class CraftingWindow extends Window {
     private final Skin skin;
 
     private final Image productImage;
-    private final Label productLabel, titleLabel;
+    private final Label productLabel, productDescription, titleLabel;
     private final Table productIngredients;
     private final TextButton craftButton;
 
@@ -90,7 +90,12 @@ public class CraftingWindow extends Window {
                 region = voxels.findRegion(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName());
             }
 
-            IconButton btn = new IconButton(data.resultId().toString(),
+            String localizedLine = VoxelphaliaGame.getInstance()
+                .getLocalizationManager()
+                .getLine(LineId.parse("voxel." + data.resultId().getName().replace('_', '\0') + ".name"));
+
+            IconButton btn = new IconButton(
+                localizedLine,
                 new Image(region),
                 skin
             );
@@ -118,10 +123,19 @@ public class CraftingWindow extends Window {
         product.add(productTitle).growX().padBottom(15f).row();
 
         productImage = new Image();
-        productTitle.add(productImage).size(32f, 32f).padRight(16f);
+        productTitle.add(productImage).size(32f, 32f).top().padRight(16f);
+
+        Table productLabelTable = new Table();
+        productTitle.add(productLabelTable).grow();
 
         productLabel = new Label("", skin);
-        productTitle.add(productLabel).growX();
+        productLabel.setAlignment(Align.left);
+        productLabelTable.add(productLabel).growX().row();
+
+        productDescription = new Label("", skin, "tiny-default");
+        productDescription.setAlignment(Align.left);
+        productDescription.setWrap(true);
+        productLabelTable.add(productDescription).growX().row();
 
         // product ingredients
         productIngredients = new Table(skin);
@@ -177,7 +191,16 @@ public class CraftingWindow extends Window {
             region = atlas.findRegion(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName());
         }
         productImage.setDrawable(new TextureRegionDrawable(region));
-        productLabel.setText(id.toString());
+        productLabel.setText(
+            VoxelphaliaGame.getInstance()
+                .getLocalizationManager()
+                .getLine(LineId.parse("voxel." + data.resultId().getName().replace('_', '\0') + ".name"))
+        );
+        productDescription.setText(
+            VoxelphaliaGame.getInstance()
+                .getLocalizationManager()
+                .getLine(LineId.parse("voxel." + data.resultId().getName().replace('_', '\0') + ".description"))
+        );
 
         productIngredients.clear();
         productIngredients.layout();
@@ -210,7 +233,14 @@ public class CraftingWindow extends Window {
                 icon.setColor(Color.WHITE);
             }
 
-            ingredient.addListener(new TextTooltip(entry.getKey().toString(), skin));
+            ingredient.addListener(new TextTooltip(
+                VoxelphaliaGame.getInstance()
+                    .getLocalizationManager()
+                    .getLine(LineId.parse("voxel." + entry.getKey().getName().replace('_', '\0') + ".name")) + ".\n" +
+                    VoxelphaliaGame.getInstance()
+                        .getLocalizationManager()
+                        .getLine(LineId.parse("voxel." + entry.getKey().getName().replace('_', '\0') + ".description"))
+                , skin));
 
             productIngredients.add(ingredient).grow();
 

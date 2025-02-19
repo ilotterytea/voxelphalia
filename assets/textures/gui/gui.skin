@@ -16,6 +16,10 @@
     medium-default: {
       file: fonts/FontText.fnt,
       scaledSize: 25
+    },
+    tiny-default: {
+      file: fonts/FontText.fnt,
+      scaledSize: 15
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -96,6 +100,10 @@
     default: {
       font: default,
       fontColor: white
+    },
+    tiny-default: {
+      parent: default,
+      font: tiny-default
     },
     respawn-title: {
       font: large-default,
