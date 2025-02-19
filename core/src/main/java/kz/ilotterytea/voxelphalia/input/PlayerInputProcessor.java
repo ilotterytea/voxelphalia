@@ -30,20 +30,6 @@ public class PlayerInputProcessor implements InputProcessor {
     public boolean keyDown(int keycode) {
         if (!playerEntity.isFocused()) return false;
 
-        if (keycode == Input.Keys.NUM_0) {
-            playerEntity.getInventory().setSlotIndex(9);
-            return true;
-        }
-
-        if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
-            for (int i = 0; i < 9; i++) {
-                if (keycode == Input.Keys.NUM_1 + i) {
-                    playerEntity.getInventory().setSlotIndex(i);
-                    return true;
-                }
-            }
-        }
-
         return false;
     }
 
@@ -54,10 +40,21 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-        if (character == ' ') {
+        Inventory inv = playerEntity.getInventory();
+
+        char c = Character.toLowerCase(character);
+
+        if (c == ' ') {
             playerEntity.jump();
             return true;
+        } else if (c == 'z') {
+            inv.previousSlotIndex();
+            return true;
+        } else if (c == 'x') {
+            inv.nextSlotIndex();
+            return true;
         }
+
         return false;
     }
 
@@ -179,9 +176,9 @@ public class PlayerInputProcessor implements InputProcessor {
 
         Inventory inv = playerEntity.getInventory();
 
-        if (amountY > 0f && inv.getSlotIndex() != 0) {
+        if (amountY > 0f) {
             inv.previousSlotIndex();
-        } else if (amountY < 0f && inv.getSlotIndex() < 9f) {
+        } else if (amountY < 0f) {
             inv.nextSlotIndex();
         }
         return true;

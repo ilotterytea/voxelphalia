@@ -23,13 +23,21 @@
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
-    hotbar-background: {
-      color: { hex: "#00000055" },
-      name: rectangle
+    inventorybar-background: {
+      color: { hex: "#22212166" },
+      name: window-background
     },
-    hotbar-foreground: {
-      color: { hex: "#000000aa" },
-      name: rectangle
+    healthbar-background: {
+      color: { hex: "#22212166" },
+      name: window-background
+    },
+    slot-inactive: {
+      color: { hex: "#19191988" },
+      name: window-background
+    },
+    slot-active: {
+      color: { hex: "#956665aa" },
+      name: window-background
     },
     respawn-background: {
       color: { hex: "#250000aa" },
@@ -112,6 +120,10 @@
     pause-title: {
       parent: default,
       font: medium-default
+    },
+    healthbar-title: {
+      font: tiny-default,
+      fontColor: { hex: "#ff5d61ff" }
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
