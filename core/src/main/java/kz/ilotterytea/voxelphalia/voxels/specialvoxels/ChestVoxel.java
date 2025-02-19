@@ -7,6 +7,7 @@ import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.screens.GameScreen;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
@@ -14,7 +15,7 @@ import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 public class ChestVoxel extends Voxel implements InteractableVoxel {
     private Inventory inventory;
 
-    public ChestVoxel(byte id, VoxelMaterial material) {
+    public ChestVoxel(Identifier id, VoxelMaterial material) {
         super(id, material);
         this.inventory = new Inventory(30, (byte) 100);
     }
@@ -35,11 +36,11 @@ public class ChestVoxel extends Voxel implements InteractableVoxel {
         ChestVoxel chest = (ChestVoxel) voxel;
 
         for (Inventory.Slot slot : chest.inventory.getSlots()) {
-            if (slot.id == 0) continue;
+            if (slot.id == null) continue;
             for (int i = 0; i < slot.quantity; i++) {
                 DropEntity drop = new DropEntity(VoxelphaliaGame.getInstance()
                     .getVoxelRegistry()
-                    .getEntryById(slot.id)
+                    .getEntry(slot.id)
                 );
                 drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
                 level.addEntity(drop);

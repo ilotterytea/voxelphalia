@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -104,12 +105,12 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         for (int y = 0; y < height; y++) {
             for (int z = 0; z < depth; z++) {
                 for (int x = 0; x < width; x++) {
-                    byte v = chunk.getVoxel(x, y, z);
-                    if (v == 0) continue;
+                    Identifier v = chunk.getVoxel(x, y, z);
+                    if (v == null) continue;
 
                     Voxel voxel = VoxelphaliaGame.getInstance()
                         .getVoxelRegistry()
-                        .getEntryById(v);
+                        .getEntry(v);
 
                     VoxelMaterial vm = voxel.getMaterial();
 
@@ -293,17 +294,17 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
             false, false, false, false, false, false
         };
 
-        if (level.getVoxel(x, y + 1, z) == 0)
+        if (level.getVoxel(x, y + 1, z) == null)
             faces[0] = true;
-        if (level.getVoxel(x, y - 1, z) == 0)
+        if (level.getVoxel(x, y - 1, z) == null)
             faces[1] = true;
-        if (level.getVoxel(x - 1, y, z) == 0)
+        if (level.getVoxel(x - 1, y, z) == null)
             faces[2] = true;
-        if (level.getVoxel(x + 1, y, z) == 0)
+        if (level.getVoxel(x + 1, y, z) == null)
             faces[3] = true;
-        if (level.getVoxel(x, y, z - 1) == 0)
+        if (level.getVoxel(x, y, z - 1) == null)
             faces[4] = true;
-        if (level.getVoxel(x, y, z + 1) == 0)
+        if (level.getVoxel(x, y, z + 1) == null)
             faces[5] = true;
 
         return faces;

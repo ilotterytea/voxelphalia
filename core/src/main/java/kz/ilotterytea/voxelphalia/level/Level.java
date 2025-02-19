@@ -6,6 +6,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.Entity;
 import kz.ilotterytea.voxelphalia.entities.LivingEntity;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -32,9 +33,9 @@ public class Level implements Tickable {
         this.entities = new Array<>();
     }
 
-    public byte getVoxel(int x, int y, int z) {
+    public Identifier getVoxel(int x, int y, int z) {
         Chunk chunk = getChunk(x, y, z);
-        if (chunk == null) return 0;
+        if (chunk == null) return null;
         int cx = x % 16;
         int cy = y % 16;
         int cz = z % 16;
@@ -48,10 +49,6 @@ public class Level implements Tickable {
         int cy = y % 16;
         int cz = z % 16;
         return chunk.getVoxelState(cx, cy, cz);
-    }
-
-    public void placeVoxel(Voxel voxel, int x, int y, int z) {
-        placeVoxel(voxel.getId(), x, y, z);
     }
 
     public void placeVoxelState(Voxel voxel, int x, int y, int z) {
@@ -75,7 +72,7 @@ public class Level implements Tickable {
         }
     }
 
-    public void placeVoxel(byte voxel, int x, int y, int z) {
+    public void placeVoxel(Voxel voxel, int x, int y, int z) {
         for (int xy = -1; xy < 2; xy++) {
             for (int xc = -1; xc < 2; xc++) {
                 for (int xz = -1; xz < 2; xz++) {
@@ -160,20 +157,20 @@ public class Level implements Tickable {
         if (ix < 0 || ix >= getWidthInVoxels()) return 0;
         if (iz < 0 || iz >= getDepthInVoxels()) return 0;
         for (int y = getHeightInVoxels() - 1; y > 0; y--) {
-            if (getVoxel(ix, y, iz) > 0) return y + 1;
+            if (getVoxel(ix, y, iz) != null) return y + 1;
         }
         return 0;
     }
 
     public boolean hasVoxel(int x, int y, int z) {
-        return getVoxel(x, y, z) != 0;
+        return getVoxel(x, y, z) != null;
     }
 
     public boolean hasSolidVoxel(int x, int y, int z) {
-        byte voxel = getVoxel(x, y, z);
-        Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(voxel);
+        Identifier voxel = getVoxel(x, y, z);
+        Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry(voxel);
 
-        return !type.getMaterial().isTranslucent();
+        return type != null && !type.getMaterial().isTranslucent();
     }
 
     public boolean hasVoxelState(int x, int y, int z) {
@@ -181,8 +178,8 @@ public class Level implements Tickable {
     }
 
     public boolean hasInteractableVoxel(int x, int y, int z) {
-        byte voxel = getVoxel(x, y, z);
-        Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(voxel);
+        Identifier voxel = getVoxel(x, y, z);
+        Voxel type = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry(voxel);
 
         return type instanceof InteractableVoxel;
     }

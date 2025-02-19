@@ -3,10 +3,11 @@ package kz.ilotterytea.voxelphalia.entities;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class DropEntity extends RenderablePhysicalEntity {
-    private final byte voxel;
+    private final Identifier voxel;
     private final float maxLifeTime;
     private float lifeTime;
     private boolean dead;
@@ -23,9 +24,9 @@ public class DropEntity extends RenderablePhysicalEntity {
             .getAssetManager()
             .get("textures/gui/gui_voxels.atlas");
 
-        TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(voxel.getId()));
+        TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(voxel.getId().getName()));
         if (region == null) {
-            region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
+            region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName()));
         }
 
         setDecal(region, 0.5f, 0.5f);

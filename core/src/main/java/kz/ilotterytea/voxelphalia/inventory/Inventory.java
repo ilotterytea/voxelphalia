@@ -1,13 +1,16 @@
 package kz.ilotterytea.voxelphalia.inventory;
 
+import kz.ilotterytea.voxelphalia.utils.Identifier;
+
 import java.util.Arrays;
 
 public class Inventory implements Cloneable {
     public static class Slot implements Cloneable {
-        public byte id, size;
+        public Identifier id;
+        public byte size;
         public byte quantity;
 
-        public Slot(byte id, byte quantity, byte size) {
+        public Slot(Identifier id, byte quantity, byte size) {
             this.id = id;
             this.size = size;
             this.quantity = quantity;
@@ -66,15 +69,15 @@ public class Inventory implements Cloneable {
         this.stackSize = stackSize;
 
         for (int i = 0; i < size; i++) {
-            this.slots[i] = new Slot((byte) 0, (byte) 0, stackSize);
+            this.slots[i] = new Slot(null, (byte) 0, stackSize);
         }
     }
 
-    public byte add(byte voxel) {
+    public byte add(Identifier voxel) {
         return add(voxel, (byte) 1);
     }
 
-    public byte add(byte voxel, byte quantity) {
+    public byte add(Identifier voxel, byte quantity) {
         int index;
 
         while (quantity > 0) {
@@ -88,25 +91,25 @@ public class Inventory implements Cloneable {
         return quantity;
     }
 
-    public byte remove(byte voxel) {
+    public byte remove(Identifier voxel) {
         return remove(voxel, (byte) 1);
     }
 
-    public byte remove(byte voxel, byte quantity) {
+    public byte remove(Identifier voxel, byte quantity) {
         int index;
 
         while (quantity > 0) {
-            if (getCurrentSlot().id == voxel) {
+            if (getCurrentSlot().id.equals(voxel)) {
                 index = currentSlotIndex;
             } else {
                 index = getSlotIndex(voxel, quantity);
             }
 
             Slot slot = this.slots[index];
-            if (slot.id == 0) return quantity;
+            if (slot.id == null) return quantity;
 
             quantity = slot.remove(quantity);
-            if (slot.quantity == 0) slot.id = 0;
+            if (slot.quantity == 0) slot.id = null;
         }
 
         return quantity;
@@ -136,20 +139,20 @@ public class Inventory implements Cloneable {
         return slots;
     }
 
-    private int getSlotIndex(byte voxel, byte quantity) {
+    private int getSlotIndex(Identifier voxel, byte quantity) {
         int index = -1;
 
         for (int i = 0; i < slots.length; i++) {
             Slot slot = slots[i];
 
-            if (slot.id == 0 && index == -1) {
+            if (slot.id == null && index == -1) {
                 index = i;
             } else if (slot.id == voxel && (int) slot.quantity + quantity <= stackSize) {
                 return i;
             }
         }
 
-        if (getCurrentSlot().id == 0) {
+        if (getCurrentSlot().id != null && getCurrentSlot().id.equals(voxel)) {
             return currentSlotIndex;
         }
 
@@ -164,11 +167,11 @@ public class Inventory implements Cloneable {
         return currentSlotIndex;
     }
 
-    public int getTotalVoxelAmount(byte voxel) {
+    public int getTotalVoxelAmount(Identifier voxel) {
         int amount = 0;
 
         for (Slot slot : slots) {
-            if (slot.id == voxel) {
+            if (slot.id != null && slot.id.equals(voxel)) {
                 amount += slot.quantity;
             }
         }
@@ -178,7 +181,7 @@ public class Inventory implements Cloneable {
 
     public void clear() {
         for (Slot slot : slots) {
-            slot.id = 0;
+            slot.id = null;
             slot.quantity = 0;
         }
     }
@@ -203,7 +206,7 @@ public class Inventory implements Cloneable {
             for (int i = 0; i < size; i++) {
                 clone.slots[i] = slots[i].clone();
             }
-            
+
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
