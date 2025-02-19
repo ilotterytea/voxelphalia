@@ -1,8 +1,11 @@
 package kz.ilotterytea.voxelphalia.utils.registries;
 
+import kz.ilotterytea.voxelphalia.utils.Identifiable;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
+
 import java.util.ArrayList;
 
-public abstract class Registry<T> {
+public abstract class Registry<T extends Identifiable> {
     protected final ArrayList<T> entries;
 
     public Registry() {
@@ -18,7 +21,23 @@ public abstract class Registry<T> {
         return entries;
     }
 
-    public abstract T getEntryById(byte id);
+    public T getEntry(Identifier identifier) {
+        for (T entry : entries) {
+            if (entry.getId().equals(identifier)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public T getEntry(String identifier) {
+        for (T entry : entries) {
+            if (entry.getId().equals(new Identifier(identifier))) {
+                return entry;
+            }
+        }
+        return null;
+    }
 
     protected abstract void load();
 }

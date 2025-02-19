@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.noise.NoiseGenerator;
+import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
@@ -12,6 +13,7 @@ import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
 import kz.ilotterytea.voxelphalia.entities.mobs.hostile.MobFish;
 import kz.ilotterytea.voxelphalia.entities.mobs.neutral.MobPenguin;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
@@ -26,13 +28,13 @@ public class TerrainGenerator {
         final int DIRT_DEPTH = 4;
 
         VoxelRegistry voxelRegistry = VoxelphaliaGame.getInstance().getVoxelRegistry();
-        Voxel mantle = voxelRegistry.getEntryById((byte) 5);
-        Voxel stone = voxelRegistry.getEntryById((byte) 2);
-        Voxel water = voxelRegistry.getEntryById((byte) 7);
-        Voxel sand = voxelRegistry.getEntryById((byte) 4);
-        Voxel dirt = voxelRegistry.getEntryById((byte) 3);
-        Voxel grass = voxelRegistry.getEntryById((byte) 1);
-        Voxel snow = voxelRegistry.getEntryById((byte) 6);
+        Voxel mantle = voxelRegistry.getEntry("mantle");
+        Voxel stone = voxelRegistry.getEntry("stone");
+        Voxel water = voxelRegistry.getEntry("water");
+        Voxel sand = voxelRegistry.getEntry("sand");
+        Voxel dirt = voxelRegistry.getEntry("dirt");
+        Voxel grass = voxelRegistry.getEntry("grass_voxel");
+        Voxel snow = voxelRegistry.getEntry("snow");
 
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int z = 0; z < grid.getHeight(); z++) {
@@ -115,8 +117,9 @@ public class TerrainGenerator {
                 x = MathUtils.random(0, level.getWidthInVoxels());
                 z = MathUtils.random(0, level.getDepthInVoxels());
                 y = MathUtils.random(minY, minY + 5);
+                Identifier v = level.getVoxel(x, y, z);
 
-                pointFound = level.getVoxel(x, y, z) == 2;
+                pointFound = v != null && v.equals("stone");
 
                 attempts++;
                 if (pointFound) break;
@@ -134,7 +137,7 @@ public class TerrainGenerator {
                             continue;
                         }
 
-                        if (MathUtils.random(0, 100) > 20 && level.getVoxel(mx, my, mz) == 2) {
+                        if (MathUtils.random(0, 100) > 20 && level.getVoxel(mx, my, mz).equals(VoxelphaliaConstants.Metadata.APP_ID + ":stone")) {
                             level.placeVoxel(mineral, mx, my, mz);
                         }
                     }
@@ -180,9 +183,9 @@ public class TerrainGenerator {
 
             VoxelRegistry voxelRegistry = VoxelphaliaGame.getInstance().getVoxelRegistry();
 
-            Voxel voxelBelow = voxelRegistry.getEntryById(level.getVoxel(x, y - 1, z));
+            Voxel voxelBelow = voxelRegistry.getEntry(level.getVoxel(x, y - 1, z));
 
-            if (voxelBelow.getId() != 1) {
+            if (!voxelBelow.getId().equals(VoxelphaliaConstants.Metadata.APP_ID + ":grass_voxel")) {
                 continue;
             }
 

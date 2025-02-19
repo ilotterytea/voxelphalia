@@ -1,8 +1,7 @@
 {
   "ingredientIds": {
-    "11": 1
+    "voxelphalia:planks": 8
   },
   "resultAmount": 1,
-  "craftingTime": 2.0,
-  "level": 2
+  "level": 1
 }

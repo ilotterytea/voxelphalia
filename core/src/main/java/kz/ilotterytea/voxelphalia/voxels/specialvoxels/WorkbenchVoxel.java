@@ -4,12 +4,13 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.screens.GameScreen;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 
 public class WorkbenchVoxel extends Voxel implements InteractableVoxel {
-    public WorkbenchVoxel(byte id, VoxelMaterial material) {
+    public WorkbenchVoxel(Identifier id, VoxelMaterial material) {
         super(id, material);
     }
 

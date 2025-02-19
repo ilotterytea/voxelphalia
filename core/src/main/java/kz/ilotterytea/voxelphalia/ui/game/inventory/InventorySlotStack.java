@@ -12,18 +12,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.tuples.Triple;
 
 public class InventorySlotStack extends Stack {
     private final Inventory.Slot slot;
     private final Label amountLabel;
     private final Image icon, activeImage;
-    private int slotId;
+    private Identifier slotId;
 
     public InventorySlotStack(Skin skin, DragAndDrop dragAndDrop, Inventory inventory, Inventory.Slot slot) {
         super();
         this.slot = slot;
-        this.slotId = 0;
+        this.slotId = null;
 
         activeImage = new Image(skin.getDrawable("hotbar-foreground"));
         activeImage.setVisible(false);
@@ -46,7 +47,7 @@ public class InventorySlotStack extends Stack {
             public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
                 InventorySlotStack stack = (InventorySlotStack) getActor();
 
-                if (stack.getSlot().id == 0 || stack.getSlot().quantity == 0) {
+                if (stack.getSlot().id == null || stack.getSlot().quantity == 0) {
                     return null;
                 }
 
@@ -91,7 +92,7 @@ public class InventorySlotStack extends Stack {
                 if (slot.id == load.first.id) {
                     load.first.quantity = slot.add(load.first.quantity);
                     if (load.first.quantity <= 0) {
-                        load.first.id = 0;
+                        load.first.id = null;
                         load.first.quantity = 0;
                     }
                 } else {
@@ -115,21 +116,21 @@ public class InventorySlotStack extends Stack {
     public void act(float delta) {
         super.act(delta);
 
-        boolean visible = slot.id != 0;
+        boolean visible = slot.id != null;
 
         icon.setVisible(visible);
 
         if (visible) {
             amountLabel.setText(String.valueOf(slot.quantity));
 
-            if (slotId != slot.id && slot.id != 0) {
+            if (slotId != slot.id && slot.id != null) {
                 TextureAtlas atlas = VoxelphaliaGame.getInstance()
                     .getAssetManager()
                     .get("textures/gui/gui_voxels.atlas");
 
-                TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(slot.id));
+                TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(slot.id.getName()));
                 if (region == null) {
-                    region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
+                    region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName()));
                 }
 
                 icon.setDrawable(new TextureRegionDrawable(region));

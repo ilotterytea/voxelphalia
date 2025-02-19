@@ -27,8 +27,8 @@ public class VoxelphaliaGame extends Game {
     public void create() {
         assetManager = new AssetManager();
         preferences = Gdx.app.getPreferences(VoxelphaliaConstants.Metadata.APP_PACKAGE);
-        recipeRegistry = new RecipeRegistry();
         voxelRegistry = new VoxelRegistry();
+        recipeRegistry = new RecipeRegistry();
         localizationManager = new LocalizationManager();
 
         if (preferences.getBoolean("fullscreen", false)) {

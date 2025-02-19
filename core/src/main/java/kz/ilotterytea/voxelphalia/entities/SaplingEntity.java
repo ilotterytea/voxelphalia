@@ -40,8 +40,8 @@ public class SaplingEntity extends RenderableEntity {
 
         int h = MathUtils.random(3, 4);
 
-        Voxel leaves = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 10);
-        Voxel log = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 9);
+        Voxel leaves = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("leaves");
+        Voxel log = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("log");
 
         // hat
         for (int y = 0; y < 2; y++) {

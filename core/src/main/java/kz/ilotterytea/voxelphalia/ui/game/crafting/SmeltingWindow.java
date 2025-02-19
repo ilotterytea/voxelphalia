@@ -15,9 +15,11 @@ import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
 
 import java.util.List;
+import java.util.Map;
 
 public class SmeltingWindow extends Window {
     private final PlayerEntity playerEntity;
@@ -91,14 +93,12 @@ public class SmeltingWindow extends Window {
 
         for (int i = 0; i < recipeDatas.size(); i++) {
             Recipe data = recipeDatas.get(i);
-            String id = String.valueOf(data.resultId());
-
-            TextureAtlas.AtlasRegion region = voxels.findRegion(id);
+            TextureAtlas.AtlasRegion region = voxels.findRegion(data.resultId().getName());
             if (region == null) {
-                region = voxels.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
+                region = voxels.findRegion(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName());
             }
 
-            IconButton btn = new IconButton(id,
+            IconButton btn = new IconButton(data.resultId().toString(),
                 new Image(region),
                 skin
             );
@@ -153,14 +153,11 @@ public class SmeltingWindow extends Window {
 
                 Inventory inventory = playerEntity.getInventory();
 
-                for (int i = 0; i < selectedRecipe.ingredients().length; i++) {
-                    byte ingredientId = selectedRecipe.ingredients()[i][0];
-                    byte ingredientAmount = selectedRecipe.ingredients()[i][1];
-
-                    inventory.remove(ingredientId, ingredientAmount);
+                for (Map.Entry<Identifier, Byte> entry : selectedRecipe.ingredients().entrySet()) {
+                    inventory.remove(entry.getKey(), entry.getValue());
                 }
 
-                furnace.setVoxelToSmelt(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById(selectedRecipe.resultId()));
+                furnace.setVoxelToSmelt(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry(selectedRecipe.resultId()));
                 showRecipe(selectedRecipe.resultId());
             }
         });
@@ -199,20 +196,20 @@ public class SmeltingWindow extends Window {
         }
     }
 
-    private void showRecipe(byte id) {
-        Recipe data = VoxelphaliaGame.getInstance().getRecipeRegistry().getEntryById(id);
+    private void showRecipe(Identifier id) {
+        Recipe data = VoxelphaliaGame.getInstance().getRecipeRegistry().getEntry(id);
         if (data == null || data.level() != RecipeWorkbenchLevel.FURNACE) return;
         this.selectedRecipe = data;
 
         TextureAtlas atlas = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
 
         // recipe name and icon
-        TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(id));
+        TextureAtlas.AtlasRegion region = atlas.findRegion(id.getName());
         if (region == null) {
-            region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntryById((byte) 8).getId()));
+            region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName()));
         }
         productImage.setDrawable(new TextureRegionDrawable(region));
-        productLabel.setText(String.valueOf(id));
+        productLabel.setText(id.toString());
 
         productIngredients.clear();
         productIngredients.layout();
@@ -221,24 +218,22 @@ public class SmeltingWindow extends Window {
         LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
 
         // ingredients
-        for (int i = 0; i < data.ingredients().length; i++) {
-            byte ingredientId = data.ingredients()[i][0];
-            byte ingredientAmount = data.ingredients()[i][1];
-
-            int totalAmount = playerEntity.getInventory().getTotalVoxelAmount(ingredientId);
+        int i = 0;
+        for (Map.Entry<Identifier, Byte> entry : data.ingredients().entrySet()) {
+            int totalAmount = playerEntity.getInventory().getTotalVoxelAmount(entry.getKey());
 
             Table ingredient = new Table();
             ingredient.align(Align.center);
             ingredient.pad(8f);
 
-            Image icon = new Image(atlas.findRegion(String.valueOf(ingredientId)));
+            Image icon = new Image(atlas.findRegion(entry.getKey().getName()));
             ingredient.add(icon).size(32f, 32f).row();
 
-            Label amount = new Label(localizationManager.getLine(LineId.CRAFTING_INGREDIENTS, totalAmount, ingredientAmount), skin);
+            Label amount = new Label(localizationManager.getLine(LineId.CRAFTING_INGREDIENTS, totalAmount, entry.getValue()), skin);
             amount.setAlignment(Align.center);
             ingredient.add(amount).row();
 
-            if (totalAmount < ingredientAmount) {
+            if (totalAmount < entry.getValue()) {
                 amount.setColor(Color.SALMON);
                 icon.setColor(Color.SALMON);
                 smeltable = false;
@@ -247,13 +242,15 @@ public class SmeltingWindow extends Window {
                 icon.setColor(Color.WHITE);
             }
 
-            ingredient.addListener(new TextTooltip(String.valueOf(ingredientId), skin));
+            ingredient.addListener(new TextTooltip(entry.getKey().toString(), skin));
 
             productIngredients.add(ingredient).grow();
 
             if (i % 3 == 2) {
                 productIngredients.row();
             }
+
+            i++;
         }
 
         if (furnace != null && furnace.isVoxelSmelting()) {

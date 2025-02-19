@@ -119,21 +119,21 @@ public class PlayerInputProcessor implements InputProcessor {
         }
 
         if (collided) {
-            Voxel voxel = VoxelphaliaGame.getInstance()
-                .getVoxelRegistry().getEntryById((byte) 0);
+            Voxel voxel = null;
 
             if (place) {
                 Inventory.Slot slot = playerEntity.getInventory().getCurrentSlot();
                 voxel = VoxelphaliaGame.getInstance()
-                    .getVoxelRegistry().getEntryById(slot.id);
-                if (playerEntity.getInventory().remove(voxel.getId()) > 0 || voxel.getId() == 0) return false;
+                    .getVoxelRegistry().getEntry(slot.id);
+                if (voxel != null && (playerEntity.getInventory().remove(voxel.getId()) > 0 || voxel.getId() == null))
+                    return false;
             } else {
                 Voxel v = VoxelphaliaGame.getInstance()
-                    .getVoxelRegistry().getEntryById(level.getVoxel(x, y, z));
+                    .getVoxelRegistry().getEntry(level.getVoxel(x, y, z));
 
                 if (v instanceof DestroyableVoxel vv) {
                     Voxel vvv = v;
-                    
+
                     if (level.hasInteractableVoxel(x, y, z)) {
                         vvv = level.getVoxelState(x, y, z);
                     }

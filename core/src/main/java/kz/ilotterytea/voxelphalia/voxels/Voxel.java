@@ -5,18 +5,21 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.DropEntity;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.utils.Identifiable;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
 
-public class Voxel implements Cloneable, Tickable, DestroyableVoxel {
-    private byte id;
+public class Voxel implements Cloneable, Tickable, DestroyableVoxel, Identifiable {
+    private Identifier id;
     private VoxelMaterial material;
 
-    public Voxel(byte id, VoxelMaterial material) {
+    public Voxel(Identifier id, VoxelMaterial material) {
         this.id = id;
         this.material = material;
     }
 
-    public byte getId() {
+    @Override
+    public Identifier getId() {
         return id;
     }
 
@@ -36,7 +39,7 @@ public class Voxel implements Cloneable, Tickable, DestroyableVoxel {
         try {
             Voxel clone = (Voxel) super.clone();
             clone.id = id;
-            clone.material = material.clone();
+            clone.material = material;
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
@@ -47,7 +50,7 @@ public class Voxel implements Cloneable, Tickable, DestroyableVoxel {
     public void onDestroy(Voxel voxel, PlayerEntity entity, Level level, Vector3 position) {
         DropEntity drop = new DropEntity(VoxelphaliaGame.getInstance()
             .getVoxelRegistry()
-            .getEntryById(voxel.getId()));
+            .getEntry(voxel.getId()));
         drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
         level.addEntity(drop);
     }

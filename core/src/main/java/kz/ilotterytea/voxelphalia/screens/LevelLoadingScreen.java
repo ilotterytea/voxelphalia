@@ -18,6 +18,7 @@ import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -47,11 +48,7 @@ public class LevelLoadingScreen implements Screen {
             .get("textures/gui/gui.skin");
 
         // generating texture from terrain.png
-        Voxel voxel;
-
-        do {
-            voxel = game.getVoxelRegistry().getEntryById((byte) MathUtils.random(1, game.getVoxelRegistry().getEntries().size() - 1));
-        } while (voxel.getId() == 8);
+        Voxel voxel = game.getVoxelRegistry().getEntries().get((byte) MathUtils.random(1, game.getVoxelRegistry().getEntries().size() - 1));
 
         TextureRegion region = voxel.getMaterial().getFrontTextureRegion(VoxelphaliaGame.getInstance()
             .getAssetManager().get("textures/terrain.png", Texture.class));
@@ -176,11 +173,11 @@ public class LevelLoadingScreen implements Screen {
                     // placing minerals
                     case 2 -> {
                         Voxel[] minerals = {
-                            game.getVoxelRegistry().getEntryById((byte) 12),
-                            game.getVoxelRegistry().getEntryById((byte) 13),
-                            game.getVoxelRegistry().getEntryById((byte) 14),
-                            game.getVoxelRegistry().getEntryById((byte) 15),
-                            game.getVoxelRegistry().getEntryById((byte) 16),
+                            game.getVoxelRegistry().getEntry(new Identifier("coal_mineral")),
+                            game.getVoxelRegistry().getEntry(new Identifier("iron_mineral")),
+                            game.getVoxelRegistry().getEntry(new Identifier("gold_mineral")),
+                            game.getVoxelRegistry().getEntry(new Identifier("gem_mineral")),
+                            game.getVoxelRegistry().getEntry(new Identifier("ruby_mineral")),
                         };
 
                         int[] mineralSettings = {
