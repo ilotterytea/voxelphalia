@@ -36,8 +36,9 @@ import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 import kz.ilotterytea.voxelphalia.ui.game.PauseScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
-import kz.ilotterytea.voxelphalia.ui.game.crafting.CraftingWindow;
+import kz.ilotterytea.voxelphalia.ui.game.crafting.HandWorkbenchWindow;
 import kz.ilotterytea.voxelphalia.ui.game.crafting.SmeltingWindow;
+import kz.ilotterytea.voxelphalia.ui.game.crafting.WorkbenchWindow;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.ChestWindow;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.InventoryWindow;
 
@@ -46,7 +47,7 @@ public class GameScreen implements Screen {
     private Stage stage;
     private PauseScreenStack pauseScreenStack;
 
-    private CraftingWindow craftingWindow;
+    private WorkbenchWindow workbenchWindow;
     private SmeltingWindow smeltingWindow;
     private ChestWindow chestWindow;
 
@@ -189,8 +190,10 @@ public class GameScreen implements Screen {
         stage.addActor(new HotbarTable(skin, dragAndDrop, playerEntity));
         stage.addActor(new InventoryWindow(skin, dragAndDrop, playerEntity));
 
-        craftingWindow = new CraftingWindow(skin, playerEntity);
-        stage.addActor(craftingWindow);
+        stage.addActor(new HandWorkbenchWindow(skin, playerEntity));
+
+        workbenchWindow = new WorkbenchWindow(skin, playerEntity);
+        stage.addActor(workbenchWindow);
 
         smeltingWindow = new SmeltingWindow(skin, playerEntity);
         stage.addActor(smeltingWindow);
@@ -206,8 +209,8 @@ public class GameScreen implements Screen {
         stage.addActor(new DebugInfoStack(skin, camera, renderableLevel));
     }
 
-    public CraftingWindow getCraftingWindow() {
-        return craftingWindow;
+    public WorkbenchWindow getWorkbenchWindow() {
+        return workbenchWindow;
     }
 
     public SmeltingWindow getSmeltingWindow() {

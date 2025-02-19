@@ -2,7 +2,6 @@ package kz.ilotterytea.voxelphalia.voxels.specialvoxels;
 
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
-import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.screens.GameScreen;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
@@ -21,7 +20,7 @@ public class WorkbenchVoxel extends Voxel implements InteractableVoxel {
         }
 
         GameScreen screen = (GameScreen) VoxelphaliaGame.getInstance().getScreen();
-        screen.getCraftingWindow().setVisible(true, RecipeWorkbenchLevel.WORKBENCH);
+        screen.getWorkbenchWindow().setVisible(true);
     }
 
     @Override

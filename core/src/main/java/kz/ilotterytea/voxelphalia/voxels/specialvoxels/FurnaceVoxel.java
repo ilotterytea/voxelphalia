@@ -30,7 +30,8 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
         }
 
         GameScreen screen = (GameScreen) VoxelphaliaGame.getInstance().getScreen();
-        screen.getSmeltingWindow().setVisible(true, this);
+        screen.getSmeltingWindow().setFurnace(this);
+        screen.getSmeltingWindow().setVisible(true);
     }
 
     @Override

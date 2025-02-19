@@ -1,7 +1,5 @@
 package kz.ilotterytea.voxelphalia.ui.game.crafting;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,20 +17,23 @@ import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 
+import java.util.List;
 import java.util.Map;
 
 public class CraftingWindow extends Window {
-    private final PlayerEntity playerEntity;
-    private final Skin skin;
+    protected final PlayerEntity playerEntity;
+    protected final Skin skin;
+    protected final RecipeWorkbenchLevel level;
 
-    private final Image productImage;
-    private final Label productLabel, productDescription, titleLabel;
-    private final Table productIngredients;
-    private final TextButton craftButton;
+    protected final Image productImage;
+    protected final Label productLabel, productDescription;
+    protected final Table productIngredientBody;
+    protected final TextButton craftButton;
+    protected final IconButton[] recipeButtons;
 
-    private Recipe selectedRecipe;
+    protected Recipe selectedRecipe;
 
-    public CraftingWindow(Skin skin, PlayerEntity playerEntity) {
+    public CraftingWindow(Skin skin, PlayerEntity playerEntity, RecipeWorkbenchLevel level) {
         super("", skin);
         setModal(true);
         setMovable(true);
@@ -40,59 +41,87 @@ public class CraftingWindow extends Window {
 
         this.playerEntity = playerEntity;
         this.skin = skin;
-        setSize(600, 450);
-        setVisible(false);
+        this.level = level;
+        VoxelphaliaGame game = VoxelphaliaGame.getInstance();
 
-        // HEADER
-        Table header = new Table();
-        add(header).growX().padBottom(15f).row();
+        setSize(800, 600);
+        super.setVisible(false);
 
-        LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
+        LineId windowTitleId, craftButtonId;
 
-        // title
+        switch (level) {
+            case WORKBENCH -> {
+                windowTitleId = LineId.CRAFTING_BASIC_TITLE;
+                craftButtonId = LineId.CRAFTING_CRAFT;
+            }
+            case FURNACE -> {
+                windowTitleId = LineId.SMELTING_TITLE;
+                craftButtonId = LineId.SMELTING_SMELT;
+            }
+            default -> {
+                windowTitleId = LineId.CRAFTING_HANDMADE_TITLE;
+                craftButtonId = LineId.CRAFTING_CRAFT;
+            }
+        }
+
+        // --- WINDOW HEADER ---
+        Table windowHeader = new Table();
+        add(windowHeader).growX().padBottom(15f).row();
+
+        LocalizationManager localizationManager = game.getLocalizationManager();
+
+        // Window title
         Table title = new Table();
         title.align(Align.left);
-        titleLabel = new Label(localizationManager.getLine(LineId.CRAFTING_HANDMADE_TITLE), skin);
+        Label titleLabel = new Label(localizationManager.getLine(windowTitleId), skin);
         title.add(titleLabel);
-        header.add(title).growX();
+        windowHeader.add(title).growX();
 
-        // close button
+        // Close button
         ImageButton closeButton = new ImageButton(skin, "close");
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                setVisible(false, RecipeWorkbenchLevel.HANDS);
+                setVisible(false);
             }
         });
-        header.add(closeButton);
+        windowHeader.add(closeButton);
 
-        // body
-        Table body = new Table();
-        body.align(Align.top);
-        add(body).grow();
+        // --- WINDOW BODY ---
+        Table windowBody = new Table();
+        windowBody.align(Align.top);
+        add(windowBody).grow();
 
-        // recipes
-        Table recipes = new Table();
-        recipes.align(Align.top);
-        ScrollPane recipesScrollpane = new ScrollPane(recipes, skin);
+        // --- RECIPES BODY ---
+        Table recipesBody = new Table();
+        recipesBody.align(Align.top);
+        ScrollPane recipesScrollpane = new ScrollPane(recipesBody, skin);
         recipesScrollpane.setScrollingDisabled(true, false);
         recipesScrollpane.setFadeScrollBars(false);
         recipesScrollpane.setScrollbarsVisible(true);
-        body.add(recipesScrollpane).padRight(16f).grow();
+        windowBody.add(recipesScrollpane).padRight(16f).grow();
 
-        // loading recipes
-        TextureAtlas voxels = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
+        // Loading recipes
+        TextureAtlas voxels = game.getAssetManager().get("textures/gui/gui_voxels.atlas");
+        List<Recipe> recipes = VoxelphaliaGame.getInstance()
+            .getRecipeRegistry()
+            .getEntries()
+            .stream()
+            .filter((x) -> x.level() == level)
+            .toList();
+        recipeButtons = new IconButton[recipes.size()];
 
-        for (Recipe data : VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries()) {
-            TextureAtlas.AtlasRegion region = voxels.findRegion(data.resultId().getName());
+        for (int i = 0; i < recipes.size(); i++) {
+            Recipe recipe = recipes.get(i);
+            TextureAtlas.AtlasRegion region = voxels.findRegion(recipe.resultId().getName());
             if (region == null) {
-                region = voxels.findRegion(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName());
+                region = voxels.findRegion(game.getVoxelRegistry().getEntry("missing_voxel").getId().getName());
             }
 
-            String localizedLine = VoxelphaliaGame.getInstance()
+            String localizedLine = game
                 .getLocalizationManager()
-                .getLine(LineId.parse("voxel." + data.resultId().getName().replace('_', '\0') + ".name"));
+                .getLine(LineId.parse("voxel." + recipe.resultId().getName().replace('_', '\0') + ".name"));
 
             IconButton btn = new IconButton(
                 localizedLine,
@@ -100,54 +129,61 @@ public class CraftingWindow extends Window {
                 skin
             );
 
+            recipeButtons[i] = btn;
+
             btn.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
-                    showRecipe(data.resultId());
+                    if (btn.isDisabled()) return;
+                    showRecipe(recipe);
                 }
             });
-            recipes.add(btn).growX().padBottom(8f).row();
+            recipesBody.add(btn).growX().padBottom(8f).row();
         }
 
-        // product
-        Table product = new Table();
-        product.align(Align.top);
-        body.add(product).grow();
+        // --- PRODUCT BODY ---
+        Table productBody = new Table();
+        productBody.align(Align.top);
+        windowBody.add(productBody).grow();
 
-        // product title
-        Table productTitle = new Table(skin);
-        productTitle.setBackground("window-foreground");
-        productTitle.align(Align.left);
-        productTitle.pad(8f);
-        product.add(productTitle).growX().padBottom(15f).row();
+        // --- PRODUCT HEADER ---
+        Table productHeader = new Table(skin);
+        productHeader.setBackground("window-foreground");
+        productHeader.align(Align.left);
+        productHeader.pad(8f);
+        productBody.add(productHeader).growX().padBottom(15f).row();
 
+        // Product image
         productImage = new Image();
-        productTitle.add(productImage).size(32f, 32f).top().padRight(16f);
+        productHeader.add(productImage).size(32f, 32f).top().padRight(16f);
 
-        Table productLabelTable = new Table();
-        productTitle.add(productLabelTable).grow();
+        // -- PRODUCT INFORMATION BODY --
+        Table productInformationBody = new Table();
+        productHeader.add(productInformationBody).grow();
 
+        // Product name
         productLabel = new Label("", skin);
         productLabel.setAlignment(Align.left);
-        productLabelTable.add(productLabel).growX().row();
+        productInformationBody.add(productLabel).growX().row();
 
+        // Product description
         productDescription = new Label("", skin, "tiny-default");
         productDescription.setAlignment(Align.left);
         productDescription.setWrap(true);
-        productLabelTable.add(productDescription).growX().row();
+        productInformationBody.add(productDescription).growX().row();
 
-        // product ingredients
-        productIngredients = new Table(skin);
-        productIngredients.setBackground("window-foreground");
-        ScrollPane ingredientsScrollpane = new ScrollPane(productIngredients, skin);
+        // -- PRODUCT INGREDIENT BODY --
+        productIngredientBody = new Table(skin);
+        productIngredientBody.setBackground("window-foreground");
+        ScrollPane ingredientsScrollpane = new ScrollPane(productIngredientBody, skin);
         ingredientsScrollpane.setScrollingDisabled(true, false);
         ingredientsScrollpane.setFadeScrollBars(false);
         ingredientsScrollpane.setScrollbarsVisible(true);
-        product.add(ingredientsScrollpane).grow().padBottom(15f).row();
+        productBody.add(ingredientsScrollpane).grow().padBottom(15f).row();
 
-        // product creation
-        craftButton = new TextButton(localizationManager.getLine(LineId.CRAFTING_CRAFT), skin);
+        // --- CREATION BUTTON ---
+        craftButton = new TextButton(localizationManager.getLine(craftButtonId), skin);
         craftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -161,32 +197,28 @@ public class CraftingWindow extends Window {
                 }
 
                 inventory.add(selectedRecipe.resultId(), selectedRecipe.resultAmount());
-                showRecipe(selectedRecipe.resultId());
+                showRecipe(selectedRecipe);
             }
         });
-        product.add(craftButton).growX();
+        productBody.add(craftButton).growX();
 
-        showRecipe(VoxelphaliaGame.getInstance().getRecipeRegistry().getEntries().getFirst().resultId());
+        showRecipe(game.getRecipeRegistry()
+            .getEntries()
+            .stream()
+            .filter((x) -> x.level() == level)
+            .findFirst()
+            .orElse(null)
+        );
     }
 
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            setVisible(!isVisible(), RecipeWorkbenchLevel.HANDS);
-        }
-    }
-
-    private void showRecipe(Identifier id) {
-        Recipe data = VoxelphaliaGame.getInstance().getRecipeRegistry().getEntry(id);
-        if (data == null) return;
-        this.selectedRecipe = data;
+    protected void showRecipe(Recipe recipe) {
+        if (recipe == null || recipe.level() != level) return;
+        this.selectedRecipe = recipe;
 
         TextureAtlas atlas = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
 
         // recipe name and icon
-        TextureAtlas.AtlasRegion region = atlas.findRegion(id.getName());
+        TextureAtlas.AtlasRegion region = atlas.findRegion(recipe.resultId().getName());
         if (region == null) {
             region = atlas.findRegion(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName());
         }
@@ -194,23 +226,23 @@ public class CraftingWindow extends Window {
         productLabel.setText(
             VoxelphaliaGame.getInstance()
                 .getLocalizationManager()
-                .getLine(LineId.parse("voxel." + data.resultId().getName().replace('_', '\0') + ".name"))
+                .getLine(LineId.parse("voxel." + recipe.resultId().getName().replace('_', '\0') + ".name"))
         );
         productDescription.setText(
             VoxelphaliaGame.getInstance()
                 .getLocalizationManager()
-                .getLine(LineId.parse("voxel." + data.resultId().getName().replace('_', '\0') + ".description"))
+                .getLine(LineId.parse("voxel." + recipe.resultId().getName().replace('_', '\0') + ".description"))
         );
 
-        productIngredients.clear();
-        productIngredients.layout();
+        productIngredientBody.clear();
+        productIngredientBody.layout();
 
         boolean craftable = true;
         LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
 
         // ingredients
         int i = 0;
-        for (Map.Entry<Identifier, Byte> entry : data.ingredients().entrySet()) {
+        for (Map.Entry<Identifier, Byte> entry : recipe.ingredients().entrySet()) {
             int totalAmount = playerEntity.getInventory().getTotalVoxelAmount(entry.getKey());
 
             Table ingredient = new Table();
@@ -242,10 +274,10 @@ public class CraftingWindow extends Window {
                         .getLine(LineId.parse("voxel." + entry.getKey().getName().replace('_', '\0') + ".description"))
                 , skin));
 
-            productIngredients.add(ingredient).grow();
+            productIngredientBody.add(ingredient).grow();
 
             if (i % 3 == 2) {
-                productIngredients.row();
+                productIngredientBody.row();
             }
 
             i++;
@@ -254,16 +286,10 @@ public class CraftingWindow extends Window {
         craftButton.setDisabled(!craftable);
     }
 
-    public void setVisible(boolean visible, RecipeWorkbenchLevel level) {
+    public void setVisible(boolean visible) {
         super.setVisible(visible);
         playerEntity.setFocused(!isVisible());
-        showRecipe(selectedRecipe.resultId());
-
-        if (level == RecipeWorkbenchLevel.HANDS) {
-            titleLabel.setText(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.CRAFTING_HANDMADE_TITLE));
-        } else {
-            titleLabel.setText(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.CRAFTING_BASIC_TITLE));
-        }
+        showRecipe(selectedRecipe);
 
         if (isVisible()) {
             setPosition(getStage().getWidth() / 2f - getWidth() / 2f, getStage().getHeight() / 2f - getHeight() / 2f);
