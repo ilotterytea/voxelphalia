@@ -15,6 +15,7 @@ import com.github.czyzby.noise4j.map.Grid;
 import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
+import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -90,7 +91,7 @@ public class LevelLoadingScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        Label titleLabel = new Label("Loading level", skin);
+        Label titleLabel = new Label(game.getLocalizationManager().getLine(LineId.LOADING_TITLE), skin);
         table.add(titleLabel).padBottom(15f).row();
 
         stepLabel = new Label("", skin);
@@ -107,17 +108,17 @@ public class LevelLoadingScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(Color.DARK_GRAY);
 
-        String status = switch (step) {
-            case 0 -> "Generating terrain";
-            case 1 -> "Building terrain";
-            case 2 -> "Mineralizing";
-            case 3 -> "Placing trees";
-            case 4 -> "Making it more alive";
-            case 5 -> "Simulating a little bit :)";
-            default -> "Finished!";
+        LineId id = switch (step) {
+            case 0 -> LineId.LOADING_TERRAIN_GENERATING;
+            case 1 -> LineId.LOADING_TERRAIN_BUILDING;
+            case 2 -> LineId.LOADING_MINERAL;
+            case 3 -> LineId.LOADING_TREES;
+            case 4 -> LineId.LOADING_LIFE;
+            case 5 -> LineId.LOADING_SIMULATION;
+            default -> LineId.LOADING_FINISHED;
         };
 
-        stepLabel.setText(status);
+        stepLabel.setText(game.getLocalizationManager().getLine(id));
         stepBar.setValue(step);
 
         stage.act(delta);

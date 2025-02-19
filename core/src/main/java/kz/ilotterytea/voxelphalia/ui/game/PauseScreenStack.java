@@ -7,7 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.l10n.LineId;
+import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 
 public class PauseScreenStack extends Stack {
     private final PlayerEntity playerEntity;
@@ -38,11 +41,13 @@ public class PauseScreenStack extends Stack {
         window.align(Align.top);
         table.add(window).size(350f, 400f);
 
-        Label windowLabel = new Label("GAME MENU", skin, "pause-title");
+        LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
+
+        Label windowLabel = new Label(localizationManager.getLine(LineId.PAUSE_TITLE), skin, "pause-title");
         windowLabel.setAlignment(Align.center);
         window.add(windowLabel).growX().padBottom(60f).padTop(30f).row();
 
-        TextButton continueButton = new TextButton("Return to Game", skin);
+        TextButton continueButton = new TextButton(localizationManager.getLine(LineId.PAUSE_RETURN), skin);
         continueButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -53,7 +58,7 @@ public class PauseScreenStack extends Stack {
         });
         window.add(continueButton).growX().padBottom(30f).row();
 
-        TextButton quitButton = new TextButton("Quit to Desktop", skin);
+        TextButton quitButton = new TextButton(localizationManager.getLine(LineId.PAUSE_QUIT), skin);
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

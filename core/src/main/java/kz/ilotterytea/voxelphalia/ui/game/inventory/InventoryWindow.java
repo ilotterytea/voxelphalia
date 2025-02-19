@@ -6,8 +6,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.l10n.LineId;
 
 public class InventoryWindow extends Window {
     private final PlayerEntity playerEntity;
@@ -25,7 +27,7 @@ public class InventoryWindow extends Window {
         Table header = new Table();
         add(header).growX().row();
 
-        header.add(new Label("Inventory", skin)).growX();
+        header.add(new Label(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.INVENTORY_TITLE), skin)).growX();
 
         // close button
         ImageButton closeButton = new ImageButton(skin, "close");

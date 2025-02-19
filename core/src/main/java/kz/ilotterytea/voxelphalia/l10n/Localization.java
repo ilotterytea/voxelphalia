@@ -34,6 +34,18 @@ public class Localization {
         return this.lines.get(id);
     }
 
+    public String getLine(LineId id, Object... arguments) {
+        String line = this.lines.get(id);
+        int index = 0;
+
+        while (arguments.length > index) {
+            line = line.replaceFirst("%s", arguments[index].toString());
+            index++;
+        }
+
+        return line;
+    }
+
     public String getName() {
         return name;
     }

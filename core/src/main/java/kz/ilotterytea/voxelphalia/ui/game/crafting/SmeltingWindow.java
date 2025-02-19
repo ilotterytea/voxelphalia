@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.l10n.LineId;
+import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
@@ -48,7 +50,7 @@ public class SmeltingWindow extends Window {
         // title
         Table title = new Table();
         title.align(Align.left);
-        titleLabel = new Label("Smelting", skin);
+        titleLabel = new Label(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.SMELTING_TITLE), skin);
         title.add(titleLabel);
         header.add(title).growX();
 
@@ -142,7 +144,7 @@ public class SmeltingWindow extends Window {
         product.add(ingredientsScrollpane).grow().padBottom(15f).row();
 
         // product creation
-        smeltButton = new TextButton("Smelt", skin);
+        smeltButton = new TextButton(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.SMELTING_SMELT), skin);
         smeltButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -171,11 +173,13 @@ public class SmeltingWindow extends Window {
     public void act(float delta) {
         super.act(delta);
 
+        LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
+
         if (isVisible()) {
             if (furnace.getVoxel() != null && selectedRecipe.resultId() == furnace.getVoxel().getId() && furnace.isVoxelSmelting()) {
-                smeltButton.setText("Remaining " + (int) ((furnace.getMaxSmeltTime() - furnace.getSmeltTime()) * 10f) / 10f + "s...");
+                smeltButton.setText(localizationManager.getLine(LineId.CRAFTING_REMAINING, (int) ((furnace.getMaxSmeltTime() - furnace.getSmeltTime()) * 10f) / 10f));
             } else {
-                smeltButton.setText("Smelt");
+                smeltButton.setText(localizationManager.getLine(LineId.SMELTING_SMELT));
             }
 
             if (furnace.isFinished()) {
@@ -214,6 +218,7 @@ public class SmeltingWindow extends Window {
         productIngredients.layout();
 
         boolean smeltable = true;
+        LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
 
         // ingredients
         for (int i = 0; i < data.ingredients().length; i++) {
@@ -229,7 +234,7 @@ public class SmeltingWindow extends Window {
             Image icon = new Image(atlas.findRegion(String.valueOf(ingredientId)));
             ingredient.add(icon).size(32f, 32f).row();
 
-            Label amount = new Label(String.format("%s/%s", totalAmount, ingredientAmount), skin);
+            Label amount = new Label(localizationManager.getLine(LineId.CRAFTING_INGREDIENTS, totalAmount, ingredientAmount), skin);
             amount.setAlignment(Align.center);
             ingredient.add(amount).row();
 
