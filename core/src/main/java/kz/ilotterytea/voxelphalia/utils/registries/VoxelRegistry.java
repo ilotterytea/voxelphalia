@@ -5,6 +5,7 @@ import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.ChestVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
+import kz.ilotterytea.voxelphalia.voxels.specialvoxels.StoneVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.WorkbenchVoxel;
 
 public class VoxelRegistry extends Registry<Voxel> {
@@ -17,7 +18,7 @@ public class VoxelRegistry extends Registry<Voxel> {
         // grass
         addEntry(new Voxel((byte) 1, new VoxelMaterial(new Vector2(0, 0))));
         // stone
-        addEntry(new Voxel((byte) 2, new VoxelMaterial(new Vector2(1, 0))));
+        addEntry(new StoneVoxel((byte) 2, new VoxelMaterial(new Vector2(1, 0))));
         // dirt
         addEntry(new Voxel((byte) 3, new VoxelMaterial(new Vector2(2, 0))));
         // sand
