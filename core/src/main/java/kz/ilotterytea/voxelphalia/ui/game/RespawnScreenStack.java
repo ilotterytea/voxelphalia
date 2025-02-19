@@ -3,7 +3,9 @@ package kz.ilotterytea.voxelphalia.ui.game;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.l10n.LineId;
 
 public class RespawnScreenStack extends Stack {
     private final PlayerEntity entity;
@@ -31,7 +33,7 @@ public class RespawnScreenStack extends Stack {
         table.setFillParent(true);
         add(table);
 
-        Label title = new Label("You died!", skin, "respawn-title");
+        Label title = new Label(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.DEATH_TITLE), skin, "respawn-title");
         table.add(title).padBottom(30f).row();
 
         timerTitle = new Label("", skin);
@@ -45,7 +47,7 @@ public class RespawnScreenStack extends Stack {
         setVisible(entity.isDead());
 
         if (entity.isDead()) {
-            timerTitle.setText("Respawn in " + (int) (entity.getRespawnTime() * 10f) / 10f + "...");
+            timerTitle.setText(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.DEATH_RESPAWN, (int) (entity.getRespawnTime() * 10f) / 10f));
             if (!gradientImage.hasActions()) {
                 gradientImage.addAction(Actions.sequence(
                     Actions.alpha(0f),

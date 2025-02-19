@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.l10n.LineId;
+import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
@@ -42,10 +44,12 @@ public class CraftingWindow extends Window {
         Table header = new Table();
         add(header).growX().padBottom(15f).row();
 
+        LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
+
         // title
         Table title = new Table();
         title.align(Align.left);
-        titleLabel = new Label("Crafting", skin);
+        titleLabel = new Label(localizationManager.getLine(LineId.CRAFTING_HANDMADE_TITLE), skin);
         title.add(titleLabel);
         header.add(title).growX();
 
@@ -128,7 +132,7 @@ public class CraftingWindow extends Window {
         product.add(ingredientsScrollpane).grow().padBottom(15f).row();
 
         // product creation
-        craftButton = new TextButton("Craft", skin);
+        craftButton = new TextButton(localizationManager.getLine(LineId.CRAFTING_CRAFT), skin);
         craftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -181,6 +185,7 @@ public class CraftingWindow extends Window {
         productIngredients.layout();
 
         boolean craftable = true;
+        LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
 
         // ingredients
         for (int i = 0; i < data.ingredients().length; i++) {
@@ -196,7 +201,7 @@ public class CraftingWindow extends Window {
             Image icon = new Image(atlas.findRegion(String.valueOf(ingredientId)));
             ingredient.add(icon).size(32f, 32f).row();
 
-            Label amount = new Label(String.format("%s/%s", totalAmount, ingredientAmount), skin);
+            Label amount = new Label(localizationManager.getLine(LineId.CRAFTING_INGREDIENTS, totalAmount, ingredientAmount), skin);
             amount.setAlignment(Align.center);
             ingredient.add(amount).row();
 
@@ -227,9 +232,9 @@ public class CraftingWindow extends Window {
         showRecipe(selectedRecipe.resultId());
 
         if (level == RecipeWorkbenchLevel.HANDS) {
-            titleLabel.setText("Hand-made crafting");
+            titleLabel.setText(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.CRAFTING_HANDMADE_TITLE));
         } else {
-            titleLabel.setText("Basic crafting");
+            titleLabel.setText(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.CRAFTING_BASIC_TITLE));
         }
 
         if (isVisible()) {

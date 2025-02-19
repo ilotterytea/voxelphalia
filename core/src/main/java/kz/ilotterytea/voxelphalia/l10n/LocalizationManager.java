@@ -24,6 +24,10 @@ public class LocalizationManager {
         return this.localizations.get(index).getLine(id);
     }
 
+    public String getLine(LineId id, Object... arguments) {
+        return this.localizations.get(index).getLine(id, arguments);
+    }
+
     public List<String> getNames() {
         return this.localizations.stream()
             .map(Localization::getName)
