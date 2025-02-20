@@ -1,0 +1,22 @@
+{
+  "material": {
+    "side": [
+      14,
+      0
+    ],
+    "top": [
+      15,
+      2
+    ],
+    "bottom": [
+      15,
+      2
+    ],
+    "front": [
+      15,
+      0
+    ]
+  },
+  "state_save": true,
+  "behaviour": "chest"
+}

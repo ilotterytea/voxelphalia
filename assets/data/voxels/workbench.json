@@ -1,0 +1,17 @@
+{
+  "material": {
+    "side": [
+      15,
+      1
+    ],
+    "top": [
+      14,
+      1
+    ],
+    "bottom": [
+      15,
+      2
+    ]
+  },
+  "behaviour": "workbench"
+}
