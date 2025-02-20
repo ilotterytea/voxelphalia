@@ -131,9 +131,9 @@ public class InventorySlotStack extends Stack {
                     .getAssetManager()
                     .get("textures/gui/gui_voxels.atlas");
 
-                TextureAtlas.AtlasRegion region = atlas.findRegion(String.valueOf(slot.id.getName()));
+                TextureAtlas.AtlasRegion region = atlas.findRegion(slot.id.getName());
                 if (region == null) {
-                    region = atlas.findRegion(String.valueOf(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName()));
+                    region = atlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
                 }
 
                 icon.setDrawable(new TextureRegionDrawable(region));
