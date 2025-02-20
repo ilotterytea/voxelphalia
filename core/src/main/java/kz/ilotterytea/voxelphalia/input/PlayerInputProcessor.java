@@ -3,8 +3,10 @@ package kz.ilotterytea.voxelphalia.input;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
@@ -116,7 +118,7 @@ public class PlayerInputProcessor implements InputProcessor {
         }
 
         if (collided) {
-            Voxel voxel = null;
+            Voxel voxel = null, nextVoxel = null;
 
             if (place) {
                 Inventory.Slot slot = playerEntity.getInventory().getCurrentSlot();
@@ -124,6 +126,7 @@ public class PlayerInputProcessor implements InputProcessor {
                     .getVoxelRegistry().getEntry(slot.id);
                 if (voxel != null && (playerEntity.getInventory().remove(voxel.getId()) > 0 || voxel.getId() == null))
                     return false;
+                nextVoxel = voxel;
             } else {
                 Voxel v = VoxelphaliaGame.getInstance()
                     .getVoxelRegistry().getEntry(level.getVoxel(x, y, z));
@@ -137,6 +140,8 @@ public class PlayerInputProcessor implements InputProcessor {
 
                     vv.onDestroy(vvv, playerEntity, level, new Vector3(x, y, z));
                 }
+
+                nextVoxel = v;
             }
 
             if (voxel instanceof InteractableVoxel) {
@@ -144,6 +149,32 @@ public class PlayerInputProcessor implements InputProcessor {
             }
 
             level.placeVoxel(voxel, x, y, z);
+
+            if (nextVoxel != null) {
+                VoxelphaliaGame game = VoxelphaliaGame.getInstance();
+
+                // playing destroy/place sound
+                String footstepName = switch (nextVoxel.getMaterial().getType()) {
+                    case STONE -> "stone";
+                    case LOG -> "log";
+                    case DIRT -> "dirt";
+                    case SAND -> "sand";
+                    case LEAVES -> "leaves";
+                    case LIQUID -> "liquid";
+                    case null -> null;
+                    default -> "grass";
+                };
+
+                if (footstepName != null) {
+                    IdentifiedSound sound = game.getSoundRegistry()
+                        .getEntry("voxelphalia:sfx.footsteps." + footstepName);
+
+                    sound.getSound().play(MathUtils.clamp(game.getPreferences()
+                            .getFloat("sfx", 1f),
+                        0f, 1f
+                    ));
+                }
+            }
             return true;
         }
 
