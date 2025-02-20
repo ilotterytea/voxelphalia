@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class RecipeRegistry extends Registry<Recipe> {
     @Override
-    protected void load() {
+    public void load() {
         FileHandle recipesHandle = Gdx.files.internal("data/recipes");
         IdentifierRegistry identifierRegistry = VoxelphaliaGame.getInstance().getIdentifierRegistry();
 
