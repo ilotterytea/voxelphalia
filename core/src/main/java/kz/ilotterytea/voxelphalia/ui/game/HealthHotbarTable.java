@@ -1,5 +1,6 @@
 package kz.ilotterytea.voxelphalia.ui.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -10,8 +11,10 @@ import kz.ilotterytea.voxelphalia.l10n.LineId;
 
 public class HealthHotbarTable extends Table {
     private final LivingEntity entity;
+    private float previousHealth;
     private final Skin skin;
     private final Image[] heartIcons;
+    private final Label title;
 
     public HealthHotbarTable(Skin skin, LivingEntity entity) {
         super(skin);
@@ -21,10 +24,11 @@ public class HealthHotbarTable extends Table {
 
         this.entity = entity;
         this.skin = skin;
+        this.previousHealth = entity.getHealth();
 
         this.heartIcons = new Image[entity.getMaxHealth() / 20];
 
-        Label title = new Label(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.HOTBAR_HEALTH_TITLE),
+        title = new Label(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.HOTBAR_HEALTH_TITLE),
             skin,
             "healthbar-title"
         );
@@ -48,6 +52,9 @@ public class HealthHotbarTable extends Table {
     public void act(float delta) {
         super.act(delta);
 
+        float d = Math.abs(entity.getHealth() - previousHealth);
+        previousHealth = entity.getHealth();
+
         for (int i = 0; i < heartIcons.length; i++) {
             Image heart = heartIcons[i];
 
@@ -61,14 +68,32 @@ public class HealthHotbarTable extends Table {
                 heart.setDrawable(skin.getDrawable("heart-empty"));
             }
 
-            if (segment <= 0.5f && !heart.hasActions()) {
-                float y = MathUtils.random(-1f, 1f);
-                float d = 5f - entity.getHealth();
+            if ((segment <= 0.5f && !heart.hasActions()) || d > 0) {
+                float y = MathUtils.random(-20f, 20f) * (d / 10);
+                float x = MathUtils.random(-20f, 20f) * (d / 10);
                 heart.addAction(Actions.sequence(
-                    Actions.moveBy(0f, y + d, 0.05f),
-                    Actions.moveBy(0f, -y - d, 0.05f)
+                    Actions.parallel(
+                        Actions.moveBy(x, y, 0.05f),
+                        Actions.color(Color.LIGHT_GRAY)
+                    ),
+                    Actions.parallel(
+                        Actions.moveBy(-x, -y, 0.05f),
+                        Actions.color(Color.WHITE)
+                    )
+                ));
+                title.addAction(Actions.sequence(
+                    Actions.parallel(
+                        Actions.moveBy(x, y, 0.05f),
+                        Actions.color(Color.LIGHT_GRAY)
+                    ),
+                    Actions.parallel(
+                        Actions.moveBy(-x, -y, 0.05f),
+                        Actions.color(Color.WHITE)
+                    )
                 ));
             }
         }
+
+        previousHealth = entity.getHealth();
     }
 }
