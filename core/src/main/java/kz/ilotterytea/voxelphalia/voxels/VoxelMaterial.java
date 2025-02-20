@@ -121,6 +121,30 @@ public class VoxelMaterial implements Cloneable {
         return stateSave;
     }
 
+    public void setTop(Vector2 top) {
+        this.top = top;
+    }
+
+    public void setBottom(Vector2 bottom) {
+        this.bottom = bottom;
+    }
+
+    public void setLeft(Vector2 left) {
+        this.left = left;
+    }
+
+    public void setRight(Vector2 right) {
+        this.right = right;
+    }
+
+    public void setFront(Vector2 front) {
+        this.front = front;
+    }
+
+    public void setBack(Vector2 back) {
+        this.back = back;
+    }
+
     @Override
     public VoxelMaterial clone() {
         try {
