@@ -116,7 +116,7 @@ public class CraftingWindow extends Window {
             Recipe recipe = recipes.get(i);
             TextureAtlas.AtlasRegion region = voxels.findRegion(recipe.resultId().getName());
             if (region == null) {
-                region = voxels.findRegion(game.getVoxelRegistry().getEntry("missing_voxel").getId().getName());
+                region = voxels.findRegion(game.getIdentifierRegistry().getEntry("missing_voxel").getName());
             }
 
             String localizedLine = game
@@ -220,7 +220,7 @@ public class CraftingWindow extends Window {
         // recipe name and icon
         TextureAtlas.AtlasRegion region = atlas.findRegion(recipe.resultId().getName());
         if (region == null) {
-            region = atlas.findRegion(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry("missing_voxel").getId().getName());
+            region = atlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
         }
         productImage.setDrawable(new TextureRegionDrawable(region));
         productLabel.setText(
