@@ -15,7 +15,8 @@
     "front": [
       14,
       2
-    ]
+    ],
+    "type": "stone"
   },
   "behaviour": "furnace",
   "state_save": true
