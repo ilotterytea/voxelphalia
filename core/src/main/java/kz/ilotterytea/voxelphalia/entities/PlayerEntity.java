@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.level.Level;
 
@@ -115,6 +116,13 @@ public class PlayerEntity extends LivingEntity {
         if (dead && respawnTime <= 0f) {
             setFocused(false);
             respawnTime = 10f;
+            IdentifiedSound sound = VoxelphaliaGame.getInstance().getSoundRegistry()
+                .getEntry("voxelphalia:sfx.player.death");
+
+            sound.getSound().play(MathUtils.clamp(VoxelphaliaGame.getInstance().getPreferences()
+                    .getFloat("sfx", 1f),
+                0f, 1f
+            ));
         }
     }
 
