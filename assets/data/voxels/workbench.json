@@ -11,7 +11,8 @@
     "bottom": [
       15,
       2
-    ]
+    ],
+    "type": "log"
   },
   "behaviour": "workbench"
 }

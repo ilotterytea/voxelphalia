@@ -4,6 +4,7 @@
       0,
       15
     ],
-    "translucent": true
+    "translucent": true,
+    "type": "liquid"
   }
 }

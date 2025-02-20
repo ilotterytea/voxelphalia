@@ -9,6 +9,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
+import kz.ilotterytea.voxelphalia.voxels.VoxelMaterialType;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.ChestVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.StoneVoxel;
@@ -83,6 +84,10 @@ public class VoxelRegistry extends Registry<Voxel> {
                     int[] values = matJson.get("right").asIntArray();
                     Vector2 vec = new Vector2(values[0], values[1]);
                     material.setRight(vec);
+                }
+
+                if (matJson.has("type")) {
+                    material.setType(VoxelMaterialType.valueOf(matJson.getString("type").toUpperCase()));
                 }
             }
 

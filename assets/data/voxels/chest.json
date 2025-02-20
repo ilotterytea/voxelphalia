@@ -15,7 +15,8 @@
     "front": [
       15,
       0
-    ]
+    ],
+    "type": "log"
   },
   "state_save": true,
   "behaviour": "chest"

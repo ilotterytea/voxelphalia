@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 public class VoxelMaterial implements Cloneable {
     private Vector2 top, bottom, left, right, back, front;
     private boolean translucent, stateSave;
+    private VoxelMaterialType type;
 
     public VoxelMaterial() {
         this(new Vector2());
@@ -145,6 +146,14 @@ public class VoxelMaterial implements Cloneable {
         this.back = back;
     }
 
+    public VoxelMaterialType getType() {
+        return type;
+    }
+
+    public void setType(VoxelMaterialType type) {
+        this.type = type;
+    }
+
     @Override
     public VoxelMaterial clone() {
         try {
@@ -157,6 +166,7 @@ public class VoxelMaterial implements Cloneable {
             clone.front = new Vector2(front.x, front.y);
             clone.translucent = translucent;
             clone.stateSave = stateSave;
+            clone.type = type;
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);

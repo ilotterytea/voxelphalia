@@ -3,7 +3,8 @@
     "side": [
       1,
       0
-    ]
+    ],
+    "type": "stone"
   },
   "behaviour": "stone"
 }
