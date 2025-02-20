@@ -8,6 +8,7 @@ import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.screens.SplashScreen;
 import kz.ilotterytea.voxelphalia.utils.registries.IdentifierRegistry;
 import kz.ilotterytea.voxelphalia.utils.registries.RecipeRegistry;
+import kz.ilotterytea.voxelphalia.utils.registries.SoundRegistry;
 import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
 
 /**
@@ -22,6 +23,7 @@ public class VoxelphaliaGame extends Game {
     private IdentifierRegistry identifierRegistry;
     private RecipeRegistry recipeRegistry;
     private VoxelRegistry voxelRegistry;
+    private SoundRegistry soundRegistry;
 
     private LocalizationManager localizationManager;
 
@@ -32,6 +34,7 @@ public class VoxelphaliaGame extends Game {
         identifierRegistry = new IdentifierRegistry();
         voxelRegistry = new VoxelRegistry();
         recipeRegistry = new RecipeRegistry();
+        soundRegistry = new SoundRegistry();
         localizationManager = new LocalizationManager();
 
         if (preferences.getBoolean("fullscreen", false)) {
@@ -72,6 +75,10 @@ public class VoxelphaliaGame extends Game {
 
     public VoxelRegistry getVoxelRegistry() {
         return voxelRegistry;
+    }
+
+    public SoundRegistry getSoundRegistry() {
+        return soundRegistry;
     }
 
     public LocalizationManager getLocalizationManager() {

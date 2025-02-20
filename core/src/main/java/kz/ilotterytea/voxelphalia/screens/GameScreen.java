@@ -220,4 +220,12 @@ public class GameScreen implements Screen {
     public ChestWindow getChestWindow() {
         return chestWindow;
     }
+
+    public PlayerEntity getPlayerEntity() {
+        return playerEntity;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
 }
