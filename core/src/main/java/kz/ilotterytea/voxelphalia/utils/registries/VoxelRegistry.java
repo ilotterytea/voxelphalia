@@ -16,7 +16,7 @@ import kz.ilotterytea.voxelphalia.voxels.specialvoxels.WorkbenchVoxel;
 
 public class VoxelRegistry extends Registry<Voxel> {
     @Override
-    protected void load() {
+    public void load() {
         FileHandle folder = Gdx.files.internal("data/voxels");
 
         for (FileHandle handle : folder.list()) {

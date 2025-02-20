@@ -6,7 +6,7 @@ import kz.ilotterytea.voxelphalia.utils.Identifier;
 
 public class IdentifierRegistry extends Registry<Identifier> {
     @Override
-    protected void load() {
+    public void load() {
         FileHandle folder = Gdx.files.internal("data");
         loadFolder(folder);
         Gdx.app.log("IdentifierRegistry", "Loaded " + entries.size() + " identifiers!");

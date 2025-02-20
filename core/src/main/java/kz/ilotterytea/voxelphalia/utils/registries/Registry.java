@@ -10,7 +10,6 @@ public abstract class Registry<T extends Identifiable> {
 
     public Registry() {
         this.entries = new ArrayList<>();
-        load();
     }
 
     public void addEntry(T entry) {
@@ -39,5 +38,5 @@ public abstract class Registry<T extends Identifiable> {
         return null;
     }
 
-    protected abstract void load();
+    public abstract void load();
 }
