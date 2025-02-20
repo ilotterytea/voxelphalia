@@ -4,6 +4,7 @@ import kz.ilotterytea.voxelphalia.utils.Identifiable;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public abstract class Registry<T extends Identifiable> {
     protected final ArrayList<T> entries;
@@ -12,8 +13,15 @@ public abstract class Registry<T extends Identifiable> {
         this.entries = new ArrayList<>();
     }
 
-    public void addEntry(T entry) {
-        this.entries.add(entry);
+    public T addEntry(T entry) {
+        Optional<T> i = this.entries.stream().filter((x) -> x.equals(entry)).findFirst();
+
+        if (i.isPresent()) {
+            return i.get();
+        } else {
+            this.entries.add(entry);
+            return entry;
+        }
     }
 
     public ArrayList<T> getEntries() {
