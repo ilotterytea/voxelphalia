@@ -16,7 +16,7 @@ public class LivingEntity extends RenderablePhysicalEntity {
     protected int health, maxHealth, damage;
     protected boolean dead;
 
-    private float damageInDelay, lastFootstepTime;
+    protected float damageInDelay, lastFootstepTime;
 
     public LivingEntity() {
         this.hitBox = new BoundingBox();
@@ -31,7 +31,7 @@ public class LivingEntity extends RenderablePhysicalEntity {
     }
 
     public void takeDamage(int damage) {
-        if (damageInDelay > 0f) return;
+        if (damageInDelay > 0f || dead) return;
 
         health -= damage;
         if (health <= 0) {
@@ -50,6 +50,22 @@ public class LivingEntity extends RenderablePhysicalEntity {
                 }
                 decal.setColor(Color.WHITE);
             }).start();
+        }
+
+        if (VoxelphaliaGame.getInstance().getScreen() instanceof GameScreen g) {
+            Vector3 playerPosition = g.getPlayerEntity().getPosition();
+
+            float volume = playerPosition.dst(position);
+            if (volume >= 10f) return;
+            volume /= 10f;
+
+            IdentifiedSound sound = VoxelphaliaGame.getInstance().getSoundRegistry()
+                .getEntry(dead ? "voxelphalia:sfx.hit.disassemble" : "voxelphalia:sfx.hit.stab");
+
+            sound.getSound().play(MathUtils.clamp(VoxelphaliaGame.getInstance().getPreferences()
+                    .getFloat("sfx", 1f) - volume,
+                0f, 1f
+            ));
         }
     }
 
