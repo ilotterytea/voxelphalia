@@ -77,10 +77,11 @@ public class SmeltingWindow extends CraftingWindow {
     protected void showRecipe(Recipe recipe) {
         super.showRecipe(recipe);
 
-        boolean craftable = furnace == null || !furnace.isVoxelSmelting();
+        boolean furnaceSmelting = furnace == null || !furnace.isVoxelSmelting();
+        boolean craftable = !craftButton.isDisabled() && furnaceSmelting;
 
         for (IconButton recipeButton : recipeButtons) {
-            recipeButton.setDisabled(!craftable);
+            recipeButton.setDisabled(!furnaceSmelting);
         }
 
         craftButton.setDisabled(!craftable);
