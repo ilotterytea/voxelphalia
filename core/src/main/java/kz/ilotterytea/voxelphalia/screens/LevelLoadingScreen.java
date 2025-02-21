@@ -197,7 +197,7 @@ public class LevelLoadingScreen implements Screen {
                         }
                     }
                     // placing trees
-                    case 3 -> TerrainGenerator.generateTrees(level, 50, level.getSeed() + 19);
+                    case 3 -> TerrainGenerator.generateTrees(level, 1000, level.getSeed() + 19);
                     // spawning mobs
                     case 4 -> {
                         MobType[] mobs = {
