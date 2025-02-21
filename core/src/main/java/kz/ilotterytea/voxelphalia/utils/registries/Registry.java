@@ -46,5 +46,18 @@ public abstract class Registry<T extends Identifiable> {
         return null;
     }
 
+    public boolean containsEntry(String id) {
+        return containsEntry(new Identifier(id));
+    }
+
+    public boolean containsEntry(Identifier id) {
+        for (T entry : entries) {
+            if (entry.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public abstract void load();
 }
