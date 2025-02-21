@@ -147,7 +147,7 @@ public class Inventory implements Cloneable {
 
             if (slot.id == null && index == -1) {
                 index = i;
-            } else if (slot.id == voxel && (int) slot.quantity + quantity <= stackSize) {
+            } else if (slot.id != null && slot.id.equals(voxel) && (int) slot.quantity + quantity <= stackSize) {
                 return i;
             }
         }
