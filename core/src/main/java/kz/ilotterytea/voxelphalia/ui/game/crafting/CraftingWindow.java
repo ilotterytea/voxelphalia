@@ -1,7 +1,9 @@
 package kz.ilotterytea.voxelphalia.ui.game.crafting;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -215,24 +217,47 @@ public class CraftingWindow extends Window {
         if (recipe == null || recipe.level() != level) return;
         this.selectedRecipe = recipe;
 
-        TextureAtlas atlas = VoxelphaliaGame.getInstance().getAssetManager().get("textures/gui/gui_voxels.atlas");
+        VoxelphaliaGame game = VoxelphaliaGame.getInstance();
+
+        TextureAtlas atlas = game.getAssetManager().get("textures/gui/gui_voxels.atlas");
+        Texture items = game.getAssetManager().get("textures/items.png", Texture.class);
 
         // recipe name and icon
-        TextureAtlas.AtlasRegion region = atlas.findRegion(recipe.resultId().getName());
+        TextureRegion region;
+
+        if (game.getItemRegistry().containsEntry(recipe.resultId())) {
+            region = game.getItemRegistry().getEntry(recipe.resultId())
+                .getMaterial()
+                .getTextureRegion(items);
+        } else {
+            region = atlas.findRegion(recipe.resultId().getName());
+        }
+
         if (region == null) {
             region = atlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
         }
+
         productImage.setDrawable(new TextureRegionDrawable(region));
+
+        String recipeName = recipe.resultId().getName().replace('_', '\0');
+        LineId name, desc;
+
+        try {
+            name = LineId.parse("voxel." + recipeName + ".name");
+            desc = LineId.parse("voxel." + recipeName + ".description");
+        } catch (Exception e) {
+            name = LineId.parse("item." + recipeName + ".name");
+            desc = LineId.parse("item." + recipeName + ".description");
+        }
+
         productLabel.setText(
             VoxelphaliaGame.getInstance()
                 .getLocalizationManager()
-                .getLine(LineId.parse("voxel." + recipe.resultId().getName().replace('_', '\0') + ".name"))
-        );
+                .getLine(name));
         productDescription.setText(
             VoxelphaliaGame.getInstance()
                 .getLocalizationManager()
-                .getLine(LineId.parse("voxel." + recipe.resultId().getName().replace('_', '\0') + ".description"))
-        );
+                .getLine(desc));
 
         productIngredientBody.clear();
         productIngredientBody.layout();
@@ -249,7 +274,19 @@ public class CraftingWindow extends Window {
             ingredient.align(Align.center);
             ingredient.pad(8f);
 
-            Image icon = new Image(atlas.findRegion(entry.getKey().getName()));
+            if (game.getItemRegistry().containsEntry(entry.getKey())) {
+                region = game.getItemRegistry().getEntry(entry.getKey())
+                    .getMaterial()
+                    .getTextureRegion(items);
+            } else {
+                region = atlas.findRegion(entry.getKey().getName());
+            }
+
+            if (region == null) {
+                region = atlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
+            }
+
+            Image icon = new Image(region);
             ingredient.add(icon).size(32f, 32f).row();
 
             Label amount = new Label(localizationManager.getLine(LineId.CRAFTING_INGREDIENTS, totalAmount, entry.getValue()), skin);
@@ -265,13 +302,24 @@ public class CraftingWindow extends Window {
                 icon.setColor(Color.WHITE);
             }
 
+            String ingredientName = entry.getKey().getName().replace('_', '\0');
+            LineId ingredientNameId, ingredientDescId;
+
+            try {
+                ingredientNameId = LineId.parse("voxel." + ingredientName + ".name");
+                ingredientDescId = LineId.parse("voxel." + ingredientName + ".description");
+            } catch (Exception e) {
+                ingredientNameId = LineId.parse("item." + ingredientName + ".name");
+                ingredientDescId = LineId.parse("item." + ingredientName + ".description");
+            }
+
             ingredient.addListener(new TextTooltip(
                 VoxelphaliaGame.getInstance()
                     .getLocalizationManager()
-                    .getLine(LineId.parse("voxel." + entry.getKey().getName().replace('_', '\0') + ".name")) + ".\n" +
+                    .getLine(ingredientNameId) + ".\n" +
                     VoxelphaliaGame.getInstance()
                         .getLocalizationManager()
-                        .getLine(LineId.parse("voxel." + entry.getKey().getName().replace('_', '\0') + ".description"))
+                        .getLine(ingredientDescId)
                 , skin));
 
             productIngredientBody.add(ingredient).grow();
