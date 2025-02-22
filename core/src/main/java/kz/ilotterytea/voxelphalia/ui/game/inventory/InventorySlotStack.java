@@ -1,7 +1,9 @@
 package kz.ilotterytea.voxelphalia.ui.game.inventory;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -127,11 +129,21 @@ public class InventorySlotStack extends Stack {
             amountLabel.setText(String.valueOf(slot.quantity));
 
             if (slotId != slot.id && slot.id != null) {
+                VoxelphaliaGame game = VoxelphaliaGame.getInstance();
+
                 TextureAtlas atlas = VoxelphaliaGame.getInstance()
                     .getAssetManager()
                     .get("textures/gui/gui_voxels.atlas");
+                TextureRegion region;
 
-                TextureAtlas.AtlasRegion region = atlas.findRegion(slot.id.getName());
+                if (game.getItemRegistry().containsEntry(slot.id)) {
+                    region = game.getItemRegistry().getEntry(slot.id)
+                        .getMaterial()
+                        .getTextureRegion(game.getAssetManager().get("textures/items.png", Texture.class));
+                } else {
+                    region = atlas.findRegion(slot.id.getName());
+                }
+
                 if (region == null) {
                     region = atlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
                 }

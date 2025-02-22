@@ -6,10 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.screens.SplashScreen;
-import kz.ilotterytea.voxelphalia.utils.registries.IdentifierRegistry;
-import kz.ilotterytea.voxelphalia.utils.registries.RecipeRegistry;
-import kz.ilotterytea.voxelphalia.utils.registries.SoundRegistry;
-import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
+import kz.ilotterytea.voxelphalia.utils.registries.*;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
@@ -24,6 +21,7 @@ public class VoxelphaliaGame extends Game {
     private RecipeRegistry recipeRegistry;
     private VoxelRegistry voxelRegistry;
     private SoundRegistry soundRegistry;
+    private ItemRegistry itemRegistry;
 
     private LocalizationManager localizationManager;
 
@@ -32,6 +30,7 @@ public class VoxelphaliaGame extends Game {
         assetManager = new AssetManager();
         preferences = Gdx.app.getPreferences(VoxelphaliaConstants.Metadata.APP_PACKAGE);
         identifierRegistry = new IdentifierRegistry();
+        itemRegistry = new ItemRegistry();
         voxelRegistry = new VoxelRegistry();
         recipeRegistry = new RecipeRegistry();
         soundRegistry = new SoundRegistry();
@@ -79,6 +78,10 @@ public class VoxelphaliaGame extends Game {
 
     public SoundRegistry getSoundRegistry() {
         return soundRegistry;
+    }
+
+    public ItemRegistry getItemRegistry() {
+        return itemRegistry;
     }
 
     public LocalizationManager getLocalizationManager() {
