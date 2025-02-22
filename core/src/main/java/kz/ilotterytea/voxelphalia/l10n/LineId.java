@@ -68,7 +68,10 @@ public enum LineId {
     VOXEL_FURNACE_NAME,
     VOXEL_FURNACE_DESCRIPTION,
     VOXEL_CHEST_NAME,
-    VOXEL_CHEST_DESCRIPTION;
+    VOXEL_CHEST_DESCRIPTION,
+
+    ITEM_COAL_NAME,
+    ITEM_COAL_DESCRIPTION;
 
     public static LineId parse(String value) {
         return valueOf(value.toUpperCase().replace('.', '_'));
