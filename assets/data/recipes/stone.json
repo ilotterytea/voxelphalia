@@ -1,6 +1,7 @@
 {
   "ingredientIds": {
-    "voxelphalia:cobblestone": 1
+    "voxelphalia:cobblestone": 1,
+    "voxelphalia:coal": 1
   },
   "resultAmount": 1,
   "craftingTime": 2.0,
