@@ -92,6 +92,11 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 case LivingEntity living -> {
                     if (living.isDead()) removeEntities.add(living);
                 }
+                case BulletEntity bullet -> {
+                    if (bullet.isHit()) {
+                        removeEntities.add(bullet);
+                    }
+                }
                 default -> {
                 }
             }

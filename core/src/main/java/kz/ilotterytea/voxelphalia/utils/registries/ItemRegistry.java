@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.items.Item;
 import kz.ilotterytea.voxelphalia.items.ItemMaterial;
+import kz.ilotterytea.voxelphalia.items.Weapon;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 
 public class ItemRegistry extends Registry<Item> {
@@ -37,7 +38,25 @@ public class ItemRegistry extends Registry<Item> {
                 }
             }
 
-            addEntry(new Item(id, material));
+            Item item;
+
+            if (json.has("behaviour")) {
+                JsonValue behJson = json.get("behaviour");
+                switch (behJson.getString("name").toLowerCase()) {
+                    case "weapon" -> {
+                        float recoilTime = behJson.getFloat("recoilTime");
+                        float energyCost = behJson.getFloat("energyCost");
+                        int damage = behJson.getInt("damage");
+                        boolean spawnBullet = behJson.getBoolean("spawnBullet");
+                        item = new Weapon(id, material, recoilTime, energyCost, damage, spawnBullet);
+                    }
+                    default -> item = new Item(id, material);
+                }
+            } else {
+                item = new Item(id, material);
+            }
+
+            addEntry(item);
         }
 
         Gdx.app.log("ItemRegistry", "Loaded " + entries.size() + " items!");

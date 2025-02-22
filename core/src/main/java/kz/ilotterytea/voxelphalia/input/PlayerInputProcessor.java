@@ -7,9 +7,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
+import kz.ilotterytea.voxelphalia.entities.BulletEntity;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
+import kz.ilotterytea.voxelphalia.items.Weapon;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.voxels.DestroyableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
@@ -240,6 +242,8 @@ public class PlayerInputProcessor implements InputProcessor {
     }
 
     private boolean hitEntity() {
+        if (shotWithWeapon()) return true;
+
         Vector3 pos = new Vector3(playerEntity.getPosition());
         Vector3 dir = new Vector3(playerEntity.getDirection());
         boolean collided = false;
@@ -255,8 +259,39 @@ public class PlayerInputProcessor implements InputProcessor {
 
         if (collided) {
             MobEntity entity = level.getEntityByHitBox((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z), MobEntity.class);
-            entity.takeDamage(playerEntity.getDamage());
+
+            int damage = playerEntity.getDamage();
+            VoxelphaliaGame game = VoxelphaliaGame.getInstance();
+            Inventory.Slot currentSlot = playerEntity.getInventory().getCurrentSlot();
+            if (currentSlot != null && game.getItemRegistry().containsEntry(currentSlot.id)) {
+                if (game.getItemRegistry().getEntry(currentSlot.id) instanceof Weapon w) {
+                    damage = w.getDamage();
+                }
+            }
+
+            entity.takeDamage(damage);
             return true;
+        }
+
+        return false;
+    }
+
+    private boolean shotWithWeapon() {
+        VoxelphaliaGame game = VoxelphaliaGame.getInstance();
+        Inventory.Slot currentSlot = playerEntity.getInventory().getCurrentSlot();
+
+        if (currentSlot != null && game.getItemRegistry().containsEntry(currentSlot.id)) {
+            if (game.getItemRegistry().getEntry(currentSlot.id) instanceof Weapon w) {
+                if (w.isSpawnBullet()) {
+                    Vector3 p = playerEntity.getPosition().cpy();
+                    p.add(0f, playerEntity.getHeight(), 0f);
+                    p.add(playerEntity.getDirection().cpy().scl(1.5f));
+
+                    BulletEntity bullet = new BulletEntity(w, p, playerEntity.getDirection().cpy());
+                    level.addEntity(bullet);
+                    return true;
+                }
+            }
         }
 
         return false;
