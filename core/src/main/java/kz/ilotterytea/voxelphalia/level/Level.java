@@ -11,10 +11,12 @@ import kz.ilotterytea.voxelphalia.utils.Tickable;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
+import java.util.ArrayList;
+
 public class Level implements Tickable {
     protected final Array<Chunk> chunks;
     protected final int width, height, depth;
-    protected final Array<Entity> entities;
+    protected final ArrayList<Entity> entities;
     protected final int seed;
 
     public Level(int width, int height, int depth, int seed) {
@@ -30,7 +32,7 @@ public class Level implements Tickable {
             this.chunks.add(new Chunk(16, 16, 16));
         }
 
-        this.entities = new Array<>();
+        this.entities = new ArrayList<>();
     }
 
     public Identifier getVoxel(int x, int y, int z) {
@@ -225,7 +227,7 @@ public class Level implements Tickable {
     }
 
     public void removeEntity(Entity entity) {
-        this.entities.removeValue(entity, false);
+        this.entities.remove(entity);
     }
 
     public boolean hasEntity(int x, int y, int z) {
@@ -241,7 +243,7 @@ public class Level implements Tickable {
     }
 
     public int getEntityCount() {
-        return this.entities.size;
+        return this.entities.size();
     }
 
     public int getSeed() {
