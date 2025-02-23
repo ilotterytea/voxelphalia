@@ -16,7 +16,7 @@ public class PlayerEntity extends LivingEntity {
     private final Camera camera;
     private final Vector3 spawnPoint;
 
-    private float respawnTime, bobbingY, time;
+    private float respawnTime, bobbing, bobbingY, time;
     private boolean focused;
 
     public PlayerEntity(Vector3 spawnPoint, Camera camera) {
@@ -39,7 +39,7 @@ public class PlayerEntity extends LivingEntity {
         if (dead) return;
         super.setPosition(x, y, z);
 
-        float bobbing = MathUtils.sin(time * velocity.x * 2f) * bobbingY * 0.1f;
+        bobbing = MathUtils.sin(time * velocity.x * 2f) * bobbingY * 0.1f;
 
         camera.position.set(x, y + height + bobbing, z);
         camera.update();
@@ -152,5 +152,9 @@ public class PlayerEntity extends LivingEntity {
 
     public boolean isFocused() {
         return focused;
+    }
+
+    public float getBobbing() {
+        return bobbing;
     }
 }

@@ -35,6 +35,7 @@ import kz.ilotterytea.voxelphalia.level.RenderableLevel;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 import kz.ilotterytea.voxelphalia.ui.game.PauseScreenStack;
+import kz.ilotterytea.voxelphalia.ui.game.PlayerHandsTable;
 import kz.ilotterytea.voxelphalia.ui.game.RespawnScreenStack;
 import kz.ilotterytea.voxelphalia.ui.game.crafting.HandWorkbenchWindow;
 import kz.ilotterytea.voxelphalia.ui.game.crafting.SmeltingWindow;
@@ -179,11 +180,12 @@ public class GameScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
 
-        // Crosshair
         Container<Image> crosshairContainer = new Container<>(new Image(game.getAssetManager().get("textures/gui/crosshair.png", Texture.class)));
         crosshairContainer.setFillParent(true);
         crosshairContainer.align(Align.center);
         stage.addActor(crosshairContainer);
+
+        stage.addActor(new PlayerHandsTable(playerEntity));
 
         DragAndDrop dragAndDrop = new DragAndDrop();
 
