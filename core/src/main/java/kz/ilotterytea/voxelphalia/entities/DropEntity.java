@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.math.MathUtils;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.items.Item;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
@@ -18,7 +19,7 @@ public class DropEntity extends RenderablePhysicalEntity {
     public DropEntity(Identifier identifier, byte amount) {
         super();
         this.identifier = identifier;
-        this.amount = amount;
+        this.amount = amount > 0 ? (byte) MathUtils.random(1, amount) : amount;
 
         setWeight(0.5f);
         setSize(0.8f, 0.8f, 0.8f);
