@@ -1,0 +1,9 @@
+{
+  "ingredientIds": {
+    "voxelphalia:gold_mineral": 2,
+    "voxelphalia:coal": 1
+  },
+  "resultAmount": 1,
+  "craftingTime": 8.0,
+  "level": 2
+}

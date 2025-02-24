@@ -71,7 +71,15 @@ public enum LineId {
     VOXEL_CHEST_DESCRIPTION,
 
     ITEM_COAL_NAME,
-    ITEM_COAL_DESCRIPTION;
+    ITEM_COAL_DESCRIPTION,
+    ITEM_IRONBAR_NAME,
+    ITEM_IRONBAR_DESCRIPTION,
+    ITEM_GOLDBAR_NAME,
+    ITEM_GOLDBAR_DESCRIPTION,
+    ITEM_RUBY_NAME,
+    ITEM_RUBY_DESCRIPTION,
+    ITEM_GEMSTONE_NAME,
+    ITEM_GEMSTONE_DESCRIPTION;
 
     public static LineId parse(String value) {
         return valueOf(value.toUpperCase().replace('.', '_'));
