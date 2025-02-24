@@ -1,32 +1,48 @@
 package kz.ilotterytea.voxelphalia.entities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.items.Item;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
-import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class DropEntity extends RenderablePhysicalEntity {
-    private final Identifier voxel;
+    private final Identifier identifier;
     private final float maxLifeTime;
     private float lifeTime;
+    private byte amount;
     private boolean dead;
 
-    public DropEntity(Voxel voxel) {
+    public DropEntity(Identifier identifier, byte amount) {
         super();
-        this.voxel = voxel.getId();
+        this.identifier = identifier;
+        this.amount = amount;
 
         setWeight(0.5f);
         setSize(0.8f, 0.8f, 0.8f);
         maxLifeTime = 60f * 7f;
 
-        TextureAtlas atlas = VoxelphaliaGame.getInstance()
+        Texture itemTexture = VoxelphaliaGame.getInstance()
+            .getAssetManager()
+            .get("textures/items.png");
+
+        TextureAtlas voxelAtlas = VoxelphaliaGame.getInstance()
             .getAssetManager()
             .get("textures/gui/gui_voxels.atlas");
 
-        TextureAtlas.AtlasRegion region = atlas.findRegion(voxel.getId().getName());
+        TextureRegion region;
+        Item item;
+
+        if ((item = VoxelphaliaGame.getInstance().getItemRegistry().getEntry(identifier)) != null) {
+            region = item.getMaterial().getTextureRegion(itemTexture);
+        } else {
+            region = voxelAtlas.findRegion(identifier.getName());
+        }
+
         if (region == null) {
-            region = atlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
+            region = voxelAtlas.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
         }
 
         setDecal(region, 0.5f, 0.5f);
@@ -48,7 +64,7 @@ public class DropEntity extends RenderablePhysicalEntity {
         super.tick(delta, playerEntity);
 
         if (playerEntity.getBox().intersects(box)) {
-            dead = playerEntity.getInventory().add(voxel, (byte) 1) == 0;
+            dead = playerEntity.getInventory().add(identifier, amount) == 0;
         }
     }
 

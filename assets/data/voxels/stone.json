@@ -6,5 +6,5 @@
     ],
     "type": "stone"
   },
-  "behaviour": "stone"
+  "dropId": "voxelphalia:cobblestone"
 }
