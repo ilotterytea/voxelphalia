@@ -176,5 +176,46 @@
       background: window-foreground,
       label: default
     }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+    default-horizontal: {
+      background: window-foreground,
+      knob: button-up,
+      knobBefore: button-down
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+    default: {
+      font: default,
+      fontColorSelected: { hex: "#ecb48fff" },
+      fontColorUnselected: { hex: "#975e3fff" },
+      selection: button-disabled,
+      down: button-down,
+      over: button-over,
+      background: window-foreground
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
+    default: {
+      font: default,
+      background: button-up,
+      backgroundOver: button-over,
+      backgroundOpen: button-down,
+      backgroundDisabled: button-disabled,
+      scrollStyle: default,
+      listStyle: default
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+    default: {
+      font: default,
+      fontColor: { hex: "#ecb48fff" },
+      checkboxOn: checkbox-on,
+      checkboxOff: button-down,
+      checkboxOnOver: checkbox-on,
+      checkboxOver: button-over,
+      checkboxOnDisabled: checkbox-on,
+      checkboxOffDisabled: button-disabled
+    }
   }
 }
