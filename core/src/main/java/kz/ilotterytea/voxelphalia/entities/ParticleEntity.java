@@ -9,10 +9,10 @@ public class ParticleEntity extends RenderablePhysicalEntity {
     private final float maxLifeTime;
     private float lifeTime;
 
-    public ParticleEntity(TextureRegion region) {
+    public ParticleEntity(TextureRegion region, float speed) {
         setDecal(region, 0.1f, 0.1f);
         setWeight(1f);
-        setSpeed(10f);
+        setSpeed(speed);
         setSize(0.1f, 0.2f, 0.1f);
 
         this.maxLifeTime = MathUtils.random(5f, 10f);
