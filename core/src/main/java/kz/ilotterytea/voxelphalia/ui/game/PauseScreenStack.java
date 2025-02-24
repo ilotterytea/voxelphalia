@@ -47,6 +47,7 @@ public class PauseScreenStack extends Stack {
         windowLabel.setAlignment(Align.center);
         window.add(windowLabel).growX().padBottom(60f).padTop(30f).row();
 
+        // -- CONTINUE BUTTON --
         TextButton continueButton = new TextButton(localizationManager.getLine(LineId.PAUSE_RETURN), skin);
         continueButton.addListener(new ClickListener() {
             @Override
@@ -58,6 +59,26 @@ public class PauseScreenStack extends Stack {
         });
         window.add(continueButton).growX().padBottom(30f).row();
 
+        // -- SETTINGS BUTTON --
+        Table settingsTable = new Table();
+        settingsTable.setFillParent(true);
+        add(settingsTable);
+
+        SettingsWindow settingsWindow = new SettingsWindow(skin);
+        settingsWindow.setVisible(false);
+        settingsTable.add(settingsWindow).size(350f, 400f);
+
+        TextButton settingsButton = new TextButton(localizationManager.getLine(LineId.PAUSE_SETTINGS), skin);
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                settingsWindow.setVisible(!settingsWindow.isVisible());
+            }
+        });
+        window.add(settingsButton).growX().padBottom(30f).row();
+
+        // -- QUIT BUTTON --
         TextButton quitButton = new TextButton(localizationManager.getLine(LineId.PAUSE_QUIT), skin);
         quitButton.addListener(new ClickListener() {
             @Override
