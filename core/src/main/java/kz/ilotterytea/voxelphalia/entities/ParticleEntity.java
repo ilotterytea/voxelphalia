@@ -9,24 +9,24 @@ public class ParticleEntity extends RenderablePhysicalEntity {
     private final float maxLifeTime;
     private float lifeTime;
 
-    public ParticleEntity(TextureRegion region, float speed) {
+    public ParticleEntity(TextureRegion region, float xSpeed, float ySpeed) {
         setDecal(region, 0.1f, 0.1f);
         setWeight(1f);
-        setSpeed(speed);
+        setSpeed(xSpeed);
         setSize(0.1f, 0.2f, 0.1f);
 
         this.maxLifeTime = MathUtils.random(5f, 10f);
 
         setDirection(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f));
 
-        velocity.y = MathUtils.random(2f, 4f);
+        velocity.y = MathUtils.random(ySpeed, (float) Math.pow(ySpeed, 2f));
         onGround = false;
     }
 
     @Override
     public void tick(float delta, Level level) {
         super.tick(delta, level);
-        velocity.x = Math.max(velocity.x - 0.01f, 0f);
+        velocity.x = Math.max(velocity.x - 0.05f, 0f);
         moveForward(velocity.x, delta, level);
 
         lifeTime += delta;

@@ -77,7 +77,7 @@ public class Voxel implements Cloneable, Tickable, DestroyableVoxel, Identifiabl
             ParticleEntity p = new ParticleEntity(voxel.getMaterial().getFrontTextureRegion(
                 VoxelphaliaGame.getInstance()
                     .getAssetManager()
-                    .get("textures/terrain.png")), 1f);
+                    .get("textures/terrain.png")), 4f, 1.5f);
             p.setPosition(position.x + 0.5f, position.y + 0.5f, position.z + 0.5f);
             level.addEntity(p);
         }

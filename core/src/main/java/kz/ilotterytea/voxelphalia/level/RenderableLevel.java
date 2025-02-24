@@ -111,7 +111,7 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 Vector3 pos = e.getPosition();
 
                 for (int i = 0; i < 1000; i++) {
-                    ParticleEntity p = new ParticleEntity(x.getTextureRegion(), 10f);
+                    ParticleEntity p = new ParticleEntity(x.getTextureRegion(), 10f, 2f);
                     p.setPosition(pos.x, pos.y, pos.z);
                     level.addEntity(p);
                 }
