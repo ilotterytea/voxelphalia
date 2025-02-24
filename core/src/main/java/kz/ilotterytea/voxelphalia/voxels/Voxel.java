@@ -1,7 +1,9 @@
 package kz.ilotterytea.voxelphalia.voxels;
 
 import com.badlogic.gdx.math.Vector3;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.DropEntity;
+import kz.ilotterytea.voxelphalia.entities.ParticleEntity;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.utils.Identifiable;
@@ -70,5 +72,14 @@ public class Voxel implements Cloneable, Tickable, DestroyableVoxel, Identifiabl
 
         drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
         level.addEntity(drop);
+
+        for (int i = 0; i < 100; i++) {
+            ParticleEntity p = new ParticleEntity(voxel.getMaterial().getFrontTextureRegion(
+                VoxelphaliaGame.getInstance()
+                    .getAssetManager()
+                    .get("textures/terrain.png")), 1f);
+            p.setPosition(position.x + 0.5f, position.y + 0.5f, position.z + 0.5f);
+            level.addEntity(p);
+        }
     }
 }
