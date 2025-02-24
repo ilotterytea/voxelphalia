@@ -15,6 +15,10 @@ public class Identifier implements Identifiable {
     }
 
     public static Identifier of(String value) {
+        if (!value.contains(":")) {
+            return new Identifier(value);
+        }
+
         try {
             String[] parts = value.split(":");
             String namespace = parts[0];
