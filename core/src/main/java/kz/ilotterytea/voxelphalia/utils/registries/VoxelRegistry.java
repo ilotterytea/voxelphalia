@@ -12,7 +12,6 @@ import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterialType;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.ChestVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
-import kz.ilotterytea.voxelphalia.voxels.specialvoxels.StoneVoxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.WorkbenchVoxel;
 
 public class VoxelRegistry extends Registry<Voxel> {
@@ -106,9 +105,22 @@ public class VoxelRegistry extends Registry<Voxel> {
                 case "workbench" -> new WorkbenchVoxel(id, material);
                 case "furnace" -> new FurnaceVoxel(id, material);
                 case "chest" -> new ChestVoxel(id, material);
-                case "stone" -> new StoneVoxel(id, material);
                 case null, default -> new Voxel(id, material);
             };
+
+            if (json.has("dropId")) {
+                Identifier dropId = VoxelphaliaGame.getInstance()
+                    .getIdentifierRegistry()
+                    .getEntry(Identifier.of(json.getString("dropId")));
+
+                if (dropId != null) {
+                    voxel.setDropId(dropId);
+
+                    if (json.has("dropAmount")) {
+                        voxel.setDropAmount(json.getByte("dropAmount"));
+                    }
+                }
+            }
 
             addEntry(voxel);
         }

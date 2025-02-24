@@ -37,14 +37,9 @@ public class ChestVoxel extends Voxel implements InteractableVoxel {
 
         for (Inventory.Slot slot : chest.inventory.getSlots()) {
             if (slot.id == null) continue;
-            for (int i = 0; i < slot.quantity; i++) {
-                DropEntity drop = new DropEntity(VoxelphaliaGame.getInstance()
-                    .getVoxelRegistry()
-                    .getEntry(slot.id)
-                );
-                drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
-                level.addEntity(drop);
-            }
+            DropEntity drop = new DropEntity(slot.id, slot.quantity);
+            drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
+            level.addEntity(drop);
         }
     }
 

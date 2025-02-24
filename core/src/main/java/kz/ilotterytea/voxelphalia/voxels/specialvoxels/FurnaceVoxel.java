@@ -46,13 +46,9 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
             .getEntry(furnaceVoxel.voxel.getId());
 
         for (Map.Entry<Identifier, Byte> entry : recipe.ingredients().entrySet()) {
-            for (int j = 0; j < entry.getValue(); j++) {
-                DropEntity drop = new DropEntity(VoxelphaliaGame.getInstance()
-                    .getVoxelRegistry()
-                    .getEntry(entry.getKey()));
-                drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
-                level.addEntity(drop);
-            }
+            DropEntity drop = new DropEntity(entry.getKey(), entry.getValue());
+            drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
+            level.addEntity(drop);
         }
     }
 
