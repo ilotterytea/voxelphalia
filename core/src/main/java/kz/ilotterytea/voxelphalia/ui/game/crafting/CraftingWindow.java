@@ -113,17 +113,39 @@ public class CraftingWindow extends Window {
             .filter((x) -> x.level() == level)
             .toList();
         recipeButtons = new IconButton[recipes.size()];
+        Texture items = game.getAssetManager().get("textures/items.png", Texture.class);
+
 
         for (int i = 0; i < recipes.size(); i++) {
             Recipe recipe = recipes.get(i);
-            TextureAtlas.AtlasRegion region = voxels.findRegion(recipe.resultId().getName());
+
+            TextureRegion region;
+
+            if (game.getItemRegistry().containsEntry(recipe.resultId())) {
+                region = game.getItemRegistry().getEntry(recipe.resultId())
+                    .getMaterial()
+                    .getTextureRegion(items);
+            } else {
+                region = voxels.findRegion(recipe.resultId().getName());
+            }
+
             if (region == null) {
-                region = voxels.findRegion(game.getIdentifierRegistry().getEntry("missing_voxel").getName());
+                region = voxels.findRegion(VoxelphaliaGame.getInstance().getIdentifierRegistry().getEntry("missing_voxel").getName());
+            }
+
+            LineId lineId;
+
+            String name = recipe.resultId().getName().replace("_", "");
+
+            if (game.getItemRegistry().containsEntry(recipe.resultId())) {
+                lineId = LineId.parse("item." + name + ".name");
+            } else {
+                lineId = LineId.parse("voxel." + name + ".name");
             }
 
             String localizedLine = game
                 .getLocalizationManager()
-                .getLine(LineId.parse("voxel." + recipe.resultId().getName().replace('_', '\0') + ".name"));
+                .getLine(lineId);
 
             IconButton btn = new IconButton(
                 localizedLine,
@@ -239,7 +261,7 @@ public class CraftingWindow extends Window {
 
         productImage.setDrawable(new TextureRegionDrawable(region));
 
-        String recipeName = recipe.resultId().getName().replace('_', '\0');
+        String recipeName = recipe.resultId().getName().replace("_", "");
         LineId name, desc;
 
         try {
@@ -302,7 +324,7 @@ public class CraftingWindow extends Window {
                 icon.setColor(Color.WHITE);
             }
 
-            String ingredientName = entry.getKey().getName().replace('_', '\0');
+            String ingredientName = entry.getKey().getName().replace("_", "");
             LineId ingredientNameId, ingredientDescId;
 
             try {

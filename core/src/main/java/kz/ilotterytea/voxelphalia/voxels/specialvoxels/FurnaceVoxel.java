@@ -15,7 +15,7 @@ import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 import java.util.Map;
 
 public class FurnaceVoxel extends Voxel implements InteractableVoxel {
-    private Voxel voxel;
+    private Identifier smeltId;
     private float smeltTime, maxSmeltTime;
     private boolean finished;
 
@@ -39,11 +39,11 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
         super.onDestroy(voxel, entity, level, position);
 
         FurnaceVoxel furnaceVoxel = (FurnaceVoxel) voxel;
-        if (furnaceVoxel.voxel == null) return;
+        if (furnaceVoxel.smeltId == null) return;
 
         Recipe recipe = VoxelphaliaGame.getInstance()
             .getRecipeRegistry()
-            .getEntry(furnaceVoxel.voxel.getId());
+            .getEntry(furnaceVoxel.smeltId.getId());
 
         for (Map.Entry<Identifier, Byte> entry : recipe.ingredients().entrySet()) {
             DropEntity drop = new DropEntity(entry.getKey(), entry.getValue());
@@ -55,7 +55,7 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
     @Override
     public void tick(float delta) {
         super.tick(delta);
-        if (voxel == null) return;
+        if (smeltId == null) return;
 
         smeltTime += delta;
 
@@ -64,16 +64,16 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
         }
     }
 
-    public void setVoxelToSmelt(Voxel voxel) {
-        this.voxel = voxel;
+    public void setVoxelToSmelt(Identifier smeltId) {
+        this.smeltId = smeltId;
         this.smeltTime = 0f;
 
         this.maxSmeltTime = 0f;
 
-        if (voxel != null) {
+        if (smeltId != null) {
             Recipe recipe = VoxelphaliaGame.getInstance()
                 .getRecipeRegistry()
-                .getEntry(voxel.getId());
+                .getEntry(smeltId.getId());
 
             this.maxSmeltTime = recipe.craftingTime();
         }
@@ -81,8 +81,8 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
         this.finished = false;
     }
 
-    public Voxel getVoxel() {
-        return voxel;
+    public Identifier getSmeltId() {
+        return smeltId;
     }
 
     public float getSmeltTime() {
@@ -97,8 +97,8 @@ public class FurnaceVoxel extends Voxel implements InteractableVoxel {
         return finished;
     }
 
-    public boolean isVoxelSmelting() {
-        return this.voxel != null && !finished;
+    public boolean isSmelting() {
+        return this.smeltId != null && !finished;
     }
 
     @Override

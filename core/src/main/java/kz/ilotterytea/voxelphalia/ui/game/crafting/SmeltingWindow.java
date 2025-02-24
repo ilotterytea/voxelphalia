@@ -36,7 +36,7 @@ public class SmeltingWindow extends CraftingWindow {
                     inventory.remove(entry.getKey(), entry.getValue());
                 }
 
-                furnace.setVoxelToSmelt(VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry(selectedRecipe.resultId()));
+                furnace.setVoxelToSmelt(selectedRecipe.resultId());
                 showRecipe(selectedRecipe);
             }
         });
@@ -49,7 +49,7 @@ public class SmeltingWindow extends CraftingWindow {
         LocalizationManager localizationManager = VoxelphaliaGame.getInstance().getLocalizationManager();
 
         if (isVisible()) {
-            if (furnace.getVoxel() != null && selectedRecipe.resultId() == furnace.getVoxel().getId() && furnace.isVoxelSmelting()) {
+            if (furnace.getSmeltId() != null && selectedRecipe.resultId().equals(furnace.getSmeltId()) && furnace.isSmelting()) {
                 craftButton.setText(localizationManager.getLine(LineId.CRAFTING_REMAINING, (int) ((furnace.getMaxSmeltTime() - furnace.getSmeltTime()) * 10f) / 10f));
             } else {
                 craftButton.setText(localizationManager.getLine(LineId.SMELTING_SMELT));
@@ -62,7 +62,7 @@ public class SmeltingWindow extends CraftingWindow {
                     .getRecipeRegistry()
                     .getEntries()
                     .stream()
-                    .filter((x) -> x.resultId() == furnace.getVoxel().getId())
+                    .filter((x) -> x.resultId() == furnace.getSmeltId())
                     .findFirst()
                     .get();
 
@@ -77,7 +77,7 @@ public class SmeltingWindow extends CraftingWindow {
     protected void showRecipe(Recipe recipe) {
         super.showRecipe(recipe);
 
-        boolean furnaceSmelting = furnace == null || !furnace.isVoxelSmelting();
+        boolean furnaceSmelting = furnace == null || !furnace.isSmelting();
         boolean craftable = !craftButton.isDisabled() && furnaceSmelting;
 
         for (IconButton recipeButton : recipeButtons) {
@@ -93,7 +93,7 @@ public class SmeltingWindow extends CraftingWindow {
 
         RecipeRegistry recipeRegistry = VoxelphaliaGame.getInstance().getRecipeRegistry();
 
-        if (furnace != null && furnace.isVoxelSmelting()) {
+        if (furnace != null && furnace.isSmelting()) {
             showRecipe(recipeRegistry.getEntry(furnace.getId()));
         } else {
             showRecipe(recipeRegistry.getEntries().stream().filter((x) -> x.level() == level).findFirst().orElse(null));
