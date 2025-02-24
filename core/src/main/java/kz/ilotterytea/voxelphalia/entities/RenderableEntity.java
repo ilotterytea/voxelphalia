@@ -1,6 +1,7 @@
 package kz.ilotterytea.voxelphalia.entities;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
@@ -49,5 +50,9 @@ public class RenderableEntity extends Entity implements Renderable {
 
     public TextureRegion getTextureRegion() {
         return this.decal.getTextureRegion();
+    }
+
+    public void setColor(Color color) {
+        this.decal.setColor(color);
     }
 }
