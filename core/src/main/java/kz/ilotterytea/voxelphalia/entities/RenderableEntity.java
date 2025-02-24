@@ -46,4 +46,8 @@ public class RenderableEntity extends Entity implements Renderable {
     protected void setDecal(TextureRegion region, float width, float height) {
         this.decal = Decal.newDecal(width, height, region, true);
     }
+
+    public TextureRegion getTextureRegion() {
+        return this.decal.getTextureRegion();
+    }
 }
