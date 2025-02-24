@@ -1,12 +1,17 @@
 package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.*;
 import kz.ilotterytea.voxelphalia.utils.Renderable;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
@@ -111,8 +116,15 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 Vector3 pos = e.getPosition();
 
                 for (int i = 0; i < 1000; i++) {
-                    ParticleEntity p = new ParticleEntity(x.getTextureRegion(), 10f, 2f);
+                    ParticleEntity p = new ParticleEntity(new TextureRegion(
+                        VoxelphaliaGame.getInstance()
+                            .getAssetManager()
+                            .get("textures/entities/particles/pixel.png", Texture.class)),
+                        10f, 2f
+                    );
                     p.setPosition(pos.x, pos.y, pos.z);
+                    float cr = MathUtils.random(-0.5f, 0.5f);
+                    p.setColor(Color.RED.cpy().add(cr, cr, cr, 0f));
                     level.addEntity(p);
                 }
             }
