@@ -22,7 +22,7 @@ public class Localization {
             if (json.has(id.toString())) {
                 value = json.getString(id.toString());
             } else {
-                value = "missingno";
+                value = id.toString();
             }
             this.lines.put(id, value);
         }
