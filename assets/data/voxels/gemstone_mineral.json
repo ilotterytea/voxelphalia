@@ -1,11 +1,11 @@
 {
   "material": {
     "side": [
-      1,
+      0,
       3
     ],
     "type": "stone"
   },
-  "dropId": "voxelphalia:ruby",
-  "dropAmount": 2
+  "dropId": "voxelphalia:gemstone",
+  "dropAmount": 4
 }

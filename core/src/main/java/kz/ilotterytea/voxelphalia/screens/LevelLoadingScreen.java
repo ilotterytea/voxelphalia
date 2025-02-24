@@ -176,7 +176,7 @@ public class LevelLoadingScreen implements Screen {
                             game.getVoxelRegistry().getEntry(new Identifier("coal_mineral")),
                             game.getVoxelRegistry().getEntry(new Identifier("iron_mineral")),
                             game.getVoxelRegistry().getEntry(new Identifier("gold_mineral")),
-                            game.getVoxelRegistry().getEntry(new Identifier("gem_mineral")),
+                            game.getVoxelRegistry().getEntry(new Identifier("gemstone_mineral")),
                             game.getVoxelRegistry().getEntry(new Identifier("ruby_mineral")),
                         };
 
