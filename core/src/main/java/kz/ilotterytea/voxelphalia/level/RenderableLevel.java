@@ -97,6 +97,9 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                         removeEntities.add(bullet);
                     }
                 }
+                case ParticleEntity particle -> {
+                    if (particle.isDead()) removeEntities.add(particle);
+                }
                 default -> {
                 }
             }
@@ -104,6 +107,15 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
 
         for (Entity e : removeEntities) {
             level.removeEntity(e);
+            if (e instanceof LivingEntity x) {
+                Vector3 pos = e.getPosition();
+
+                for (int i = 0; i < 1000; i++) {
+                    ParticleEntity p = new ParticleEntity(x.getTextureRegion());
+                    p.setPosition(pos.x, pos.y, pos.z);
+                    level.addEntity(p);
+                }
+            }
         }
     }
 
