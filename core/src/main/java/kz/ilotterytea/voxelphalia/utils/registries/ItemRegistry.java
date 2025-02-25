@@ -47,8 +47,10 @@ public class ItemRegistry extends Registry<Item> {
                         float recoilTime = behJson.getFloat("recoilTime");
                         float energyCost = behJson.getFloat("energyCost");
                         int damage = behJson.getInt("damage");
+                        int bulletMinAmount = behJson.getInt("bulletMinAmount", 1);
+                        float bulletSpread = behJson.getFloat("bulletSpread", 0f);
                         boolean spawnBullet = behJson.getBoolean("spawnBullet");
-                        item = new Weapon(id, material, recoilTime, energyCost, damage, spawnBullet);
+                        item = new Weapon(id, material, recoilTime, energyCost, damage, bulletMinAmount, bulletSpread, spawnBullet);
                     }
                     default -> item = new Item(id, material);
                 }
