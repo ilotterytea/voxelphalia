@@ -8,7 +8,7 @@
   "behaviour": {
     "name": "weapon",
     "recoilTime": 0.05,
-    "energyCost": 2.0,
+    "energyCost": 5.0,
     "damage": 2,
     "spawnBullet": true,
     "bulletSpread": 0.01
