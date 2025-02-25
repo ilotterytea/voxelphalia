@@ -1,0 +1,16 @@
+{
+  "material": {
+    "region": [
+      14,
+      0
+    ]
+  },
+  "behaviour": {
+    "name": "weapon",
+    "recoilTime": 0.2,
+    "energyCost": 1.5,
+    "damage": 8,
+    "spawnBullet": true,
+    "bulletSpread": 0.01
+  }
+}

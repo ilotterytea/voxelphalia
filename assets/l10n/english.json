@@ -97,5 +97,11 @@
   "item.ruby.name": "Ruby",
   "item.ruby.description": "A precious red stone.",
   "item.gemstone.name": "Gemstone",
-  "item.gemstone.description": "A precious stone. Can be found in the depths."
+  "item.gemstone.description": "A precious stone. Can be found in the depths.",
+  "item.pistol.name": "Pistol",
+  "item.pistol.description": "A firearm. Used for defense against hostile mobs.",
+  "item.shotgun.name": "Shotgun",
+  "item.shotgun.description": "A firearm. Slow, but spreading. Used for defense against hostile mobs.",
+  "item.smg.name": "SMG",
+  "item.smg.description": "A firearm. Very fast. Used for defense against hostile mobs."
 }

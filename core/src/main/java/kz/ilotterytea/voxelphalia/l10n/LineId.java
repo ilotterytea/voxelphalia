@@ -108,7 +108,14 @@ public enum LineId {
     ITEM_RUBY_NAME,
     ITEM_RUBY_DESCRIPTION,
     ITEM_GEMSTONE_NAME,
-    ITEM_GEMSTONE_DESCRIPTION;
+    ITEM_GEMSTONE_DESCRIPTION,
+
+    ITEM_PISTOL_NAME,
+    ITEM_PISTOL_DESCRIPTION,
+    ITEM_SMG_NAME,
+    ITEM_SMG_DESCRIPTION,
+    ITEM_SHOTGUN_NAME,
+    ITEM_SHOTGUN_DESCRIPTION;
 
     public static LineId parse(String value) {
         return valueOf(value.toUpperCase().replace('.', '_'));
