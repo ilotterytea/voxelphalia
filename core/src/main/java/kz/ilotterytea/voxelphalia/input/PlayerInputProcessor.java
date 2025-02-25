@@ -282,6 +282,10 @@ public class PlayerInputProcessor implements InputProcessor {
 
         if (currentSlot != null && game.getItemRegistry().containsEntry(currentSlot.id)) {
             if (game.getItemRegistry().getEntry(currentSlot.id) instanceof Weapon w) {
+                if (playerEntity.getRecoilDelayTime() >= 0f) {
+                    return true;
+                }
+
                 if (w.isSpawnBullet()) {
                     Vector3 p = playerEntity.getPosition().cpy();
                     p.add(0f, playerEntity.getHeight(), 0f);
@@ -304,6 +308,8 @@ public class PlayerInputProcessor implements InputProcessor {
                         );
                         level.addEntity(bullet);
                     }
+                    
+                    playerEntity.setRecoilDelayTime(w.getRecoilTime());
                     return true;
                 }
             }
