@@ -311,6 +311,14 @@ public class PlayerInputProcessor implements InputProcessor {
 
                     playerEntity.setRecoilDelayTime(w.getRecoilTime());
                     playerEntity.takeEnergy(w.getEnergyCost());
+
+                    // TODO: Make it optional in .json file
+                    IdentifiedSound sound = game.getSoundRegistry().getEntry("sfx.weapon." + w.getId().getName() + "_shot");
+
+                    if (sound != null) {
+                        float sfx = game.getPreferences().getFloat("sfx", 1f);
+                        sound.getSound().play(sfx);
+                    }
                     return true;
                 }
             }
