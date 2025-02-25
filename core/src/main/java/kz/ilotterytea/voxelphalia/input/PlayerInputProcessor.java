@@ -287,8 +287,23 @@ public class PlayerInputProcessor implements InputProcessor {
                     p.add(0f, playerEntity.getHeight(), 0f);
                     p.add(playerEntity.getDirection().cpy().scl(1.5f));
 
-                    BulletEntity bullet = new BulletEntity(w, p, playerEntity.getDirection().cpy());
-                    level.addEntity(bullet);
+                    int bulletAmount = w.getBulletMinAmount() <= 1 ?
+                        w.getBulletMinAmount() :
+                        MathUtils.random(w.getBulletMinAmount(), w.getBulletMinAmount() + 2);
+
+                    float r = w.getBulletSpread();
+                    for (int i = 0; i < bulletAmount; i++) {
+                        BulletEntity bullet = new BulletEntity(w,
+                            p,
+                            playerEntity.getDirection().cpy()
+                                .add(
+                                    MathUtils.random(-r, r),
+                                    MathUtils.random(-r, r),
+                                    MathUtils.random(-r, r)
+                                ).nor()
+                        );
+                        level.addEntity(bullet);
+                    }
                     return true;
                 }
             }
