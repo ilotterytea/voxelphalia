@@ -21,9 +21,15 @@ public class HotbarTable extends Table {
         wrapper.add(bar).grow();
 
         HealthHotbarTable health = new HealthHotbarTable(skin, player);
-        bar.add(health).expandX().left();
+        bar.add(health).expandX().align(Align.bottomLeft);
+
+        Table rightTable = new Table();
+        bar.add(rightTable).expandY().width(400f).right();
+
+        EnergyHotbarTable energy = new EnergyHotbarTable(skin, player);
+        rightTable.add(energy).grow().padBottom(8f).row();
 
         InventoryHotbarTable inventory = new InventoryHotbarTable(skin, player.getInventory());
-        bar.add(inventory).expandY().align(Align.bottomRight);
+        rightTable.add(inventory).growX().row();
     }
 }

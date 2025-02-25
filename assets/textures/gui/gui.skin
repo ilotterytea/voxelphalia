@@ -124,6 +124,10 @@
     healthbar-title: {
       font: tiny-default,
       fontColor: { hex: "#ff5d61ff" }
+    },
+    energybar-title: {
+      font: tiny-default,
+      fontColor: { hex: "#fffa9bff" }
     }
   },
   com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {

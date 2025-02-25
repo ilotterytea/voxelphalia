@@ -31,6 +31,7 @@
   "death.title": "You died!",
   "death.respawn": "Respawn in %ss...",
   "hotbar.health.title": "HEALTH",
+  "hotbar.energy.title": "ENERGY",
   "smelting.title": "Furnace",
   "smelting.smelt": "Smelt",
   "crafting.handmade.title": "Hand-made crafting",

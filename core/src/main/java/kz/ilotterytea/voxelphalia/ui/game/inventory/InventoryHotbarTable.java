@@ -26,7 +26,7 @@ public class InventoryHotbarTable extends Table {
         pane.setFadeScrollBars(true);
         pane.setScrollbarsVisible(false);
         pane.setScrollingDisabled(false, true);
-        add(pane).width(316f).growY();
+        add(pane).grow();
 
         for (int i = 0; i < this.slots.length; i++) {
             InventorySlotStack stack = new InventorySlotStack(skin, null, inventory, inventory.getSlot(i));
