@@ -288,7 +288,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
                 if (w.isSpawnBullet()) {
                     Vector3 p = playerEntity.getPosition().cpy();
-                    p.add(0f, playerEntity.getHeight(), 0f);
+                    p.add(0f, playerEntity.getHeight() - 0.5f, 0f);
                     p.add(playerEntity.getDirection().cpy().scl(1.5f));
 
                     int bulletAmount = w.getBulletMinAmount() <= 1 ?
