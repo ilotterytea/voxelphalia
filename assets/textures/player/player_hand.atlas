@@ -1,7 +1,13 @@
 player_hand.png
-size:256,128
+size:256,512
 repeat:none
 finger
-bounds:128,0,128,96
+bounds:128,128,128,128
 hand
-bounds:0,0,128,96
+bounds:128,256,128,128
+pistol
+bounds:0,0,128,128
+shotgun
+bounds:0,128,128,128
+smg
+bounds:0,256,128,128

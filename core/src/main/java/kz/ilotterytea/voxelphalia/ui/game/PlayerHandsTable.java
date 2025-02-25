@@ -22,6 +22,10 @@ public class PlayerHandsTable extends Table {
 
     private Image item;
 
+    // im too lazy to make it as enum.
+    // 0 - hands, 1 - pistol, 2 - smg, 3 - shotgun
+    private int currentItem;
+
     public PlayerHandsTable(PlayerEntity playerEntity) {
         super();
         this.playerEntity = playerEntity;
@@ -87,7 +91,26 @@ public class PlayerHandsTable extends Table {
 
         add(stack).size(w, h);
 
-        addAction(Actions.moveTo(0f, -100f));
+        addAction(Actions.moveTo(0f, -50f));
+    }
+
+    private void showGun(String regionName) {
+        clear();
+        layout();
+
+        Stack stack = new Stack();
+
+        // --- shotgun ---
+        Table gunTable = new Table();
+        stack.add(gunTable);
+
+        Image gun = new Image(handAtlas.findRegion(regionName));
+
+        float w = gun.getWidth() * 3f, h = gun.getHeight() * 3f;
+
+        gunTable.add(gun).size(w, h);
+
+        add(stack).size(w, h);
     }
 
     @Override
@@ -102,10 +125,40 @@ public class PlayerHandsTable extends Table {
         ));
 
         Inventory inventory = playerEntity.getInventory();
+        Inventory.Slot slot = inventory.getCurrentSlot();
 
-        if (inventory.getCurrentSlot().id != null) {
+        if (slot.id == null) {
+            if (currentItem != 0) {
+                currentItem = 0;
+                showHoldingHands();
+            }
+
+            item.setVisible(false);
+            return;
+        }
+
+        boolean holdingShotgun = slot.id.equals("voxelphalia:shotgun");
+        boolean holdingPistol = slot.id.equals("voxelphalia:pistol");
+        boolean holdingSMG = slot.id.equals("voxelphalia:smg");
+
+        // changing item
+        if (holdingShotgun && currentItem != 3) {
+            currentItem = 3;
+            showGun("shotgun");
+        } else if (holdingSMG && currentItem != 2) {
+            currentItem = 2;
+            showGun("smg");
+        } else if (holdingPistol && currentItem != 1) {
+            currentItem = 1;
+            showGun("pistol");
+        } else if (!holdingShotgun && !holdingPistol && !holdingSMG && currentItem != 0) {
+            currentItem = 0;
+            showHoldingHands();
+            System.out.println("aight");
+        }
+
+        if (currentItem == 0) {
             item.setVisible(true);
-            Inventory.Slot slot = inventory.getCurrentSlot();
 
             TextureRegion region;
 
@@ -122,8 +175,6 @@ public class PlayerHandsTable extends Table {
             }
 
             item.setDrawable(new TextureRegionDrawable(region));
-        } else {
-            item.setVisible(false);
         }
     }
 }
