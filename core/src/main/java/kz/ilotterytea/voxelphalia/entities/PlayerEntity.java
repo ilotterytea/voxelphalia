@@ -16,7 +16,7 @@ public class PlayerEntity extends LivingEntity {
     private final Camera camera;
     private final Vector3 spawnPoint;
 
-    private float respawnTime, bobbing, bobbingY, time;
+    private float respawnTime, bobbing, bobbingY, time, recoilDelayTime;
     private boolean focused;
 
     public PlayerEntity(Vector3 spawnPoint, Camera camera) {
@@ -107,6 +107,7 @@ public class PlayerEntity extends LivingEntity {
         setPosition(spawnPoint.x, spawnPoint.y, spawnPoint.z);
         setDirection(0f, 0f, 0f);
         setHealth(maxHealth);
+        setRecoilDelayTime(0f);
     }
 
     @Override
@@ -130,6 +131,7 @@ public class PlayerEntity extends LivingEntity {
     public void tick(float delta) {
         super.tick(delta);
         respawnTime -= delta;
+        recoilDelayTime -= delta;
 
         // auto respawn
         if (dead && respawnTime <= 0.1f) {
@@ -156,5 +158,13 @@ public class PlayerEntity extends LivingEntity {
 
     public float getBobbing() {
         return bobbing;
+    }
+
+    public void setRecoilDelayTime(float recoilDelayTime) {
+        this.recoilDelayTime = recoilDelayTime;
+    }
+
+    public float getRecoilDelayTime() {
+        return recoilDelayTime;
     }
 }
