@@ -282,7 +282,7 @@ public class PlayerInputProcessor implements InputProcessor {
 
         if (currentSlot != null && game.getItemRegistry().containsEntry(currentSlot.id)) {
             if (game.getItemRegistry().getEntry(currentSlot.id) instanceof Weapon w) {
-                if (playerEntity.getRecoilDelayTime() >= 0f) {
+                if (playerEntity.getRecoilDelayTime() >= 0f || playerEntity.getEnergy() - w.getEnergyCost() < -0.1f) {
                     return true;
                 }
 
@@ -308,8 +308,9 @@ public class PlayerInputProcessor implements InputProcessor {
                         );
                         level.addEntity(bullet);
                     }
-                    
+
                     playerEntity.setRecoilDelayTime(w.getRecoilTime());
+                    playerEntity.takeEnergy(w.getEnergyCost());
                     return true;
                 }
             }

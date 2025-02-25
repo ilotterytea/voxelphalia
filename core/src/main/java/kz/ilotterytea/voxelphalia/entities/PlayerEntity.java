@@ -17,6 +17,7 @@ public class PlayerEntity extends LivingEntity {
     private final Vector3 spawnPoint;
 
     private float respawnTime, bobbing, bobbingY, time, recoilDelayTime;
+    private float energy, maxEnergy;
     private boolean focused;
 
     public PlayerEntity(Vector3 spawnPoint, Camera camera) {
@@ -32,6 +33,9 @@ public class PlayerEntity extends LivingEntity {
         setHealth(60);
         setMaxHealth(60);
         setDamage(1);
+
+        this.maxEnergy = 120;
+        this.energy = this.maxEnergy;
     }
 
     @Override
@@ -133,6 +137,12 @@ public class PlayerEntity extends LivingEntity {
         respawnTime -= delta;
         recoilDelayTime -= delta;
 
+        this.energy += delta * 5f;
+
+        if (this.energy > this.maxEnergy) {
+            this.energy = this.maxEnergy;
+        }
+
         // auto respawn
         if (dead && respawnTime <= 0.1f) {
             setFocused(true);
@@ -166,5 +176,17 @@ public class PlayerEntity extends LivingEntity {
 
     public float getRecoilDelayTime() {
         return recoilDelayTime;
+    }
+
+    public void takeEnergy(float energy) {
+        this.energy = Math.max(this.energy - energy, 0);
+    }
+
+    public float getEnergy() {
+        return energy;
+    }
+
+    public float getMaxEnergy() {
+        return maxEnergy;
     }
 }
