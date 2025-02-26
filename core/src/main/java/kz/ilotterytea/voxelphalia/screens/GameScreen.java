@@ -120,6 +120,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        camera.far = 40.0f * game.getPreferences().getInteger("render-distance", 1);
+        camera.update();
+
         ScreenUtils.clear(Color.SKY, true);
 
         if (pauseScreenStack.isVisible()) {
