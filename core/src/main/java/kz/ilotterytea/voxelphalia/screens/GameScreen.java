@@ -139,7 +139,8 @@ public class GameScreen implements Screen {
         renderableLevel.render(decalBatch);
         decalBatch.flush();
 
-        stage.act(delta);
+        // do not touch it, it fixed selectbox
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
 
