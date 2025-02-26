@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
@@ -166,12 +167,29 @@ public class SettingsWindow extends Window {
         renderTable.add(renderLabel);
 
         SelectBox<String> renderSelectBox = new SelectBox<>(skin);
-        renderSelectBox.setItems(
-            game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_TINY),
-            game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_SMALL),
-            game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_MEDIUM),
-            game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_FAR)
+        Array<String> renderArray = new Array<>(
+            new String[]{
+                game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_TINY),
+                game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_SMALL),
+                game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_MEDIUM),
+                game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_FAR)
+            }
         );
+        renderSelectBox.setItems(renderArray);
+        renderSelectBox.setSelected(renderArray.get(
+            preferences.getInteger("render-distance", 1) - 1
+        ));
+
+        renderSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String selectedString = renderSelectBox.getSelected();
+                int index = renderArray.indexOf(selectedString, false);
+
+                preferences.putInteger("render-distance", index + 1);
+                preferences.flush();
+            }
+        });
         renderTable.add(renderSelectBox).growX();
 
         // -- FULLSCREEN --

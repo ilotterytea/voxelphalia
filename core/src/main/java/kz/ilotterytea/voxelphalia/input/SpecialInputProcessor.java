@@ -31,21 +31,6 @@ public class SpecialInputProcessor implements InputProcessor {
                 processed = true;
                 break;
             }
-            // render distance
-            case Input.Keys.F4: {
-                int distance = preferences.getInteger("render-distance", 1);
-                distance += 3;
-                if (distance >= 10) distance = 1;
-
-                preferences.putInteger("render-distance", distance);
-                preferences.flush();
-
-                camera.far = 40.0f * distance;
-                camera.update();
-
-                processed = true;
-                break;
-            }
             // render mode
             case Input.Keys.F5: {
                 int mode = preferences.getInteger("render-mode", 0);
