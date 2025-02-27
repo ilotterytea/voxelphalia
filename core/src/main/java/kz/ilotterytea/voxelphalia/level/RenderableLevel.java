@@ -105,6 +105,9 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 case ParticleEntity particle -> {
                     if (particle.isDead()) removeEntities.add(particle);
                 }
+                case CorpseEntity corpse -> {
+                    if (corpse.isDead()) removeEntities.add(corpse);
+                }
                 default -> {
                 }
             }
@@ -113,6 +116,8 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
         for (Entity e : removeEntities) {
             level.removeEntity(e);
             if (e instanceof LivingEntity x) {
+                level.addEntity(new CorpseEntity(x));
+
                 Vector3 pos = e.getPosition();
 
                 for (int i = 0; i < 1000; i++) {
