@@ -123,8 +123,23 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                         10f, 2f
                     );
                     p.setPosition(pos.x, pos.y, pos.z);
-                    float cr = MathUtils.random(-0.5f, 0.5f);
-                    p.setColor(Color.RED.cpy().add(cr, cr, cr, 0f));
+
+                    Color color;
+                    if (VoxelphaliaGame.getInstance().getPreferences()
+                        .getBoolean("violent-content", true)) {
+                        float cr = MathUtils.random(-0.5f, 0.5f);
+                        color = Color.RED.cpy().add(cr, cr, cr, 0f);
+                    } else {
+                        color = new Color(
+                            MathUtils.random(0.3f, 1.0f),
+                            MathUtils.random(0.3f, 1.0f),
+                            MathUtils.random(0.3f, 1.0f),
+                            1f
+                        );
+                    }
+
+                    p.setColor(color);
+
                     level.addEntity(p);
                 }
             }
