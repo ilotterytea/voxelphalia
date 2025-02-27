@@ -133,6 +133,19 @@ public class SettingsWindow extends Window {
             }
         });
         playerSettingsTable.add(autoJumpBox).expandX().row();
+
+        CheckBox matureContentBox = new CheckBox(localizationManager.getLine(LineId.SETTINGS_VIOLENTCONTENT), skin);
+        matureContentBox.setChecked(preferences.getBoolean("violent-content", true));
+        matureContentBox.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                preferences.putBoolean("violent-content", !preferences.getBoolean("violent-content", true));
+                preferences.flush();
+                matureContentBox.setChecked(preferences.getBoolean("violent-content", true));
+            }
+        });
+        playerSettingsTable.add(matureContentBox).expandX().row();
     }
 
     private void showGraphicsWindow() {
