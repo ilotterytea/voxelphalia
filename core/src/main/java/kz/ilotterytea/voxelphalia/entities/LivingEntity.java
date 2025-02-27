@@ -59,8 +59,20 @@ public class LivingEntity extends RenderablePhysicalEntity {
             if (volume >= 10f) return;
             volume /= 10f;
 
+            String soundName;
+
+            if (dead) {
+                if (VoxelphaliaGame.getInstance().getPreferences().getBoolean("violent-content", true)) {
+                    soundName = "voxelphalia:sfx.hit.disassemble";
+                } else {
+                    soundName = "voxelphalia:sfx.hit.safe_disassemble";
+                }
+            } else {
+                soundName = "voxelphalia:sfx.hit.stab";
+            }
+
             IdentifiedSound sound = VoxelphaliaGame.getInstance().getSoundRegistry()
-                .getEntry(dead ? "voxelphalia:sfx.hit.disassemble" : "voxelphalia:sfx.hit.stab");
+                .getEntry(soundName);
 
             sound.getSound().play(MathUtils.clamp(VoxelphaliaGame.getInstance().getPreferences()
                     .getFloat("sfx", 1f) - volume,
