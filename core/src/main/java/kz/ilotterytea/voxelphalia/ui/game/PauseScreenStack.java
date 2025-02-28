@@ -67,7 +67,7 @@ public class PauseScreenStack extends Stack {
 
         SettingsWindow settingsWindow = new SettingsWindow(skin);
         settingsWindow.setVisible(false);
-        settingsTable.add(settingsWindow).size(350f, 400f);
+        settingsTable.add(settingsWindow).size(400f, 450f);
 
         SoundingTextButton settingsButton = new SoundingTextButton(localizationManager.getLine(LineId.PAUSE_SETTINGS), skin);
         settingsButton.addListener(new ClickListener() {
