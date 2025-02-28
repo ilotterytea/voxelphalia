@@ -123,7 +123,7 @@ public class SettingsWindow extends Window {
                 bobbingBox.setChecked(preferences.getBoolean("view-bobbing", true));
             }
         });
-        playerSettingsTable.add(bobbingBox).expandX().padBottom(16f).row();
+        playerSettingsTable.add(bobbingBox).expand();
 
         SoundingCheckbox autoJumpBox = new SoundingCheckbox(localizationManager.getLine(LineId.SETTINGS_PLAYER_AUTOJUMP), skin);
         autoJumpBox.setChecked(preferences.getBoolean("auto-jump", true));
@@ -136,7 +136,7 @@ public class SettingsWindow extends Window {
                 autoJumpBox.setChecked(preferences.getBoolean("auto-jump", true));
             }
         });
-        playerSettingsTable.add(autoJumpBox).expandX().row();
+        playerSettingsTable.add(autoJumpBox).expand().row();
 
         SoundingCheckbox matureContentBox = new SoundingCheckbox(localizationManager.getLine(LineId.SETTINGS_VIOLENTCONTENT), skin);
         matureContentBox.setChecked(preferences.getBoolean("violent-content", true));
@@ -149,7 +149,7 @@ public class SettingsWindow extends Window {
                 matureContentBox.setChecked(preferences.getBoolean("violent-content", true));
             }
         });
-        playerSettingsTable.add(matureContentBox).expandX().row();
+        playerSettingsTable.add(matureContentBox).expand().row();
     }
 
     private void showGraphicsWindow() {
