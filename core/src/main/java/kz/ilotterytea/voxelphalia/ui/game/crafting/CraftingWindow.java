@@ -17,6 +17,9 @@ import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.recipes.Recipe;
 import kz.ilotterytea.voxelphalia.recipes.RecipeWorkbenchLevel;
 import kz.ilotterytea.voxelphalia.ui.IconButton;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingIconButton;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingImageButton;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingTextButton;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 
 import java.util.List;
@@ -80,7 +83,7 @@ public class CraftingWindow extends Window {
         windowHeader.add(title).growX();
 
         // Close button
-        ImageButton closeButton = new ImageButton(skin, "close");
+        SoundingImageButton closeButton = new SoundingImageButton(skin, "close");
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -147,7 +150,7 @@ public class CraftingWindow extends Window {
                 .getLocalizationManager()
                 .getLine(lineId);
 
-            IconButton btn = new IconButton(
+            SoundingIconButton btn = new SoundingIconButton(
                 localizedLine,
                 new Image(region),
                 skin
@@ -207,7 +210,7 @@ public class CraftingWindow extends Window {
         productBody.add(ingredientsScrollpane).grow().padBottom(15f).row();
 
         // --- CREATION BUTTON ---
-        craftButton = new TextButton(localizationManager.getLine(craftButtonId), skin);
+        craftButton = new SoundingTextButton(localizationManager.getLine(craftButtonId), skin, null, "sfx.ui.crafting");
         craftButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

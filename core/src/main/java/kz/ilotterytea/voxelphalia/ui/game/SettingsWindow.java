@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -12,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
+import kz.ilotterytea.voxelphalia.ui.sound.*;
 
 public class SettingsWindow extends Window {
     private final Skin skin;
@@ -49,7 +53,7 @@ public class SettingsWindow extends Window {
         headerTable.add(windowLabel).growX();
 
         // Close button
-        ImageButton closeButton = new ImageButton(skin, "close");
+        SoundingImageButton closeButton = new SoundingImageButton(skin, "close");
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -72,7 +76,7 @@ public class SettingsWindow extends Window {
 
             Label sliderValue = new Label("", skin);
 
-            Slider slider = new Slider(0f, 1f, 0.1f, false, skin);
+            SoundingSlider slider = new SoundingSlider(0f, 1f, 0.1f, false, skin);
             slider.setValue(preferences.getFloat("sfx", 1f));
             slider.addListener(new ChangeListener() {
                 @Override
@@ -94,7 +98,7 @@ public class SettingsWindow extends Window {
         add(categoriesTable).growX().padBottom(30f).row();
 
         // Graphics
-        TextButton graphicsButton = new TextButton(localizationManager.getLine(LineId.SETTINGS_GRAPHICS), skin);
+        SoundingTextButton graphicsButton = new SoundingTextButton(localizationManager.getLine(LineId.SETTINGS_GRAPHICS), skin);
         graphicsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -108,7 +112,7 @@ public class SettingsWindow extends Window {
         Table playerSettingsTable = new Table();
         add(playerSettingsTable).growX().padBottom(30f).row();
 
-        CheckBox bobbingBox = new CheckBox(localizationManager.getLine(LineId.SETTINGS_PLAYER_BOBBING), skin);
+        SoundingCheckbox bobbingBox = new SoundingCheckbox(localizationManager.getLine(LineId.SETTINGS_PLAYER_BOBBING), skin);
         bobbingBox.setChecked(preferences.getBoolean("view-bobbing", true));
         bobbingBox.addListener(new ClickListener() {
             @Override
@@ -121,7 +125,7 @@ public class SettingsWindow extends Window {
         });
         playerSettingsTable.add(bobbingBox).expandX().padBottom(16f).row();
 
-        CheckBox autoJumpBox = new CheckBox(localizationManager.getLine(LineId.SETTINGS_PLAYER_AUTOJUMP), skin);
+        SoundingCheckbox autoJumpBox = new SoundingCheckbox(localizationManager.getLine(LineId.SETTINGS_PLAYER_AUTOJUMP), skin);
         autoJumpBox.setChecked(preferences.getBoolean("auto-jump", true));
         autoJumpBox.addListener(new ClickListener() {
             @Override
@@ -134,7 +138,7 @@ public class SettingsWindow extends Window {
         });
         playerSettingsTable.add(autoJumpBox).expandX().row();
 
-        CheckBox matureContentBox = new CheckBox(localizationManager.getLine(LineId.SETTINGS_VIOLENTCONTENT), skin);
+        SoundingCheckbox matureContentBox = new SoundingCheckbox(localizationManager.getLine(LineId.SETTINGS_VIOLENTCONTENT), skin);
         matureContentBox.setChecked(preferences.getBoolean("violent-content", true));
         matureContentBox.addListener(new ClickListener() {
             @Override
@@ -162,7 +166,7 @@ public class SettingsWindow extends Window {
         headerTable.add(windowLabel).growX();
 
         // Close button
-        ImageButton closeButton = new ImageButton(skin, "close");
+        SoundingImageButton closeButton = new SoundingImageButton(skin, "close");
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -179,7 +183,7 @@ public class SettingsWindow extends Window {
         Label renderLabel = new Label(game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER), skin);
         renderTable.add(renderLabel);
 
-        SelectBox<String> renderSelectBox = new SelectBox<>(skin);
+        SoundingSelectBox<String> renderSelectBox = new SoundingSelectBox<>(skin);
         Array<String> renderArray = new Array<>(
             new String[]{
                 game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_RENDER_TINY),
@@ -206,7 +210,7 @@ public class SettingsWindow extends Window {
         renderTable.add(renderSelectBox).growX();
 
         // -- FULLSCREEN --
-        CheckBox fullscreenCheckbox = new CheckBox("fullscreen", skin);
+        SoundingCheckbox fullscreenCheckbox = new SoundingCheckbox("fullscreen", skin);
         fullscreenCheckbox.setChecked(preferences.getBoolean("fullscreen", false));
         fullscreenCheckbox.addListener(new ClickListener() {
             @Override

@@ -3,13 +3,17 @@ package kz.ilotterytea.voxelphalia.ui.game.inventory;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingImageButton;
 
 public class InventoryWindow extends Window {
     private final PlayerEntity playerEntity;
@@ -30,7 +34,7 @@ public class InventoryWindow extends Window {
         header.add(new Label(VoxelphaliaGame.getInstance().getLocalizationManager().getLine(LineId.INVENTORY_TITLE), skin)).growX();
 
         // close button
-        ImageButton closeButton = new ImageButton(skin, "close");
+        SoundingImageButton closeButton = new SoundingImageButton(skin, "close");
         closeButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
