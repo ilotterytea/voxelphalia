@@ -11,6 +11,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingTextButton;
 
 public class PauseScreenStack extends Stack {
     private final PlayerEntity playerEntity;
@@ -48,7 +49,7 @@ public class PauseScreenStack extends Stack {
         window.add(windowLabel).growX().padBottom(60f).padTop(30f).row();
 
         // -- CONTINUE BUTTON --
-        TextButton continueButton = new TextButton(localizationManager.getLine(LineId.PAUSE_RETURN), skin);
+        SoundingTextButton continueButton = new SoundingTextButton(localizationManager.getLine(LineId.PAUSE_RETURN), skin);
         continueButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -68,7 +69,7 @@ public class PauseScreenStack extends Stack {
         settingsWindow.setVisible(false);
         settingsTable.add(settingsWindow).size(350f, 400f);
 
-        TextButton settingsButton = new TextButton(localizationManager.getLine(LineId.PAUSE_SETTINGS), skin);
+        SoundingTextButton settingsButton = new SoundingTextButton(localizationManager.getLine(LineId.PAUSE_SETTINGS), skin);
         settingsButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -79,7 +80,7 @@ public class PauseScreenStack extends Stack {
         window.add(settingsButton).growX().padBottom(30f).row();
 
         // -- QUIT BUTTON --
-        TextButton quitButton = new TextButton(localizationManager.getLine(LineId.PAUSE_QUIT), skin);
+        SoundingTextButton quitButton = new SoundingTextButton(localizationManager.getLine(LineId.PAUSE_QUIT), skin);
         quitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
