@@ -210,7 +210,7 @@ public class SettingsWindow extends Window {
         renderTable.add(renderSelectBox).growX();
 
         // -- FULLSCREEN --
-        SoundingCheckbox fullscreenCheckbox = new SoundingCheckbox("fullscreen", skin);
+        SoundingCheckbox fullscreenCheckbox = new SoundingCheckbox(game.getLocalizationManager().getLine(LineId.SETTINGS_GRAPHICS_FULLSCREEN), skin);
         fullscreenCheckbox.setChecked(preferences.getBoolean("fullscreen", false));
         fullscreenCheckbox.addListener(new ClickListener() {
             @Override
