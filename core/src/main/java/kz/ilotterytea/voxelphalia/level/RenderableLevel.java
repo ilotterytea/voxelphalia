@@ -2,8 +2,6 @@ package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
@@ -119,14 +117,6 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                 Vector3 pos = e.getPosition();
 
                 for (int i = 0; i < 1000; i++) {
-                    ParticleEntity p = new ParticleEntity(new TextureRegion(
-                        VoxelphaliaGame.getInstance()
-                            .getAssetManager()
-                            .get("textures/entities/particles/pixel.png", Texture.class)),
-                        10f, 2f
-                    );
-                    p.setPosition(pos.x, pos.y, pos.z);
-
                     Color color;
                     if (VoxelphaliaGame.getInstance().getPreferences()
                         .getBoolean("violent-content", true)) {
@@ -141,7 +131,8 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
                         );
                     }
 
-                    p.setColor(color);
+                    ParticleEntity p = new ParticleEntity(color, 10f, 2f);
+                    p.setPosition(pos.x, pos.y, pos.z);
 
                     level.addEntity(p);
                 }
