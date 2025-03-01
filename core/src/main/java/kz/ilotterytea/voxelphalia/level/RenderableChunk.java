@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.RenderableProvider;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
@@ -28,17 +27,15 @@ import java.util.List;
 
 public class RenderableChunk implements Disposable, Tickable, RenderableProvider {
     private final Level level;
-    private final Chunk chunk;
-    private final Vector3 offset;
+    protected final Chunk chunk;
     private Mesh mesh;
     private final Material material;
     private boolean rebuilding;
     private int meshVertexCount, meshIndexCount;
 
-    public RenderableChunk(Chunk chunk, Level level, Vector3 offset) {
+    public RenderableChunk(Chunk chunk, Level level) {
         this.chunk = chunk;
         this.level = level;
-        this.offset = offset;
 
         Texture terrainTexture = VoxelphaliaGame.getInstance()
             .getAssetManager().get("textures/terrain.png", Texture.class);
@@ -73,7 +70,7 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         meshIndexCount = 0;
 
         new Thread(() -> {
-            Gdx.app.debug("RenderableChunk" + offset, "Rebuilding chunk mesh...");
+            Gdx.app.debug("RenderableChunk" + chunk.offset, "Rebuilding chunk mesh...");
             long startTimestamp = System.currentTimeMillis();
 
             Pair<Pair<List<Float>, List<Short>>, Integer> data = generateMeshData();
@@ -83,7 +80,7 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
             Gdx.app.postRunnable(() -> {
                 rebuildMesh(data);
                 rebuilding = false;
-                Gdx.app.debug("RenderableChunk" + offset, String.format("Finished in %sms!", System.currentTimeMillis() - startTimestamp));
+                Gdx.app.debug("RenderableChunk" + chunk.offset, String.format("Finished in %sms!", System.currentTimeMillis() - startTimestamp));
             });
         }).start();
     }
@@ -95,16 +92,12 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         List<Float> vertices = new ArrayList<>();
         List<Short> indices = new ArrayList<>();
 
-        int width = chunk.width;
-        int height = chunk.height;
-        int depth = chunk.depth;
-
         short indexOffset = 0;
         int faceCount = 0;
 
-        for (int y = 0; y < height; y++) {
-            for (int z = 0; z < depth; z++) {
-                for (int x = 0; x < width; x++) {
+        for (int y = 0; y < chunk.size; y++) {
+            for (int z = 0; z < chunk.size; z++) {
+                for (int x = 0; x < chunk.size; x++) {
                     Identifier v = chunk.getVoxel(x, y, z);
                     if (v == null) continue;
 
@@ -114,7 +107,7 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
 
                     VoxelMaterial vm = voxel.getMaterial();
 
-                    boolean[] faces = getVisibleFaces((int) (offset.x + x), (int) (offset.y + y), (int) (offset.z + z));
+                    boolean[] faces = getVisibleFaces((int) (chunk.offset.x + x), (int) (chunk.offset.y + y), (int) (chunk.offset.z + z));
                     faceCount += faces.length;
 
                     if (faces[0]) {
@@ -177,10 +170,10 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y + 1, offset.z + z, 0f, 1f, 0f, u1, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z, 0f, 1f, 0f, u2, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 0f, 1f, 0f, u2, v2,
-            offset.x + x, offset.y + y + 1, offset.z + z + 1, 0f, 1f, 0f, u1, v2
+            chunk.offset.x + x, chunk.offset.y + y + 1, chunk.offset.z + z, 0f, 1f, 0f, u1, v1,
+            chunk.offset.x + x + 1, chunk.offset.y + y + 1, chunk.offset.z + z, 0f, 1f, 0f, u2, v1,
+            chunk.offset.x + x + 1, chunk.offset.y + y + 1, chunk.offset.z + z + 1, 0f, 1f, 0f, u2, v2,
+            chunk.offset.x + x, chunk.offset.y + y + 1, chunk.offset.z + z + 1, 0f, 1f, 0f, u1, v2
         ));
 
         indices.addAll(Arrays.asList(
@@ -196,10 +189,10 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z, 0f, -1f, 0f, u1, v1,
-            offset.x + x, offset.y + y, offset.z + z + 1, 0f, -1f, 0f, u1, v2,
-            offset.x + x + 1, offset.y + y, offset.z + z + 1, 0f, -1f, 0f, u2, v2,
-            offset.x + x + 1, offset.y + y, offset.z + z, 0f, -1f, 0f, u2, v1
+            chunk.offset.x + x, chunk.offset.y + y, chunk.offset.z + z, 0f, -1f, 0f, u1, v1,
+            chunk.offset.x + x, chunk.offset.y + y, chunk.offset.z + z + 1, 0f, -1f, 0f, u1, v2,
+            chunk.offset.x + x + 1, chunk.offset.y + y, chunk.offset.z + z + 1, 0f, -1f, 0f, u2, v2,
+            chunk.offset.x + x + 1, chunk.offset.y + y, chunk.offset.z + z, 0f, -1f, 0f, u2, v1
         ));
 
         indices.addAll(Arrays.asList(
@@ -215,10 +208,10 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z, -1f, 0f, 0f, u1, v2,
-            offset.x + x, offset.y + y + 1, offset.z + z, -1f, 0f, 0f, u1, v1,
-            offset.x + x, offset.y + y + 1, offset.z + z + 1, -1f, 0f, 0f, u2, v1,
-            offset.x + x, offset.y + y, offset.z + z + 1, -1f, 0f, 0f, u2, v2
+            chunk.offset.x + x, chunk.offset.y + y, chunk.offset.z + z, -1f, 0f, 0f, u1, v2,
+            chunk.offset.x + x, chunk.offset.y + y + 1, chunk.offset.z + z, -1f, 0f, 0f, u1, v1,
+            chunk.offset.x + x, chunk.offset.y + y + 1, chunk.offset.z + z + 1, -1f, 0f, 0f, u2, v1,
+            chunk.offset.x + x, chunk.offset.y + y, chunk.offset.z + z + 1, -1f, 0f, 0f, u2, v2
         ));
 
         indices.addAll(Arrays.asList(
@@ -234,10 +227,10 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x + 1, offset.y + y, offset.z + z, 1f, 0f, 0f, u2, v2,
-            offset.x + x + 1, offset.y + y, offset.z + z + 1, 1f, 0f, 0f, u1, v2,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 1f, 0f, 0f, u1, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z, 1f, 0f, 0f, u2, v1
+            chunk.offset.x + x + 1, chunk.offset.y + y, chunk.offset.z + z, 1f, 0f, 0f, u2, v2,
+            chunk.offset.x + x + 1, chunk.offset.y + y, chunk.offset.z + z + 1, 1f, 0f, 0f, u1, v2,
+            chunk.offset.x + x + 1, chunk.offset.y + y + 1, chunk.offset.z + z + 1, 1f, 0f, 0f, u1, v1,
+            chunk.offset.x + x + 1, chunk.offset.y + y + 1, chunk.offset.z + z, 1f, 0f, 0f, u2, v1
         ));
 
         indices.addAll(Arrays.asList(
@@ -253,10 +246,10 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z, 0f, 0f, 1f, u2, v2,
-            offset.x + x + 1, offset.y + y, offset.z + z, 0f, 0f, 1f, u1, v2,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z, 0f, 0f, 1f, u1, v1,
-            offset.x + x, offset.y + y + 1, offset.z + z, 0f, 0f, 1f, u2, v1
+            chunk.offset.x + x, chunk.offset.y + y, chunk.offset.z + z, 0f, 0f, 1f, u2, v2,
+            chunk.offset.x + x + 1, chunk.offset.y + y, chunk.offset.z + z, 0f, 0f, 1f, u1, v2,
+            chunk.offset.x + x + 1, chunk.offset.y + y + 1, chunk.offset.z + z, 0f, 0f, 1f, u1, v1,
+            chunk.offset.x + x, chunk.offset.y + y + 1, chunk.offset.z + z, 0f, 0f, 1f, u2, v1
         ));
 
         indices.addAll(Arrays.asList(
@@ -272,20 +265,16 @@ public class RenderableChunk implements Disposable, Tickable, RenderableProvider
         float v2 = region.getV2();
 
         vertices.addAll(Arrays.asList(
-            offset.x + x, offset.y + y, offset.z + z + 1, 0f, 0f, -1f, u1, v2,
-            offset.x + x, offset.y + y + 1, offset.z + z + 1, 0f, 0f, -1f, u1, v1,
-            offset.x + x + 1, offset.y + y + 1, offset.z + z + 1, 0f, 0f, -1f, u2, v1,
-            offset.x + x + 1, offset.y + y, offset.z + z + 1, 0f, 0f, -1f, u2, v2
+            chunk.offset.x + x, chunk.offset.y + y, chunk.offset.z + z + 1, 0f, 0f, -1f, u1, v2,
+            chunk.offset.x + x, chunk.offset.y + y + 1, chunk.offset.z + z + 1, 0f, 0f, -1f, u1, v1,
+            chunk.offset.x + x + 1, chunk.offset.y + y + 1, chunk.offset.z + z + 1, 0f, 0f, -1f, u2, v1,
+            chunk.offset.x + x + 1, chunk.offset.y + y, chunk.offset.z + z + 1, 0f, 0f, -1f, u2, v2
         ));
 
         indices.addAll(Arrays.asList(
             indexOffset, (short) (indexOffset + 1), (short) (indexOffset + 2),
             indexOffset, (short) (indexOffset + 2), (short) (indexOffset + 3)
         ));
-    }
-
-    public Vector3 getOffset() {
-        return offset;
     }
 
     private boolean[] getVisibleFaces(int x, int y, int z) {

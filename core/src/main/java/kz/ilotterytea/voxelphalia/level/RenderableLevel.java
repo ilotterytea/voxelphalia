@@ -32,9 +32,7 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
 
         for (int i = 0; i < chunkCapacity; i++) {
             Chunk chunk = level.chunks.get(i);
-            Vector3 offset = level.getChunkPositionFromIndex(i);
-
-            this.renderableChunks.add(new RenderableChunk(chunk, level, offset));
+            this.renderableChunks.add(new RenderableChunk(chunk, level));
         }
     }
 
@@ -159,7 +157,7 @@ public class RenderableLevel implements Disposable, Tickable, Renderable {
     }
 
     private boolean isChunkVisible(RenderableChunk chunk) {
-        Vector3 o = chunk.getOffset();
+        Vector3 o = chunk.chunk.getOffset();
         return this.camera.frustum.boundsInFrustum(
             o.x + 16 / 2f,
             o.y + 16 / 2f,

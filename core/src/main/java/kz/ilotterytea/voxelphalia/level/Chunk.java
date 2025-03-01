@@ -1,20 +1,21 @@
 package kz.ilotterytea.voxelphalia.level;
 
+import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class Chunk {
     protected final Identifier[] voxels;
     protected final Voxel[] voxelStates;
-    protected final int width, height, depth;
+    protected final Vector3 offset;
+    protected final int size;
     protected boolean isDirty;
 
-    public Chunk(int width, int height, int depth) {
-        this.width = width;
-        this.height = height;
-        this.depth = depth;
+    public Chunk(int size, Vector3 offset) {
+        this.size = size;
+        this.offset = offset;
 
-        int voxelCapacity = width * height * depth;
+        int voxelCapacity = (int) Math.pow(size, 3);
         this.voxels = new Identifier[voxelCapacity];
 
         this.voxelStates = new Voxel[voxelCapacity];
@@ -54,22 +55,18 @@ public class Chunk {
         return getVoxelState(x, y, z) != null;
     }
 
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getDepth() {
-        return depth;
+    public int getSize() {
+        return size;
     }
 
     private int getIndex(int x, int y, int z) {
-        if (x < 0 || x > width ||
-            y < 0 || y > height ||
-            z < 0 || z > depth) return -1;
-        return x + z * width + y * width * height;
+        if (x < 0 || x > size ||
+            y < 0 || y > size ||
+            z < 0 || z > size) return -1;
+        return x + z * size + y * size * size;
+    }
+
+    public Vector3 getOffset() {
+        return offset;
     }
 }
