@@ -38,16 +38,11 @@ public abstract class Registry<T extends Identifiable> {
     }
 
     public T getEntry(String identifier) {
-        for (T entry : entries) {
-            if (entry.getId().equals(new Identifier(identifier))) {
-                return entry;
-            }
-        }
-        return null;
+        return getEntry(Identifier.of(identifier));
     }
 
     public boolean containsEntry(String id) {
-        return containsEntry(new Identifier(id));
+        return containsEntry(Identifier.of(id));
     }
 
     public boolean containsEntry(Identifier id) {
