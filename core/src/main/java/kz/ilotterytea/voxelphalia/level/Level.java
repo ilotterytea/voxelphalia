@@ -29,7 +29,7 @@ public class Level implements Tickable {
         this.chunks = new Array<>(chunkCapacity);
 
         for (int i = 0; i < chunkCapacity; i++) {
-            this.chunks.add(new Chunk(16, 16, 16));
+            this.chunks.add(new Chunk(16, getChunkPositionFromIndex(i)));
         }
 
         this.entities = new ArrayList<>();
@@ -267,5 +267,13 @@ public class Level implements Tickable {
         for (Entity e : removeEntities) {
             removeEntity(e);
         }
+    }
+
+    public Array<Chunk> getChunks() {
+        return chunks;
+    }
+
+    public ArrayList<Entity> getEntities() {
+        return entities;
     }
 }
