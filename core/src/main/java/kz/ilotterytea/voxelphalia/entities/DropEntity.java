@@ -12,8 +12,8 @@ import kz.ilotterytea.voxelphalia.utils.Identifier;
 public class DropEntity extends RenderablePhysicalEntity {
     private final Identifier identifier;
     private final float maxLifeTime;
+    private final byte amount;
     private float lifeTime;
-    private byte amount;
     private boolean dead;
 
     public DropEntity(Identifier identifier, byte amount) {
@@ -77,5 +77,21 @@ public class DropEntity extends RenderablePhysicalEntity {
 
     public boolean isDead() {
         return dead;
+    }
+
+    public float getLifeTime() {
+        return lifeTime;
+    }
+
+    public void setLifeTime(float lifeTime) {
+        this.lifeTime = lifeTime;
+    }
+
+    public Identifier getIdentifier() {
+        return identifier;
+    }
+
+    public byte getAmount() {
+        return amount;
     }
 }

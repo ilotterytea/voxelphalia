@@ -47,4 +47,16 @@ public class BulletEntity extends RenderableEntity {
     public boolean isHit() {
         return hit;
     }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public Vector3 getInitialDirection() {
+        return initialDirection;
+    }
+
+    public Vector3 getInitialPosition() {
+        return initialPosition;
+    }
 }

@@ -22,11 +22,11 @@ public class LivingEntity extends RenderablePhysicalEntity {
         this.hitBox = new BoundingBox();
     }
 
-    protected void setHealth(int health) {
+    public void setHealth(int health) {
         this.health = health;
     }
 
-    protected void setMaxHealth(int maxHealth) {
+    public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
     }
 
@@ -89,7 +89,7 @@ public class LivingEntity extends RenderablePhysicalEntity {
         return maxHealth;
     }
 
-    protected void setDamage(int damage) {
+    public void setDamage(int damage) {
         this.damage = damage;
     }
 
@@ -197,5 +197,9 @@ public class LivingEntity extends RenderablePhysicalEntity {
             ));
             lastFootstepTime = 0f;
         }
+    }
+
+    public void setDead(boolean dead) {
+        this.dead = dead;
     }
 }

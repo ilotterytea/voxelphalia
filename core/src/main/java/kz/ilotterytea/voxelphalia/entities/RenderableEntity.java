@@ -55,4 +55,8 @@ public class RenderableEntity extends Entity implements Renderable {
     public void setColor(Color color) {
         this.decal.setColor(color);
     }
+
+    public Color getColor() {
+        return this.decal.getColor();
+    }
 }

@@ -16,7 +16,9 @@ import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
+import kz.ilotterytea.voxelphalia.level.Chunk;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -38,6 +40,18 @@ public class LevelLoadingScreen implements Screen {
     private Level level;
 
     private Thread generationThread;
+
+    public LevelLoadingScreen(String levelName) {
+        try {
+            this.level = LevelStorage.load(levelName);
+        } catch (Exception e) {
+            Gdx.app.error("LevelLoadingScreen", "Failed to load level \"" + levelName + "\"", e);
+        }
+
+        if (this.level == null) {
+            this.level = new Level(levelName, 30, 4, 30, Generators.rollSeed());
+        }
+    }
 
     @Override
     public void show() {
@@ -97,7 +111,6 @@ public class LevelLoadingScreen implements Screen {
         stepBar = new ProgressBar(0f, 6f, 1f, false, skin);
         table.add(stepBar).width(300f);
 
-        level = new Level(30, 4, 30, Generators.rollSeed());
         runGenerationThread();
     }
 
@@ -163,7 +176,7 @@ public class LevelLoadingScreen implements Screen {
         AtomicReference<Grid> grid = new AtomicReference<>();
 
         generationThread = new Thread(() -> {
-            while (step < 6) {
+            while (step < 7) {
                 switch (step) {
                     // generating terrain
                     case 0 ->
@@ -212,6 +225,13 @@ public class LevelLoadingScreen implements Screen {
                     }
                     // ticking
                     case 5 -> level.tick(Gdx.graphics.getDeltaTime());
+                    // removing locks
+                    case 6 -> {
+                        for (Chunk chunk : level.getChunks()) {
+                            chunk.setModified(false);
+                            chunk.setLock(false);
+                        }
+                    }
                     default -> {
                     }
                 }

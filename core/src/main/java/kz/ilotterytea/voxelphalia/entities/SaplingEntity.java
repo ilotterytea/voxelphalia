@@ -85,4 +85,16 @@ public class SaplingEntity extends RenderableEntity {
     public boolean hasGrown() {
         return grown;
     }
+
+    public float getLifeTime() {
+        return lifeTime;
+    }
+
+    public void setLifeTime(float lifeTime) {
+        this.lifeTime = lifeTime;
+    }
+
+    public float getAdultLifeTime() {
+        return adultLifeTime;
+    }
 }
