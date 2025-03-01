@@ -1,5 +1,10 @@
 package kz.ilotterytea.voxelphalia.voxels;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.DropEntity;
@@ -73,13 +78,27 @@ public class Voxel implements Cloneable, Tickable, DestroyableVoxel, Identifiabl
         drop.setPosition(position.x + 0.5f, position.y, position.z + 0.5f);
         level.addEntity(drop);
 
+        // generating texture from terrain.png
+        TextureRegion region = voxel.getMaterial().getFrontTextureRegion(VoxelphaliaGame.getInstance()
+            .getAssetManager().get("textures/terrain.png", Texture.class));
+
+        if (!region.getTexture().getTextureData().isPrepared()) {
+            region.getTexture().getTextureData().prepare();
+        }
+
+        Pixmap terrainPixmap = region.getTexture().getTextureData().consumePixmap();
+
+        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        pixmap.drawPixmap(terrainPixmap, 0, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight());
+
+        terrainPixmap.dispose();
+
         for (int i = 0; i < 100; i++) {
-            ParticleEntity p = new ParticleEntity(voxel.getMaterial().getFrontTextureRegion(
-                VoxelphaliaGame.getInstance()
-                    .getAssetManager()
-                    .get("textures/terrain.png")), 4f, 1.5f);
+            ParticleEntity p = new ParticleEntity(new Color(pixmap.getPixel(MathUtils.random(0, 15), MathUtils.random(0, 15))), 4f, 1.5f);
             p.setPosition(position.x + 0.5f, position.y + 0.5f, position.z + 0.5f);
             level.addEntity(p);
         }
+
+        pixmap.dispose();
     }
 }

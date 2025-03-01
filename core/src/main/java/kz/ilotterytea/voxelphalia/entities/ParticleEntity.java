@@ -1,7 +1,10 @@
 package kz.ilotterytea.voxelphalia.entities;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
+import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.level.Level;
 
 public class ParticleEntity extends RenderablePhysicalEntity {
@@ -9,8 +12,13 @@ public class ParticleEntity extends RenderablePhysicalEntity {
     private final float maxLifeTime;
     private float lifeTime;
 
-    public ParticleEntity(TextureRegion region, float xSpeed, float ySpeed) {
-        setDecal(region, 0.1f, 0.1f);
+    public ParticleEntity(Color color, float xSpeed, float ySpeed) {
+        setDecal(new TextureRegion(
+            VoxelphaliaGame.getInstance()
+                .getAssetManager()
+                .get("textures/entities/particles/pixel.png", Texture.class)
+        ), 0.1f, 0.1f);
+        setColor(color);
         setWeight(1f);
         setSpeed(xSpeed);
         setSize(0.1f, 0.2f, 0.1f);
