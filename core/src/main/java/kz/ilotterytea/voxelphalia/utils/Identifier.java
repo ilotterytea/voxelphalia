@@ -15,6 +15,8 @@ public class Identifier implements Identifiable {
     }
 
     public static Identifier of(String value) {
+        if (value == null) return null;
+
         if (!value.contains(":")) {
             return new Identifier(value);
         }
