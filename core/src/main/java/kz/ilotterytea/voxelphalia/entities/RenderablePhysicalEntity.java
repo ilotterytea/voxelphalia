@@ -171,4 +171,8 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     public BoundingBox getBox() {
         return box;
     }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
 }

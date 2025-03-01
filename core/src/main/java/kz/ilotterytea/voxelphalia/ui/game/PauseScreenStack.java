@@ -11,6 +11,8 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
+import kz.ilotterytea.voxelphalia.level.LevelStorage;
+import kz.ilotterytea.voxelphalia.screens.GameScreen;
 import kz.ilotterytea.voxelphalia.ui.sound.SoundingTextButton;
 
 public class PauseScreenStack extends Stack {
@@ -85,6 +87,11 @@ public class PauseScreenStack extends Stack {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+
+                if (VoxelphaliaGame.getInstance().getScreen() instanceof GameScreen g) {
+                    LevelStorage.save(g.getLevel());
+                }
+
                 Gdx.app.exit();
             }
         });

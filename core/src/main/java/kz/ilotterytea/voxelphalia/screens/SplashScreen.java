@@ -83,7 +83,7 @@ public class SplashScreen implements Screen {
             game.getRecipeRegistry().load();
             game.getSoundRegistry().load();
             Gdx.app.log(SplashScreen.class.getSimpleName(), "Loaded all assets");
-            game.setScreen(new LevelLoadingScreen());
+            game.setScreen(new LevelLoadingScreen("test"));
         }
     }
 

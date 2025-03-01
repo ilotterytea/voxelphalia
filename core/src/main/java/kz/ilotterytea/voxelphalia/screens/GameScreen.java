@@ -88,17 +88,27 @@ public class GameScreen implements Screen {
         environment.set(new ColorAttribute(ColorAttribute.Fog, Color.SKY));
         environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, 0, -1, 0));
 
-        Vector3 playerSpawnPoint = new Vector3(
-            MathUtils.random(20, level.getWidthInVoxels() - 40),
-            0f,
-            MathUtils.random(20, level.getDepthInVoxels() - 40)
-        );
+        playerEntity = (PlayerEntity) level.getEntities()
+            .stream().filter((x) -> x instanceof PlayerEntity)
+            .findFirst()
+            .orElse(null);
 
-        playerSpawnPoint.y = level.getHighestY(playerSpawnPoint.x, playerSpawnPoint.z) + 1f;
+        if (playerEntity == null) {
+            Vector3 playerSpawnPoint = new Vector3(
+                MathUtils.random(20, level.getWidthInVoxels() - 40),
+                0f,
+                MathUtils.random(20, level.getDepthInVoxels() - 40)
+            );
 
-        playerEntity = new PlayerEntity(playerSpawnPoint, camera);
-        playerEntity.setFocused(true);
-        level.addEntity(playerEntity);
+            playerSpawnPoint.y = level.getHighestY(playerSpawnPoint.x, playerSpawnPoint.z) + 1f;
+
+            playerEntity = new PlayerEntity(playerSpawnPoint, camera);
+            playerEntity.setFocused(true);
+            level.addEntity(playerEntity);
+        } else {
+            playerEntity.setCamera(camera);
+            playerEntity.setPosition(playerEntity.getPosition().x, playerEntity.getPosition().y, playerEntity.getPosition().z);
+        }
 
         renderableLevel = new RenderableLevel(camera, playerEntity, level);
 

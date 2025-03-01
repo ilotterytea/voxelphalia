@@ -18,12 +18,14 @@ public class Level implements Tickable {
     protected final int width, height, depth;
     protected final ArrayList<Entity> entities;
     protected final int seed;
+    protected final String name;
 
-    public Level(int width, int height, int depth, int seed) {
+    public Level(String name, int width, int height, int depth, int seed) {
         this.width = width;
         this.height = height;
         this.depth = depth;
         this.seed = seed;
+        this.name = name;
 
         int chunkCapacity = width * height * depth;
         this.chunks = new Array<>(chunkCapacity);
@@ -125,7 +127,7 @@ public class Level implements Tickable {
         return getDepth() * 16;
     }
 
-    private int getChunkIndex(int x, int y, int z) {
+    public int getChunkIndex(int x, int y, int z) {
         if (x < 0 || x > getWidthInVoxels() ||
             y < 0 || y > getHeightInVoxels() ||
             z < 0 || z > getDepthInVoxels()) return -1;
@@ -187,6 +189,8 @@ public class Level implements Tickable {
     }
 
     public void addEntity(Entity entity) {
+        Chunk chunk = getChunk((int) entity.getPosition().x, (int) entity.getPosition().y, (int) entity.getPosition().z);
+        if (chunk.locked) return;
         this.entities.add(entity);
     }
 
@@ -227,6 +231,9 @@ public class Level implements Tickable {
     }
 
     public void removeEntity(Entity entity) {
+        Chunk chunk = getChunk((int) entity.getPosition().x, (int) entity.getPosition().y, (int) entity.getPosition().z);
+        if (chunk.locked) return;
+
         this.entities.remove(entity);
     }
 

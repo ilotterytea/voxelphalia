@@ -13,9 +13,9 @@ import kz.ilotterytea.voxelphalia.level.Level;
 
 public class PlayerEntity extends LivingEntity {
     private final Inventory inventory;
-    private final Camera camera;
     private final Vector3 spawnPoint;
 
+    private Camera camera;
     private float respawnTime, bobbing, bobbingY, time, recoilDelayTime;
     private float energy, maxEnergy;
     private boolean focused;
@@ -40,13 +40,14 @@ public class PlayerEntity extends LivingEntity {
 
     @Override
     public void setPosition(float x, float y, float z) {
-        if (dead) return;
         super.setPosition(x, y, z);
 
-        bobbing = MathUtils.sin(time * velocity.x * 2f) * bobbingY * 0.1f;
+        if (camera != null) {
+            bobbing = MathUtils.sin(time * velocity.x * 2f) * bobbingY * 0.1f;
 
-        camera.position.set(x, y + height + bobbing, z);
-        camera.update();
+            camera.position.set(x, y + height + bobbing, z);
+            camera.update();
+        }
     }
 
     @Override
@@ -188,5 +189,21 @@ public class PlayerEntity extends LivingEntity {
 
     public float getMaxEnergy() {
         return maxEnergy;
+    }
+
+    public void setEnergy(float energy) {
+        this.energy = energy;
+    }
+
+    public void setMaxEnergy(float maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
+    public Vector3 getSpawnPoint() {
+        return spawnPoint;
+    }
+
+    public void setCamera(Camera camera) {
+        this.camera = camera;
     }
 }

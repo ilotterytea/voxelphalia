@@ -9,7 +9,7 @@ public class Chunk {
     protected final Voxel[] voxelStates;
     protected final Vector3 offset;
     protected final int size;
-    protected boolean isDirty;
+    protected boolean isDirty, modified, locked;
 
     public Chunk(int size, Vector3 offset) {
         this.size = size;
@@ -34,17 +34,21 @@ public class Chunk {
     }
 
     public void placeVoxel(Voxel voxel, int x, int y, int z) {
+        if (locked) return;
         int index = getIndex(x, y, z);
         if (index < 0 || index >= voxels.length) return;
         this.voxels[index] = voxel == null ? null : voxel.getId();
         this.isDirty = true;
+        this.modified = true;
     }
 
     public void placeVoxelState(Voxel voxel, int x, int y, int z) {
+        if (locked) return;
         int index = getIndex(x, y, z);
         if (index < 0 || index >= voxelStates.length) return;
         this.voxelStates[index] = voxel;
         this.isDirty = true;
+        this.modified = true;
     }
 
     public boolean hasVoxel(int x, int y, int z) {
@@ -68,5 +72,21 @@ public class Chunk {
 
     public Vector3 getOffset() {
         return offset;
+    }
+
+    public boolean isModified() {
+        return modified;
+    }
+
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
+    public void setLock(boolean lock) {
+        this.locked = lock;
     }
 }
