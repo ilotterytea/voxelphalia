@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
@@ -26,6 +27,8 @@ public class DebugInfoStack extends Stack {
 
         this.level = level;
         this.camera = camera;
+
+        setTouchable(Touchable.disabled);
 
         // --- GAME INFO ---
         Table gameTable = new Table();
