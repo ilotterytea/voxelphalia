@@ -283,4 +283,8 @@ public class Level implements Tickable {
     public ArrayList<Entity> getEntities() {
         return entities;
     }
+
+    public String getName() {
+        return name;
+    }
 }
