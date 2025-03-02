@@ -43,7 +43,7 @@ public class LevelLoadingScreen implements Screen {
 
     public LevelLoadingScreen(String levelName) {
         try {
-            this.level = LevelStorage.load(levelName);
+            this.level = LevelStorage.loadAll(levelName);
         } catch (Exception e) {
             Gdx.app.error("LevelLoadingScreen", "Failed to load level \"" + levelName + "\"", e);
         }
