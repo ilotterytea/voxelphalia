@@ -13,6 +13,7 @@ import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.screens.GameScreen;
+import kz.ilotterytea.voxelphalia.screens.MenuScreen;
 import kz.ilotterytea.voxelphalia.ui.sound.SoundingTextButton;
 
 public class PauseScreenStack extends Stack {
@@ -92,7 +93,7 @@ public class PauseScreenStack extends Stack {
                     LevelStorage.save(g.getLevel());
                 }
 
-                Gdx.app.exit();
+                VoxelphaliaGame.getInstance().setScreen(new MenuScreen());
             }
         });
         window.add(quitButton).growX().row();
