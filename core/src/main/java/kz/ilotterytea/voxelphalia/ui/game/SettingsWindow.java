@@ -38,7 +38,7 @@ public class SettingsWindow extends Window {
     }
 
     private void showMainWindow() {
-        clear();
+        clearChildren();
         layout();
 
         LocalizationManager localizationManager = game.getLocalizationManager();
@@ -153,7 +153,7 @@ public class SettingsWindow extends Window {
     }
 
     private void showGraphicsWindow() {
-        clear();
+        clearChildren();
         layout();
 
         // -- TITLE --
