@@ -5,8 +5,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
+import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.utils.OSUtils;
+
+import java.io.File;
+import java.util.zip.Deflater;
 
 public class SpecialInputProcessor implements InputProcessor {
     private final Preferences preferences;
@@ -24,6 +32,26 @@ public class SpecialInputProcessor implements InputProcessor {
         boolean processed = false;
 
         switch (keycode) {
+            // screenshot
+            case Input.Keys.F2: {
+                Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+                String screenShotName = String.format("%s/screenshots", OSUtils.getUserDataDirectory(VoxelphaliaConstants.Metadata.APP_DEV + "/" + VoxelphaliaConstants.Metadata.APP_ID));
+                new File(screenShotName).mkdirs();
+                screenShotName += "/" + System.currentTimeMillis() + ".png";
+
+                PixmapIO.writePNG(Gdx.files.absolute(screenShotName), pixmap, Deflater.NO_COMPRESSION, true);
+                pixmap.dispose();
+
+                IdentifiedSound sound = VoxelphaliaGame.getInstance().getSoundRegistry().getEntry("sfx.ui.screenshot");
+
+                if (sound != null) {
+                    sound.getSound().play(VoxelphaliaGame.getInstance().getPreferences().getFloat("sfx", 1f));
+                }
+
+                processed = true;
+                break;
+            }
             // debug info
             case Input.Keys.F3: {
                 preferences.putBoolean("debug", !preferences.getBoolean("debug", false));
