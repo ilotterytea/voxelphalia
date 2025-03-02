@@ -3,6 +3,7 @@ package kz.ilotterytea.voxelphalia.level;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -256,8 +258,27 @@ public class LevelStorage {
         Gdx.app.log("LevelStorage:" + level.name, "Finished!");
     }
 
-    public static Level load(String name) {
-        String folderName = levelsFolderName + "/" + name;
+    public static Level loadAll(String name) {
+        Level level = loadLevel(name);
+        if (level == null) return null;
+
+        level.entities.addAll(loadEntities(name));
+
+        Array<Chunk> chunks = loadChunkRegions(name);
+        if (chunks != null) {
+            for (Chunk chunk : chunks) {
+                int index = level.getChunkIndex((int) chunk.offset.x, (int) chunk.offset.y, (int) chunk.offset.z);
+                level.chunks.set(index, chunk);
+            }
+        }
+
+        Gdx.app.log("LevelStorage:" + name, "Finished!");
+
+        return level;
+    }
+
+    public static Level loadLevel(String levelName) {
+        String folderName = levelsFolderName + "/" + levelName;
 
         if (!new File(folderName).exists()) {
             return null;
@@ -286,7 +307,18 @@ public class LevelStorage {
             throw new RuntimeException(e);
         }
 
-        Gdx.app.log("LevelStorage:" + name, "Loading entities.dat...");
+        return level;
+    }
+
+    public static ArrayList<Entity> loadEntities(String levelName) {
+        String folderName = levelsFolderName + "/" + levelName;
+        if (!new File(folderName).exists()) {
+            return null;
+        }
+
+        ArrayList<Entity> entities = new ArrayList<>();
+
+        Gdx.app.log("LevelStorage:" + levelName, "Loading entities.dat...");
 
         // loading entities
         try (FileInputStream fis = new FileInputStream(folderName + "/entities.dat")) {
@@ -406,7 +438,7 @@ public class LevelStorage {
                     directionJson.getFloat(2)
                 );
 
-                level.addEntity(entity);
+                entities.add(entity);
             }
 
             gis.close();
@@ -414,7 +446,18 @@ public class LevelStorage {
             throw new RuntimeException(e);
         }
 
-        Gdx.app.log("LevelStorage:" + name, "Loading chunk regions...");
+        return entities;
+    }
+
+    public static Array<Chunk> loadChunkRegions(String levelName) {
+        String folderName = levelsFolderName + "/" + levelName;
+        if (!new File(folderName).exists()) {
+            return null;
+        }
+
+        Gdx.app.log("LevelStorage:" + levelName, "Loading chunk regions...");
+
+        Array<Chunk> chunks = new Array<>();
 
         // loading regions
         File regionFolder = new File(folderName + "/regions");
@@ -503,18 +546,13 @@ public class LevelStorage {
                 }
                 gis.close();
 
-                // setting the chunk
-                int index = level.getChunkIndex((int) chunk.offset.x, (int) chunk.offset.y, (int) chunk.offset.z);
-
                 chunk.setLock(true);
-                level.chunks.set(index, chunk);
+                chunks.add(chunk);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
 
-        Gdx.app.log("LevelStorage:" + name, "Finished!");
-
-        return level;
+        return chunks;
     }
 }
