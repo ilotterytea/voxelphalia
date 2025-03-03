@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -21,12 +25,16 @@ import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.ui.game.SettingsWindow;
 import kz.ilotterytea.voxelphalia.utils.OSUtils;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
+import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 import java.util.Comparator;
 
 public class MenuScreen implements Screen {
     private VoxelphaliaGame game;
     private Stage stage;
+
+    private Texture backgroundTexture;
+    private TextureRegion backgroundRegion;
 
     @Override
     public void show() {
@@ -35,6 +43,42 @@ public class MenuScreen implements Screen {
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
 
         LocalizationManager localizationManager = game.getLocalizationManager();
+
+        // generating texture from terrain.png
+        Voxel voxel = game.getVoxelRegistry().getEntries().get((byte) MathUtils.random(1, game.getVoxelRegistry().getEntries().size() - 1));
+
+        TextureRegion region = voxel.getMaterial().getFrontTextureRegion(VoxelphaliaGame.getInstance()
+            .getAssetManager().get("textures/terrain.png", Texture.class));
+
+        if (!region.getTexture().getTextureData().isPrepared()) {
+            region.getTexture().getTextureData().prepare();
+        }
+
+        Pixmap terrainPixmap = region.getTexture().getTextureData().consumePixmap();
+
+        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        pixmap.drawPixmap(terrainPixmap, 0, 0, region.getRegionX(), region.getRegionY(), region.getRegionWidth(), region.getRegionHeight());
+
+        backgroundTexture = new Texture(pixmap);
+        terrainPixmap.dispose();
+        pixmap.dispose();
+
+        backgroundTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        backgroundRegion = new TextureRegion(backgroundTexture, 0, 0, backgroundTexture.getWidth() * 16, backgroundTexture.getHeight() * 16);
+
+        // background
+        Image bgTileImage = new Image(backgroundRegion);
+        bgTileImage.setFillParent(true);
+        stage.addActor(bgTileImage);
+
+        // tinting the background
+        Image tintImage = new Image(skin.getDrawable("black-transparent"));
+        tintImage.setFillParent(true);
+        stage.addActor(tintImage);
+
+        Image gradientImage = new Image(skin.getDrawable("loading-screen-background"));
+        gradientImage.setFillParent(true);
+        stage.addActor(gradientImage);
 
         // -- MAIN TABLE --
         Table table = new Table();
@@ -247,6 +291,8 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+        backgroundRegion.setRegionWidth(width / 6);
+        backgroundRegion.setRegionHeight(height / 6);
     }
 
     @Override
@@ -268,6 +314,7 @@ public class MenuScreen implements Screen {
     public void dispose() {
         Gdx.input.setInputProcessor(null);
         stage.dispose();
+        backgroundTexture.dispose();
     }
 
     private long determineLevelSize(FileHandle folder) {
