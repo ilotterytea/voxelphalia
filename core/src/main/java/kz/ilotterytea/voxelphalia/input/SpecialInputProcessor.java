@@ -32,6 +32,13 @@ public class SpecialInputProcessor implements InputProcessor {
         boolean processed = false;
 
         switch (keycode) {
+            // display gui
+            case Input.Keys.F1: {
+                preferences.putBoolean("gui-display", !preferences.getBoolean("gui-display", true));
+                preferences.flush();
+                processed = true;
+                break;
+            }
             // screenshot
             case Input.Keys.F2: {
                 Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
