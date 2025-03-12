@@ -3,11 +3,16 @@ package kz.ilotterytea.voxelphalia.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -18,6 +23,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.environment.SkyClouds;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.level.Level;
@@ -34,6 +40,11 @@ public class MenuScreen implements Screen {
     private VoxelphaliaGame game;
     private Stage stage;
 
+    private PerspectiveCamera camera;
+    private SkyClouds clouds;
+    private ModelBatch modelBatch;
+    private Environment environment;
+
     private Texture backgroundTexture;
     private TextureRegion backgroundRegion;
 
@@ -44,6 +55,28 @@ public class MenuScreen implements Screen {
         Skin skin = game.getAssetManager().get("textures/gui/gui.skin");
 
         LocalizationManager localizationManager = game.getLocalizationManager();
+
+        camera = new PerspectiveCamera(60, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.near = 0.1f;
+        camera.far = 40.0f * game.getPreferences().getInteger("render-distance", 1);
+        camera.position.set(0, 0, 0);
+        camera.rotate(Vector3.Y, 90f);
+        camera.update();
+
+        this.clouds = new SkyClouds(
+            new Vector3(-1000f, 90f, 0f),
+            new Vector3(2000f, 0f, 2000f)
+        );
+
+        DefaultShader.Config config = new DefaultShader.Config();
+        config.defaultCullFace = GL20.GL_FRONT;
+        DefaultShaderProvider modelBatchProvider = new DefaultShaderProvider(config);
+        modelBatch = new ModelBatch(modelBatchProvider);
+
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
+        environment.set(new ColorAttribute(ColorAttribute.Fog, Color.SKY));
+        environment.add(new DirectionalLight().set(0.7f, 0.7f, 0.7f, 0, -1, 0));
 
         // generating texture from terrain.png
         Voxel voxel = game.getVoxelRegistry().getEntries().get((byte) MathUtils.random(1, game.getVoxelRegistry().getEntries().size() - 1));
@@ -70,16 +103,16 @@ public class MenuScreen implements Screen {
         // background
         Image bgTileImage = new Image(backgroundRegion);
         bgTileImage.setFillParent(true);
-        stage.addActor(bgTileImage);
+        //stage.addActor(bgTileImage);
 
         // tinting the background
         Image tintImage = new Image(skin.getDrawable("black-transparent"));
         tintImage.setFillParent(true);
-        stage.addActor(tintImage);
+        //stage.addActor(tintImage);
 
         Image gradientImage = new Image(skin.getDrawable("loading-screen-background"));
         gradientImage.setFillParent(true);
-        stage.addActor(gradientImage);
+        //stage.addActor(gradientImage);
 
         // -- MAIN TABLE --
         Table table = new Table();
@@ -286,7 +319,10 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(Color.BLACK);
+        ScreenUtils.clear(Color.SKY, true);
+
+        clouds.tick(delta, camera);
+        clouds.render(modelBatch, environment);
 
         // do not touch it, it fixed selectbox
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -296,6 +332,11 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+
+        camera.viewportWidth = width;
+        camera.viewportHeight = height;
+        camera.update();
+
         backgroundRegion.setRegionWidth(width / 6);
         backgroundRegion.setRegionHeight(height / 6);
     }
@@ -320,6 +361,8 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(null);
         stage.dispose();
         backgroundTexture.dispose();
+        clouds.dispose();
+        modelBatch.dispose();
     }
 
     private long determineLevelSize(FileHandle folder) {
