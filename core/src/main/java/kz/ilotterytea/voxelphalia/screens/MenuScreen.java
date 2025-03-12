@@ -23,7 +23,7 @@ import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.ui.game.SettingsWindow;
-import kz.ilotterytea.voxelphalia.ui.menu.MainMenuTitleImage;
+import kz.ilotterytea.voxelphalia.ui.menu.MainMenuTitleTable;
 import kz.ilotterytea.voxelphalia.utils.OSUtils;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -100,10 +100,11 @@ public class MenuScreen implements Screen {
         table.add(brandTable).grow().row();
 
         // Brand
-        MainMenuTitleImage brandImage = new MainMenuTitleImage();
+        //MainMenuTitleImage brandImage = new MainMenuTitleImage();
         //brandImage.setScale(2f);
         //brandImage.setOrigin(brandImage.getWidth() / 2f, brandImage.getHeight() / 2f);
 
+        MainMenuTitleTable brandImage = new MainMenuTitleTable();
         brandTable.add(brandImage).fill();
 
         // -- WORLD SELECTION --
