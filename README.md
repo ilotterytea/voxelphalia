@@ -1,6 +1,7 @@
-# Voxelphalia Open Source
+# ![Voxelphalia](/logo.png) Open Source
 
-A first-person survival game in a 2.5D voxel world, written in Java and LibGDX. This project uses Gradle to manage dependencies.
+A first-person survival game in a 2.5D voxel world, written in Java and LibGDX. This project uses Gradle to manage
+dependencies.
 
 ## Building from sources
 
@@ -20,6 +21,6 @@ and do what you need:
 ## License
 
 This project is under the Mozilla Public License
-2.0! [Read on LICENSE](https://github.com/ilotterytea/voxelphalia/blob/master/LICENSE).<br>
+2.0! [Read on LICENSE](/LICENSE).<br>
 Project Assets under
 the [Creative Commons Attribution v4.0 International](https://creativecommons.org/licenses/by/4.0/)!
