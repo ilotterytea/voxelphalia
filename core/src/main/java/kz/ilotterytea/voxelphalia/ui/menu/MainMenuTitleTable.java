@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
 
 public class MainMenuTitleTable extends Table {
     public MainMenuTitleTable() {
@@ -25,7 +26,8 @@ public class MainMenuTitleTable extends Table {
         float pad = 5f;
 
         for (int i = 0; i < chars.length; i++) {
-            TextureRegion region = atlas.findRegion(String.valueOf(chars[i]));
+            char c = chars[i];
+            TextureRegion region = atlas.findRegion(String.valueOf(c));
             float d = MathUtils.random(0.25f, 0.5f);
 
             Image image = new Image(region);
@@ -34,6 +36,16 @@ public class MainMenuTitleTable extends Table {
             float h = image.getHeight() * 5f;
             float sw = Gdx.graphics.getWidth() + w;
             float sh = Gdx.graphics.getHeight() + h;
+
+            IdentifiedSound sound;
+
+            if (c == 'x' || c == 'i' || c == 'p') {
+                sound = VoxelphaliaGame.getInstance().getSoundRegistry()
+                    .getEntry("voxelphalia:sfx.footsteps.stone");
+            } else {
+                sound = VoxelphaliaGame.getInstance().getSoundRegistry()
+                    .getEntry("voxelphalia:sfx.footsteps.dirt");
+            }
 
             image.addAction(Actions.sequence(
                 Actions.moveTo(
@@ -53,6 +65,21 @@ public class MainMenuTitleTable extends Table {
             if (i + 1 != chars.length) {
                 cell.padRight(pad);
             }
+
+            image.setOrigin(w / 2f, h / 2f);
+
+            image.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    image.addAction(Actions.sequence(
+                        Actions.rotateTo(5f, 0.25f, Interpolation.smooth),
+                        Actions.rotateTo(0f, 0.25f, Interpolation.smooth)
+                    ));
+                    sound.getSound().play(VoxelphaliaGame.getInstance().getPreferences()
+                        .getFloat("sfx", 1f));
+                }
+            });
         }
     }
 }
