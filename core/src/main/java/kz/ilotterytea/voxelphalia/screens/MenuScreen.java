@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -28,6 +29,8 @@ import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.LevelStorage;
+import kz.ilotterytea.voxelphalia.ui.TintedActor;
+import kz.ilotterytea.voxelphalia.ui.TitleWindow;
 import kz.ilotterytea.voxelphalia.ui.game.SettingsWindow;
 import kz.ilotterytea.voxelphalia.ui.menu.MainMenuTitleTable;
 import kz.ilotterytea.voxelphalia.utils.OSUtils;
@@ -138,6 +141,19 @@ public class MenuScreen implements Screen {
         //brandImage.setOrigin(brandImage.getWidth() / 2f, brandImage.getHeight() / 2f);
 
         MainMenuTitleTable brandImage = new MainMenuTitleTable();
+        final int[] clickedBrandTimes = {0};
+        brandImage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                clickedBrandTimes[0]++;
+                if (clickedBrandTimes[0] > 4) {
+                    showCreditsWindow(skin);
+                    clickedBrandTimes[0] = 0;
+                }
+            }
+        });
+
         brandTable.add(brandImage).fill();
 
         // -- WORLD SELECTION --
@@ -378,5 +394,56 @@ public class MenuScreen implements Screen {
         }
 
         return size;
+    }
+
+    private void showCreditsWindow(Skin skin) {
+        TextureAtlas atlas = game.getAssetManager().get("textures/gui/credits.atlas");
+
+        Table bodyTable = new Table();
+        bodyTable.setFillParent(true);
+
+        // Developed by ilotterytea
+        bodyTable.add(new Label("Developed by", skin)).left().expand();
+
+        Image devImage = new Image(game.getAssetManager().get("textures/gui/ilotterytea.png", Texture.class));
+        devImage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Gdx.net.openURI("https://ilotterytea.kz");
+            }
+        });
+        bodyTable.add(devImage).size(devImage.getWidth() * 0.25f, devImage.getHeight() * 0.25f).padLeft(32f).right().row();
+
+        // Made with libGDX
+        bodyTable.add(new Label("Made with", skin)).left().expand();
+        Image engineImage = new Image(atlas.findRegion("libgdx"));
+        engineImage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Gdx.net.openURI("https://libgdx.com");
+            }
+        });
+        bodyTable.add(engineImage).size(engineImage.getWidth() * 0.25f, engineImage.getHeight() * 0.25f).padLeft(32f).right().row();
+
+        // Sounds from FreeSounds
+        bodyTable.add(new Label("Sounds from", skin)).left().expand();
+        Image soundImage = new Image(atlas.findRegion("freesound"));
+        soundImage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Gdx.net.openURI("https://freesound.org");
+            }
+        });
+        bodyTable.add(soundImage).size(soundImage.getWidth() * 0.5f, soundImage.getHeight() * 0.5f).padLeft(32f).right().row();
+
+        TitleWindow window = new TitleWindow(skin, "Credits", bodyTable);
+        TintedActor tintedWindow = new TintedActor(skin, window);
+
+        window.onClose(tintedWindow::remove);
+
+        stage.addActor(tintedWindow);
     }
 }
