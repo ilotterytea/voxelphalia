@@ -5,15 +5,20 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
 
 public class MainMenuTitleTable extends Table {
+    private final Image[] letters;
+
     public MainMenuTitleTable() {
         super();
         align(Align.center);
@@ -22,6 +27,9 @@ public class MainMenuTitleTable extends Table {
 
         String title = "voxelphalia";
         char[] chars = title.toCharArray();
+
+        this.letters = new Image[chars.length];
+
         float x = 0;
         float pad = 5f;
 
@@ -80,6 +88,16 @@ public class MainMenuTitleTable extends Table {
                         .getFloat("sfx", 1f));
                 }
             });
+
+            this.letters[i] = image;
         }
+    }
+
+    @Override
+    public boolean addListener(EventListener listener) {
+        for (Image letter : letters) {
+            letter.addListener(listener);
+        }
+        return super.addListener(listener);
     }
 }
