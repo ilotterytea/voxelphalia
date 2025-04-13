@@ -2,7 +2,8 @@
   com.badlogic.gdx.graphics.Color: {
     black: { hex: "#000000" },
     white: { hex: "#fff1e8" },
-    yellow: { hex: "#ffec27" }
+    yellow: { hex: "#ffec27" },
+    gray: { hex: "#cccccc" }
   },
   com.badlogic.gdx.graphics.g2d.BitmapFont: {
     default: {
@@ -128,7 +129,11 @@
     energybar-title: {
       font: tiny-default,
       fontColor: { hex: "#fffa9bff" }
-    }
+    },
+    gray: {
+      font: default,
+      fontColor: gray
+    },
   },
   com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
     default-horizontal: {
