@@ -63,6 +63,11 @@ public class LevelStorage {
         levelJson.addChild("height", new JsonValue(level.height));
         levelJson.addChild("depth", new JsonValue(level.depth));
         levelJson.addChild("name", new JsonValue(level.name));
+        levelJson.addChild("generatorType", new JsonValue(level.generatorType.toString()));
+        levelJson.addChild("gameMode", new JsonValue(level.gameMode.toString()));
+
+        level.setLastTimeOpened(System.currentTimeMillis());
+        levelJson.addChild("lastOpened", new JsonValue(level.lastTimeOpened));
 
         try (FileOutputStream fos = new FileOutputStream(folderName + "/level.dat")) {
             GZIPOutputStream gos = new GZIPOutputStream(fos);
@@ -299,8 +304,12 @@ public class LevelStorage {
                 json.getInt("width"),
                 json.getInt("height"),
                 json.getInt("depth"),
-                json.getInt("seed")
+                json.getInt("seed"),
+                Level.LevelGeneratorType.valueOf(json.getString("generatorType")),
+                Level.LevelGameMode.valueOf(json.getString("gameMode"))
             );
+
+            level.setLastTimeOpened(json.getLong("lastOpened"));
 
             gis.close();
         } catch (Exception e) {

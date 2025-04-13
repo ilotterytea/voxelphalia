@@ -41,7 +41,7 @@ public class LevelLoadingScreen implements Screen {
 
     private Thread generationThread;
 
-    public LevelLoadingScreen(String levelName) {
+    public LevelLoadingScreen(String levelName, Level.LevelGeneratorType generatorType, Level.LevelGameMode gameMode) {
         try {
             this.level = LevelStorage.loadAll(levelName);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class LevelLoadingScreen implements Screen {
         }
 
         if (this.level == null) {
-            this.level = new Level(levelName, 30, 4, 30, Generators.rollSeed());
+            this.level = new Level(levelName, 30, 4, 30, Generators.rollSeed(), generatorType, gameMode);
         }
     }
 
