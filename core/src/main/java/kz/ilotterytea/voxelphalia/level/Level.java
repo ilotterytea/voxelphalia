@@ -14,18 +14,32 @@ import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import java.util.ArrayList;
 
 public class Level implements Tickable {
+    public enum LevelGeneratorType {
+        LIMITED
+    }
+
+    public enum LevelGameMode {
+        SURVIVAL;
+    }
+
     protected final Array<Chunk> chunks;
     protected final int width, height, depth;
     protected final ArrayList<Entity> entities;
     protected final int seed;
     protected final String name;
+    protected long lastTimeOpened;
 
-    public Level(String name, int width, int height, int depth, int seed) {
+    protected final LevelGameMode gameMode;
+    protected final LevelGeneratorType generatorType;
+
+    public Level(String name, int width, int height, int depth, int seed, LevelGeneratorType generatorType, LevelGameMode gameMode) {
         this.width = width;
         this.height = height;
         this.depth = depth;
         this.seed = seed;
         this.name = name;
+        this.generatorType = generatorType;
+        this.gameMode = gameMode;
 
         int chunkCapacity = width * height * depth;
         this.chunks = new Array<>(chunkCapacity);
@@ -35,6 +49,7 @@ public class Level implements Tickable {
         }
 
         this.entities = new ArrayList<>();
+        this.lastTimeOpened = System.currentTimeMillis();
     }
 
     public Identifier getVoxel(int x, int y, int z) {
@@ -286,5 +301,21 @@ public class Level implements Tickable {
 
     public String getName() {
         return name;
+    }
+
+    public long getLastTimeOpened() {
+        return lastTimeOpened;
+    }
+
+    public void setLastTimeOpened(long lastTimeOpened) {
+        this.lastTimeOpened = lastTimeOpened;
+    }
+
+    public LevelGameMode getGameMode() {
+        return gameMode;
+    }
+
+    public LevelGeneratorType getGeneratorType() {
+        return generatorType;
     }
 }

@@ -257,7 +257,7 @@ public class MenuScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
-                    game.setScreen(new LevelLoadingScreen(level.second.name()));
+                    game.setScreen(new LevelLoadingScreen(level.second.name(), Level.LevelGeneratorType.LIMITED, Level.LevelGameMode.SURVIVAL));
                 }
             });
             levelButtonTable.add(playButton).width(100f);
@@ -271,7 +271,7 @@ public class MenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                game.setScreen(new LevelLoadingScreen(String.format("%d", finalLevelCount)));
+                game.setScreen(new LevelLoadingScreen(String.format("%d", finalLevelCount), Level.LevelGeneratorType.LIMITED, Level.LevelGameMode.SURVIVAL));
             }
         });
         worldSelectionTable.add(createNewLevelButton).growX().height(120f).padBottom(16f).row();
