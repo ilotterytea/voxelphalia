@@ -37,7 +37,9 @@ import kz.ilotterytea.voxelphalia.utils.OSUtils;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 
 public class MenuScreen implements Screen {
     private VoxelphaliaGame game;
@@ -50,6 +52,8 @@ public class MenuScreen implements Screen {
 
     private Texture backgroundTexture;
     private TextureRegion backgroundRegion;
+
+    private Array<Texture> thumbnailTextures;
 
     @Override
     public void show() {
@@ -162,12 +166,10 @@ public class MenuScreen implements Screen {
         table.add(worldSelectionWrapper).grow().row();
 
         Table worldSelectionTable = new Table(skin);
-        worldSelectionTable.setBackground("button-disabled");
         worldSelectionTable.pad(8f);
         ScrollPane worldSelectionPane = new ScrollPane(worldSelectionTable, skin);
-        worldSelectionPane.setScrollingDisabled(true, false);
-        worldSelectionPane.setFadeScrollBars(false);
-        worldSelectionWrapper.add(worldSelectionPane).size(500f, 300f);
+        worldSelectionPane.setScrollingDisabled(false, true);
+        worldSelectionWrapper.add(worldSelectionPane).height(384f);
 
         // Loading levels
         FileHandle levelsFolder = Gdx.files.absolute(OSUtils.getUserDataDirectory(String.format("%s/%s/levels",
@@ -176,6 +178,7 @@ public class MenuScreen implements Screen {
         )));
 
         Array<Pair<Level, FileHandle>> levels = new Array<>();
+
         for (FileHandle levelFolder : levelsFolder.list()) {
             if (!levelFolder.isDirectory()) continue;
             Level level = LevelStorage.loadLevel(levelFolder.name());
@@ -183,54 +186,56 @@ public class MenuScreen implements Screen {
             levels.add(new Pair<>(level, levelFolder));
         }
 
-        levels.sort(Comparator.comparingInt(o -> Integer.parseInt(o.first.getName())));
+        levels.sort(Comparator.comparingLong(o -> o.first.getLastTimeOpened()));
 
         int levelCount = 0;
+        thumbnailTextures = new Array<>();
 
-        for (Pair<Level, FileHandle> level : levels) {
-            try {
-                int num = Integer.parseInt(level.first.getName());
-                levelCount = Math.max(levelCount, num);
-            } catch (Exception ignored) {
-                continue;
-            }
+        for (int i = 0; i < levels.size; i++) {
+            Pair<Level, FileHandle> level = levels.get(i);
 
             // Level (table)
             Table levelTable = new Table(skin);
             levelTable.setBackground("button-down");
             levelTable.pad(8f);
-            worldSelectionTable.add(levelTable).growX().padBottom(16f).row();
+            worldSelectionTable.add(levelTable).growY().width(384f).padRight(16f);
 
-            // Level name
-            Label levelName = new Label(localizationManager.getLine(LineId.MENU_LEVEL_NAME, level.first.getName()), skin);
-            levelName.setAlignment(Align.left);
-            levelTable.add(levelName).grow().padBottom(8f).row();
+            // Level thumbnail
+            Image thumbnailImage;
+
+            String thumbnailPath = level.second.path() + "/thumbnail.png";
+            FileHandle thumbnailHandle = Gdx.files.absolute(thumbnailPath);
+
+            if (thumbnailHandle.exists()) {
+                Texture thumbnail = new Texture(thumbnailHandle);
+                thumbnailTextures.add(thumbnail);
+                thumbnailImage = new Image(thumbnail);
+            } else {
+                thumbnailImage = new Image(game.getAssetManager().get("textures/gui/thumbnail.png", Texture.class));
+            }
+
+            levelTable.add(thumbnailImage).size(176f, 128f).grow().center().padBottom(8f).row();
 
             // Level description
             Table levelDescTable = new Table();
             levelDescTable.align(Align.left);
             levelTable.add(levelDescTable).grow().padBottom(8f).row();
 
-            // Level chunk size
-            Label levelChunkSizeLabel = new Label(localizationManager.getLine(LineId.MENU_LEVEL_SIZE,
-                level.first.getWidth(),
-                level.first.getHeight(),
-                level.first.getDepth()
-            ), skin);
-            levelChunkSizeLabel.addListener(new TextTooltip(localizationManager.getLine(LineId.MENU_LEVEL_SIZE,
-                level.first.getWidthInVoxels(),
-                level.first.getHeightInVoxels(),
-                level.first.getDepthInVoxels()
-            ), skin));
-            levelChunkSizeLabel.setAlignment(Align.left);
-            levelDescTable.add(levelChunkSizeLabel).padRight(8f);
+            // Level name
+            Label levelNameLabel = new Label(level.first.getName(), skin);
+            levelDescTable.add(levelNameLabel).growX().row();
 
-            // Level file size
-            Label levelFileSizeLabel = new Label(String.format("%10.2fMB",
-                determineLevelSize(level.second) / 1024f / 1024f
-            ), skin);
-            levelFileSizeLabel.setAlignment(Align.left);
-            levelDescTable.add(levelFileSizeLabel);
+            // Level timestamp
+            Label levelTimestampLabel = new Label(new SimpleDateFormat("MMM dd, yyyy HH:mm a").format(new Date(level.first.getLastTimeOpened())), skin, "gray");
+            levelDescTable.add(levelTimestampLabel).growX().row();
+
+            // Level generation type
+            Label levelGenTypeLabel = new Label(localizationManager.getLine(LineId.parse("menu.level.type." + level.first.getGeneratorType().toString())), skin, "gray");
+            levelDescTable.add(levelGenTypeLabel).growX().row();
+
+            // Level game mode
+            Label levelGameModeLabel = new Label(localizationManager.getLine(LineId.parse("menu.level.mode." + level.first.getGameMode().toString())), skin, "gray");
+            levelDescTable.add(levelGameModeLabel).growX();
 
             // Buttons
             Table levelButtonTable = new Table();
@@ -274,7 +279,7 @@ public class MenuScreen implements Screen {
                 game.setScreen(new LevelLoadingScreen(String.format("%d", finalLevelCount), Level.LevelGeneratorType.LIMITED, Level.LevelGameMode.SURVIVAL));
             }
         });
-        worldSelectionTable.add(createNewLevelButton).growX().height(120f).padBottom(16f).row();
+        worldSelectionTable.add(createNewLevelButton).size(384f, 384f).row();
 
         // --- CONTROL BUTTONS ---
         Table controlButtonTable = new Table();
@@ -379,6 +384,7 @@ public class MenuScreen implements Screen {
         backgroundTexture.dispose();
         clouds.dispose();
         modelBatch.dispose();
+        thumbnailTextures.forEach(Texture::dispose);
     }
 
     private long determineLevelSize(FileHandle folder) {

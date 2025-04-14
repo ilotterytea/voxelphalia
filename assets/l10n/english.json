@@ -12,6 +12,8 @@
   "menu.level.delete": "Delete",
   "menu.level.size": "%sx%sx%s",
   "menu.level.name": "Level %s",
+  "menu.level.type.LIMITED": "Limited",
+  "menu.level.mode.SURVIVAL": "Survival",
   "menu.settings": "Settings",
   "menu.quit": "Quit",
   "pause.title": "GAME MENU",
