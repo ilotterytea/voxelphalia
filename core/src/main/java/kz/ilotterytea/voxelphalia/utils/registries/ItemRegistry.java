@@ -14,9 +14,12 @@ import kz.ilotterytea.voxelphalia.utils.Identifier;
 public class ItemRegistry extends Registry<Item> {
     @Override
     public void load() {
-        FileHandle folder = Gdx.files.internal("data/items");
+        FileHandle assetsFile = Gdx.files.internal("assets.txt");
 
-        for (FileHandle handle : folder.list()) {
+        for (String path : assetsFile.readString().split("\n")) {
+            if (!path.startsWith("data/items/")) continue;
+            FileHandle handle = Gdx.files.internal(path);
+
             Identifier id = VoxelphaliaGame.getInstance()
                 .getIdentifierRegistry()
                 .getEntry(new Identifier(handle.nameWithoutExtension()));

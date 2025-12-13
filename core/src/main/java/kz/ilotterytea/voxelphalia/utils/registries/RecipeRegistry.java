@@ -14,10 +14,14 @@ import java.util.HashMap;
 public class RecipeRegistry extends Registry<Recipe> {
     @Override
     public void load() {
-        FileHandle recipesHandle = Gdx.files.internal("data/recipes");
         IdentifierRegistry identifierRegistry = VoxelphaliaGame.getInstance().getIdentifierRegistry();
 
-        for (FileHandle recipeFile : recipesHandle.list()) {
+        FileHandle assetsFile = Gdx.files.internal("assets.txt");
+
+        for (String path : assetsFile.readString().split("\n")) {
+            if (!path.startsWith("data/recipes/")) continue;
+            FileHandle recipeFile = Gdx.files.internal(path);
+
             Identifier id = identifierRegistry.getEntry(new Identifier(recipeFile.nameWithoutExtension()));
 
             JsonValue json = new JsonReader().parse(recipeFile.readString());

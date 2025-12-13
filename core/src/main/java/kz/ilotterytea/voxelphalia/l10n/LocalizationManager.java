@@ -13,10 +13,11 @@ public class LocalizationManager {
     public LocalizationManager() {
         this.localizations = new ArrayList<>();
 
-        FileHandle folder = Gdx.files.internal("l10n");
+        FileHandle assetsFile = Gdx.files.internal("assets.txt");
 
-        for (FileHandle handle : folder.list()) {
-            this.localizations.add(new Localization(handle));
+        for (String path : assetsFile.readString().split("\n")) {
+            if (!path.startsWith("l10n/")) continue;
+            this.localizations.add(new Localization(Gdx.files.internal(path)));
         }
     }
 

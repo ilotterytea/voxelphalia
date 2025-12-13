@@ -14,19 +14,12 @@ import java.util.ArrayList;
 public class SoundRegistry extends Registry<IdentifiedSound> {
     @Override
     public void load() {
-        FileHandle folder = Gdx.files.internal("sfx");
-        loadFolder(folder);
-        Gdx.app.log("SoundRegistry", "Loaded " + entries.size() + " sounds!");
-    }
-
-    private void loadFolder(FileHandle folder) {
+        FileHandle assetsFile = Gdx.files.internal("assets.txt");
         AssetManager assetManager = VoxelphaliaGame.getInstance().getAssetManager();
 
-        for (FileHandle file : folder.list()) {
-            if (file.isDirectory()) {
-                loadFolder(file);
-                continue;
-            }
+        for (String path : assetsFile.readString().split("\n")) {
+            if (!path.startsWith("sfx/")) continue;
+            FileHandle file = Gdx.files.internal(path);
 
             Sound sound = assetManager.get(file.path());
             String name = file.pathWithoutExtension().replace('/', '.').toLowerCase();
@@ -37,6 +30,8 @@ public class SoundRegistry extends Registry<IdentifiedSound> {
 
             addEntry(new IdentifiedSound(identifier, sound));
         }
+
+        Gdx.app.log("SoundRegistry", "Loaded " + entries.size() + " sounds!");
     }
 
     @Override

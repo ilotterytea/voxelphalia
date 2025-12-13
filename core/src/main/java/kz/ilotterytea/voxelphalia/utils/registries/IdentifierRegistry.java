@@ -7,23 +7,18 @@ import kz.ilotterytea.voxelphalia.utils.Identifier;
 public class IdentifierRegistry extends Registry<Identifier> {
     @Override
     public void load() {
-        FileHandle folder = Gdx.files.internal("data");
-        loadFolder(folder);
-        Gdx.app.log("IdentifierRegistry", "Loaded " + entries.size() + " identifiers!");
-    }
+        FileHandle assetsFile = Gdx.files.internal("assets.txt");
 
-    private void loadFolder(FileHandle folder) {
-        for (FileHandle file : folder.list()) {
-            if (file.isDirectory()) {
-                loadFolder(file);
-                continue;
-            }
-
-            Identifier id = new Identifier(file.nameWithoutExtension());
+        for (String path : assetsFile.readString().split("\n")) {
+            if (!path.startsWith("data/")) continue;
+            FileHandle handle = Gdx.files.internal(path);
+            Identifier id = new Identifier(handle.nameWithoutExtension());
 
             if (!entries.contains(id)) {
                 addEntry(id);
             }
         }
+
+        Gdx.app.log("IdentifierRegistry", "Loaded " + entries.size() + " identifiers!");
     }
 }

@@ -17,9 +17,12 @@ import kz.ilotterytea.voxelphalia.voxels.specialvoxels.WorkbenchVoxel;
 public class VoxelRegistry extends Registry<Voxel> {
     @Override
     public void load() {
-        FileHandle folder = Gdx.files.internal("data/voxels");
+        FileHandle assetsFile = Gdx.files.internal("assets.txt");
 
-        for (FileHandle handle : folder.list()) {
+        for (String path : assetsFile.readString().split("\n")) {
+            if (!path.startsWith("data/voxels/")) continue;
+            FileHandle handle = Gdx.files.internal(path);
+
             Identifier id = VoxelphaliaGame.getInstance()
                 .getIdentifierRegistry()
                 .getEntry(new Identifier(handle.nameWithoutExtension()));
