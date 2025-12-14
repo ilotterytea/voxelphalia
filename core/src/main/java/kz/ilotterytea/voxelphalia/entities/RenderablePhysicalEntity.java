@@ -111,6 +111,13 @@ public class RenderablePhysicalEntity extends RenderableEntity {
     }
 
     protected boolean isColliding(BoundingBox box, Level level) {
+        if (
+            box.min.x < 0 || box.min.y < 0 || box.min.z < 0 ||
+                box.max.x > level.getWidthInVoxels() || box.max.z > level.getDepthInVoxels()
+        ) {
+            return true;
+        }
+
         for (int x = (int) Math.floor(box.min.x); x <= Math.floor(box.max.x); x++) {
             for (int y = (int) Math.floor(box.min.y); y <= Math.floor(box.max.y); y++) {
                 for (int z = (int) Math.floor(box.min.z); z <= Math.floor(box.max.z); z++) {
