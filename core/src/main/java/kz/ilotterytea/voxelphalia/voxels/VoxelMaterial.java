@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class VoxelMaterial implements Cloneable {
     private Vector2 top, bottom, left, right, back, front;
-    private boolean translucent, stateSave;
+    private boolean translucent, breakable = true, stateSave;
     private VoxelMaterialType type;
 
     public VoxelMaterial() {
@@ -112,6 +112,14 @@ public class VoxelMaterial implements Cloneable {
 
     public boolean isTranslucent() {
         return translucent;
+    }
+
+    public boolean isBreakable() {
+        return breakable;
+    }
+
+    public void setBreakable(boolean breakable) {
+        this.breakable = breakable;
     }
 
     public void setStateSave(boolean stateSave) {

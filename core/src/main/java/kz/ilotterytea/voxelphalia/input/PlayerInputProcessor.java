@@ -13,9 +13,12 @@ import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.items.Weapon;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
+import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
 import kz.ilotterytea.voxelphalia.voxels.DestroyableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
+import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 
 public class PlayerInputProcessor implements InputProcessor {
     private final Level level;
@@ -77,6 +80,7 @@ public class PlayerInputProcessor implements InputProcessor {
             return true;
         }
 
+        VoxelRegistry voxelRegistry = VoxelphaliaGame.getInstance().getVoxelRegistry();
         Vector3 pos = new Vector3(playerEntity.getPosition()), lastPos = new Vector3();
         Vector3 dir = new Vector3(playerEntity.getDirection());
         boolean collided = false;
@@ -89,6 +93,15 @@ public class PlayerInputProcessor implements InputProcessor {
             x = (int) Math.floor(pos.x);
             y = (int) Math.floor(pos.y);
             z = (int) Math.floor(pos.z);
+
+            Identifier voxelId = level.getVoxel(x, y, z);
+            if (voxelId != null) {
+                VoxelMaterial material = voxelRegistry.getEntry(voxelId).getMaterial();
+                if (material != null && !material.isBreakable()) {
+                    lastPos.set(pos);
+                    break;
+                }
+            }
 
             if (destroy) {
                 if (level.hasSolidVoxel(x, y, z)) {

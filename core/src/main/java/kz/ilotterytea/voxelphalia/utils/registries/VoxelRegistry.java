@@ -97,6 +97,10 @@ public class VoxelRegistry extends Registry<Voxel> {
                 material.setStateSave(json.getBoolean("state_save"));
             }
 
+            if (json.has("breakable")) {
+                material.setBreakable(json.getBoolean("breakable"));
+            }
+
             // parsing voxel type
             String voxelType = "";
 
