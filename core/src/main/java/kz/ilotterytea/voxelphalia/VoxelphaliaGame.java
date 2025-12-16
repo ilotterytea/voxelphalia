@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.MathUtils;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.screens.SplashScreen;
 import kz.ilotterytea.voxelphalia.utils.registries.*;
@@ -39,6 +41,15 @@ public class VoxelphaliaGame extends Game {
         if (preferences.getBoolean("fullscreen", false)) {
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         }
+
+        // splash text
+        String splashText = "MissingNo.";
+        FileHandle splashFile = Gdx.files.internal("texts/splashes.txt");
+        if (splashFile.exists()) {
+            String[] parts = splashFile.readString().split("\n");
+            splashText = parts[MathUtils.random(0, parts.length - 1)];
+        }
+        Gdx.graphics.setTitle(String.format("%s: %s", VoxelphaliaConstants.Metadata.APP_NAME, splashText));
 
         setScreen(new SplashScreen());
     }
