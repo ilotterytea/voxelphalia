@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
+import kz.ilotterytea.voxelphalia.audio.MusicPlayer;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.environment.SkyClouds;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
@@ -64,6 +65,8 @@ public class GameScreen implements Screen {
     private PlayerEntity playerEntity;
 
     private DecalBatch decalBatch;
+
+    private MusicPlayer musicPlayer;
 
     public GameScreen(Level level) {
         this.level = level;
@@ -121,6 +124,9 @@ public class GameScreen implements Screen {
 
         showStage();
 
+        if (musicPlayer == null) musicPlayer = new MusicPlayer(MusicPlayer.Type.GAME, 1200f, 3600f);
+        musicPlayer.play();
+
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(playerEntity, camera),
             new PlayerInputProcessor(playerEntity, level, camera),
@@ -130,6 +136,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        musicPlayer.tick(delta);
+
         camera.far = 40.0f * game.getPreferences().getInteger("render-distance", 1);
         camera.update();
 
@@ -180,11 +188,13 @@ public class GameScreen implements Screen {
 
     @Override
     public void hide() {
+        musicPlayer.pause();
         dispose();
     }
 
     @Override
     public void dispose() {
+        musicPlayer.resetAll();
         stage.dispose();
         renderableLevel.dispose();
         decalBatch.dispose();

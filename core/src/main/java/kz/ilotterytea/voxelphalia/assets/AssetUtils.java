@@ -20,6 +20,8 @@ public class AssetUtils {
             String[] splitFileName = splitFilePath[splitFilePath.length - 1].split("\\.");
             String extension = splitFileName[splitFileName.length - 1];
 
+            if (filePath.startsWith("music/")) extension = "mp3";
+
             Class<?> type = switch (extension) {
                 case "png" -> Texture.class;
                 case "atlas" -> TextureAtlas.class;
