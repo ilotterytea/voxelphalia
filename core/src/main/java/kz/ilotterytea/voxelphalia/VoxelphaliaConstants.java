@@ -6,6 +6,6 @@ public class VoxelphaliaConstants {
         public static final String APP_ID = "voxelphalia";
         public static final String APP_PACKAGE = "kz.ilotterytea.voxelphalia";
         public static final String APP_DEV = "ilotterytea";
-        public static final String APP_VERSION = "0.7";
+        public static final String APP_VERSION = "0.7.1";
     }
 }
