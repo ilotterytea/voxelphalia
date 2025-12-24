@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.assets.AssetUtils;
+import kz.ilotterytea.voxelphalia.screens.menu.MenuScreen;
 
 public class SplashScreen implements Screen {
     private VoxelphaliaGame game;
