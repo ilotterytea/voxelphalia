@@ -1,5 +1,7 @@
 # ![Voxelphalia](/logo.png) Open Source
 
+[![Building (Desktop)](https://github.com/ilotterytea/voxelphalia/actions/workflows/build.yml/badge.svg)](https://github.com/ilotterytea/voxelphalia/actions/workflows/build.yml)
+
 A first-person survival game in a 2.5D voxel world, written in Java and LibGDX. This project uses Gradle to manage
 dependencies.
 
