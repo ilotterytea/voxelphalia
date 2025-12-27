@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.audio.MusicPlayer;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
+import kz.ilotterytea.voxelphalia.environment.InfiniteOcean;
 import kz.ilotterytea.voxelphalia.environment.SkyClouds;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
@@ -58,6 +59,7 @@ public class GameScreen implements Screen {
     private ModelBatch modelBatch;
     private Environment environment;
     private SkyClouds clouds;
+    private InfiniteOcean ocean;
 
     private final Level level;
     private RenderableLevel renderableLevel;
@@ -122,6 +124,8 @@ public class GameScreen implements Screen {
             new Vector3(1000f, 0f, 1000f)
         );
 
+        this.ocean = new InfiniteOcean(level);
+
         showStage();
 
         if (musicPlayer == null) musicPlayer = new MusicPlayer(MusicPlayer.Type.GAME, 1200f, 3600f);
@@ -154,6 +158,7 @@ public class GameScreen implements Screen {
         clouds.render(modelBatch, environment);
 
         modelBatch.begin(camera);
+        modelBatch.render(ocean);
         renderableLevel.render(modelBatch, environment);
         modelBatch.end();
 
@@ -200,6 +205,7 @@ public class GameScreen implements Screen {
         decalBatch.dispose();
         modelBatch.dispose();
         clouds.dispose();
+        ocean.dispose();
     }
 
     private void showStage() {
