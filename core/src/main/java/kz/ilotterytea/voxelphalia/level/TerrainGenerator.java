@@ -137,7 +137,9 @@ public class TerrainGenerator {
                             continue;
                         }
 
-                        if (MathUtils.random(0, 100) > 20 && level.getVoxel(mx, my, mz).equals(VoxelphaliaConstants.Metadata.APP_ID + ":stone")) {
+                        Identifier v = level.getVoxel(mx, my, mz);
+
+                        if (v != null && v.equals(VoxelphaliaConstants.Metadata.APP_ID + ":stone") && MathUtils.random(0, 100) > 20) {
                             level.placeVoxel(mineral, mx, my, mz);
                         }
                     }

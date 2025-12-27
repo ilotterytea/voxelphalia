@@ -56,6 +56,9 @@ public class Identifier implements Identifiable {
                 return i.name.equals(name) && i.namespace.equals(namespace);
             }
             case String s -> {
+                if (!s.contains(":")) {
+                    s = VoxelphaliaConstants.Metadata.APP_ID + ":" + s;
+                }
                 return s.equals(getFullName());
             }
             case null, default -> {
