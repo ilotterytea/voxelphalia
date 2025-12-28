@@ -18,6 +18,25 @@
     ],
     "type": "log"
   },
+  "xmasmaterial": {
+    "side": [
+      13,
+      0
+    ],
+    "top": [
+      12,
+      0
+    ],
+    "bottom": [
+      15,
+      2
+    ],
+    "front": [
+      13,
+      0
+    ],
+    "type": "log"
+  },
   "state_save": true,
   "behaviour": "chest"
 }

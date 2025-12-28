@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
+import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -34,10 +35,15 @@ public class VoxelRegistry extends Registry<Voxel> {
 
             // parsing material
             VoxelMaterial material = new VoxelMaterial();
+            JsonValue matJson = null;
 
-            if (json.has("material")) {
-                JsonValue matJson = json.get("material");
+            if (json.has("xmasmaterial") && VoxelphaliaConstants.Date.IS_XMAS) {
+                matJson = json.get("xmasmaterial");
+            } else if (json.has("material")) {
+                matJson = json.get("material");
+            }
 
+            if (matJson != null) {
                 if (matJson.has("side")) {
                     int[] values = matJson.get("side").asIntArray();
                     Vector2 vec = new Vector2(values[0], values[1]);
