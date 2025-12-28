@@ -5,6 +5,7 @@ import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 public class Chunk {
+    public static final byte SIZE = 16;
     protected final Identifier[] voxels;
     protected final Voxel[] voxelStates;
     protected final Vector3 offset;

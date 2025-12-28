@@ -9,4 +9,6 @@ public interface TerrainGenerator {
     void generateTrees(Level level);
 
     void generateMobs(Level level, MobType mob);
+
+    void generateMinerals(Level level);
 }

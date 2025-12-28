@@ -2,6 +2,7 @@ package kz.ilotterytea.voxelphalia.level.generators;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobEntity;
@@ -9,20 +10,28 @@ import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.entities.mobs.friendly.MobPig;
 import kz.ilotterytea.voxelphalia.entities.mobs.hostile.MobFish;
 import kz.ilotterytea.voxelphalia.entities.mobs.neutral.MobPenguin;
+import kz.ilotterytea.voxelphalia.level.Chunk;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class IslandTerrainGenerator implements TerrainGenerator {
+    private final Array<Chunk> caveChunks;
+
     private final FastNoiseLite heightNoise, detailNoise, treeNoise;
-    private final FastNoiseLite caveNoise, caveWrapNoise;
+    private final FastNoiseLite caveNoise, caveWrapNoise, oreNoise;
 
     private final Voxel mantle, stone, water, sand, dirt, grass, snow;
 
     public IslandTerrainGenerator(int seed) {
+        caveChunks = new Array<>();
+
         heightNoise = new FastNoiseLite(seed);
         heightNoise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
         heightNoise.SetFrequency(0.05f);
@@ -46,6 +55,10 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         caveWrapNoise = new FastNoiseLite(seed + 9);
         caveWrapNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
         caveWrapNoise.SetFrequency(0.05f);
+
+        oreNoise = new FastNoiseLite(seed + 121);
+        oreNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        oreNoise.SetFrequency(0.08f);
 
         VoxelRegistry voxels = VoxelphaliaGame.getInstance().getVoxelRegistry();
 
@@ -140,6 +153,8 @@ public class IslandTerrainGenerator implements TerrainGenerator {
                     } else {
                         level.placeVoxel(null, x, y, z);
                     }
+
+                    caveChunks.add(level.getChunk(x, y, z));
                 }
             }
         }
@@ -178,6 +193,128 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         } catch (Exception e) {
             Gdx.app.log("TerrainGenerator", "Failed to create a mob");
         }
+    }
+
+    @Override
+    public void generateMinerals(Level level) {
+        VoxelRegistry registry = VoxelphaliaGame.getInstance().getVoxelRegistry();
+        Voxel[] minerals = new Voxel[]{
+            registry.getEntry("coal_mineral"),
+            registry.getEntry("iron_mineral"),
+            registry.getEntry("gold_mineral"),
+            registry.getEntry("ruby_mineral"),
+            registry.getEntry("gemstone_mineral"),
+        };
+
+        // minY, maxY, minimal noise
+        float[] settings = new float[]{
+            40f, 100f, 0.6f,
+            32f, 49f, 0.94f,
+            21f, 33f, 0.85f,
+            40f, 100f, 0.9f,
+            11f, 20f, 0.97f,
+        };
+
+        int[] generatedAmount = new int[minerals.length];
+
+        // multithreaded ore placement
+        int threadCount = Runtime.getRuntime().availableProcessors();
+
+        try (ExecutorService executor = Executors.newFixedThreadPool(threadCount)) {
+            List<List<Chunk>> chunkBatches = new ArrayList<>();
+
+            for (int i = 0; i < threadCount; i++) chunkBatches.add(new ArrayList<>());
+            for (int i = 0; i < caveChunks.size; i++) chunkBatches.get(i % threadCount).add(caveChunks.get(i));
+
+            List<Callable<Void>> tasks = new ArrayList<>();
+            for (List<Chunk> batch : chunkBatches) {
+                tasks.add(() -> {
+                    for (Chunk chunk : batch) {
+                        for (int i = 0; i < minerals.length; i++) {
+                            float minY = settings[i * 3], maxY = settings[i * 3 + 1], value = settings[i * 3 + 2];
+                            int generatedMinerals = generateMineral(chunk, level, minerals[i], minY, maxY, value, level.getSeed() + 121);
+                            generatedAmount[i] += generatedMinerals;
+                        }
+                    }
+                    return null;
+                });
+            }
+
+            executor.invokeAll(tasks);
+            executor.shutdown();
+        } catch (InterruptedException exception) {
+            throw new RuntimeException(exception);
+        }
+
+        for (int i = 0; i < generatedAmount.length; i++) {
+            Gdx.app.log(getClass().getSimpleName(), "Generated " + generatedAmount[i] + " " + minerals[i]);
+        }
+    }
+
+    private int generateMineral(Chunk chunk, Level level, Voxel mineral, float minY, float maxY, float value, int seed) {
+        if (chunk.getOffset().y < minY || chunk.getOffset().y > maxY) {
+            return 0;
+        }
+
+        Random random = new Random(seed + mineral.getId().hashCode());
+
+        Array<Vector3> positions = new Array<>();
+
+        // determining potential ore positions
+        for (int x = 0; x < Chunk.SIZE; x++) {
+            int lx = (int) (chunk.getOffset().x + x);
+            for (int z = 0; z < Chunk.SIZE; z++) {
+                int lz = (int) (chunk.getOffset().z + z);
+                for (int y = 0; y < Chunk.SIZE; y++) {
+                    int ly = (int) (chunk.getOffset().y + y);
+                    Identifier v = level.getVoxel(lx, ly, lz);
+                    if (ly < minY || ly > maxY || v == null || !v.equals("stone")) continue;
+
+                    float n = oreNoise.GetNoise(lx, ly, lz);
+                    if (n < value) continue;
+
+                    positions.add(new Vector3(lx, ly, lz));
+                }
+            }
+        }
+
+        int veins = Math.max(1, positions.size / 50);
+        int amount = 0;
+        for (int i = 0; i < veins; i++) {
+            if (positions.isEmpty()) break;
+
+            int idx = random.nextInt(positions.size);
+            Vector3 position = positions.removeIndex(idx);
+
+            Queue<Vector3> queue = new ArrayDeque<>();
+            Set<Vector3> visited = new HashSet<>();
+            queue.add(position);
+
+            int size = 3 + random.nextInt(3);
+            while (!queue.isEmpty() && size > 0) {
+                Vector3 c = queue.poll();
+                if (!visited.add(c)) continue;
+                level.placeVoxel(mineral, (int) c.x, (int) c.y, (int) c.z);
+                amount++;
+                size--;
+
+                List<Vector3> neighbors = Arrays.asList(
+                    new Vector3(c.x + 1, c.y, c.z),
+                    new Vector3(c.x - 1, c.y, c.z),
+                    new Vector3(c.x, c.y + 1, c.z),
+                    new Vector3(c.x, c.y - 1, c.z),
+                    new Vector3(c.x, c.y, c.z + 1),
+                    new Vector3(c.x, c.y, c.z - 1)
+                );
+                Collections.shuffle(neighbors, random);
+
+                for (Vector3 n : neighbors) {
+                    if (random.nextFloat() < 0.2f) queue.add(n);
+                }
+            }
+        }
+
+        return amount;
     }
 
     @Override

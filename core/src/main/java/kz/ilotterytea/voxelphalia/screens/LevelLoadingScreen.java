@@ -183,6 +183,8 @@ public class LevelLoadingScreen implements Screen {
                 switch (step) {
                     // generating terrain
                     case 0 -> generator.generateLandscape(level);
+                    // mineralizing
+                    case 2 -> generator.generateMinerals(level);
                     // planting trees
                     case 3 -> generator.generateTrees(level);
                     // spawning mobs
