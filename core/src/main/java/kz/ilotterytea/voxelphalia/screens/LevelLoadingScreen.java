@@ -19,8 +19,8 @@ import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.level.Chunk;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.LevelStorage;
-import kz.ilotterytea.voxelphalia.level.TerrainGenerator;
-import kz.ilotterytea.voxelphalia.utils.Identifier;
+import kz.ilotterytea.voxelphalia.level.generators.IslandTerrainGenerator;
+import kz.ilotterytea.voxelphalia.level.generators.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,6 +38,7 @@ public class LevelLoadingScreen implements Screen {
     private int step;
 
     private Level level;
+    private TerrainGenerator generator;
 
     private Thread generationThread;
 
@@ -49,7 +50,7 @@ public class LevelLoadingScreen implements Screen {
         }
 
         if (this.level == null) {
-            this.level = new Level(levelName, 30, 4, 30, Generators.rollSeed(), generatorType, gameMode);
+            this.level = new Level(levelName, 30, 30, 30, Generators.rollSeed(), generatorType, gameMode);
         }
     }
 
@@ -110,6 +111,8 @@ public class LevelLoadingScreen implements Screen {
 
         stepBar = new ProgressBar(0f, 6f, 1f, false, skin);
         table.add(stepBar).width(300f);
+
+        generator = new IslandTerrainGenerator(level.getSeed());
 
         runGenerationThread();
     }
@@ -179,38 +182,9 @@ public class LevelLoadingScreen implements Screen {
             while (step < 7) {
                 switch (step) {
                     // generating terrain
-                    case 0 ->
-                        grid.set(TerrainGenerator.generateGrid(level.getWidthInVoxels(), level.getDepthInVoxels(), level.getSeed()));
-                    // building terrain
-                    case 1 -> TerrainGenerator.applyGrid(level, grid.get());
-                    // placing minerals
-                    case 2 -> {
-                        Voxel[] minerals = {
-                            game.getVoxelRegistry().getEntry(new Identifier("coal_mineral")),
-                            game.getVoxelRegistry().getEntry(new Identifier("iron_mineral")),
-                            game.getVoxelRegistry().getEntry(new Identifier("gold_mineral")),
-                            game.getVoxelRegistry().getEntry(new Identifier("gemstone_mineral")),
-                            game.getVoxelRegistry().getEntry(new Identifier("ruby_mineral")),
-                        };
-
-                        int[] mineralSettings = {
-                            3, 23, 30,
-                            2, 20, 20,
-                            2, 20, 10,
-                            1, 10, 5,
-                            1, 5, 5
-                        };
-
-                        for (int i = 0; i < minerals.length; i++) {
-                            TerrainGenerator.generateMinerals(
-                                level, minerals[i],
-                                mineralSettings[i], mineralSettings[i + 1], mineralSettings[i + 2],
-                                (int) (level.getSeed() + Math.pow(2, i))
-                            );
-                        }
-                    }
-                    // placing trees
-                    case 3 -> TerrainGenerator.generateTrees(level, 1000, level.getSeed() + 19);
+                    case 0 -> generator.generateLandscape(level);
+                    // planting trees
+                    case 3 -> generator.generateTrees(level);
                     // spawning mobs
                     case 4 -> {
                         MobType[] mobs = {
@@ -219,8 +193,8 @@ public class LevelLoadingScreen implements Screen {
                             MobType.PENGUIN
                         };
 
-                        for (int i = 0; i < mobs.length; i++) {
-                            TerrainGenerator.generateMobs(level, mobs[i], level.getSeed() + 20 + i);
+                        for (MobType mob : mobs) {
+                            generator.generateMobs(level, mob);
                         }
                     }
                     // ticking
