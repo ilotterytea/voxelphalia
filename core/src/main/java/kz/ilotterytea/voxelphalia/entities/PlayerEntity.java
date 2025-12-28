@@ -203,6 +203,10 @@ public class PlayerEntity extends LivingEntity {
         return spawnPoint;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
+
     public void setCamera(Camera camera) {
         this.camera = camera;
     }

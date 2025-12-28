@@ -30,6 +30,7 @@ import kz.ilotterytea.voxelphalia.audio.MusicPlayer;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
 import kz.ilotterytea.voxelphalia.environment.InfiniteOcean;
 import kz.ilotterytea.voxelphalia.environment.SkyClouds;
+import kz.ilotterytea.voxelphalia.environment.VoxelLiner;
 import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
@@ -61,6 +62,7 @@ public class GameScreen implements Screen {
     private Environment environment;
     private SkyClouds clouds;
     private InfiniteOcean ocean;
+    private VoxelLiner voxelLiner;
 
     private final Level level;
     private RenderableLevel renderableLevel;
@@ -135,6 +137,8 @@ public class GameScreen implements Screen {
         if (musicPlayer == null) musicPlayer = new MusicPlayer(MusicPlayer.Type.GAME, 1200f, 3600f);
         musicPlayer.play();
 
+        voxelLiner = new VoxelLiner(game.getShapeRenderer(), playerEntity, level);
+
         Gdx.input.setInputProcessor(new InputMultiplexer(
             new SpecialInputProcessor(playerEntity, camera),
             new PlayerInputProcessor(playerEntity, level, camera),
@@ -169,6 +173,8 @@ public class GameScreen implements Screen {
 
         renderableLevel.render(decalBatch);
         decalBatch.flush();
+
+        voxelLiner.tick(delta);
 
         if (game.getPreferences().getBoolean("gui-display", true)) {
             // do not touch it, it fixed selectbox
