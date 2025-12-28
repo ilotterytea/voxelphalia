@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
             new Vector3(1000f, 0f, 1000f)
         );
 
-        this.ocean = new InfiniteOcean(level);
+        this.ocean = new InfiniteOcean(level, 11);
 
         showStage();
 

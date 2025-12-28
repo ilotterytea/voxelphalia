@@ -19,8 +19,9 @@ public class InfiniteOcean implements RenderableProvider, Disposable {
     private final Material material;
     private final Texture texture;
     private final Rectangle[] rectangles;
+    private final float y;
 
-    public InfiniteOcean(Level level) {
+    public InfiniteOcean(Level level, float y) {
         VoxelRegistry voxels = VoxelphaliaGame.getInstance().getVoxelRegistry();
         Texture atlas = VoxelphaliaGame.getInstance()
             .getAssetManager()
@@ -53,6 +54,8 @@ public class InfiniteOcean implements RenderableProvider, Disposable {
         this.rectangles[2] = new Rectangle(-size, w, w + size * 2f, size);
         this.rectangles[3] = new Rectangle(-size, -size, w + size * 2f, size);
 
+        this.y = y;
+
         rebuildMesh();
     }
 
@@ -61,8 +64,6 @@ public class InfiniteOcean implements RenderableProvider, Disposable {
             mesh.dispose();
             mesh = null;
         }
-
-        float y = 21f;
 
         float[] v = new float[rectangles.length * 4 * 8];
         short[] i = new short[rectangles.length * 6];
