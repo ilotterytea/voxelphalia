@@ -155,6 +155,7 @@ public class GameScreen implements Screen {
             delta = 0f;
         }
 
+        level.tick(delta);
         renderableLevel.tick(delta);
         renderableLevel.tick(delta, level, camera);
 

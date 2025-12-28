@@ -207,6 +207,7 @@ public class LevelLoadingScreen implements Screen {
                             chunk.setModified(false);
                             chunk.setLock(false);
                         }
+                        level.setApplyPhysics(true);
                     }
                     default -> {
                     }

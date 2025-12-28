@@ -10,9 +10,7 @@ import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterial;
 import kz.ilotterytea.voxelphalia.voxels.VoxelMaterialType;
-import kz.ilotterytea.voxelphalia.voxels.specialvoxels.ChestVoxel;
-import kz.ilotterytea.voxelphalia.voxels.specialvoxels.FurnaceVoxel;
-import kz.ilotterytea.voxelphalia.voxels.specialvoxels.WorkbenchVoxel;
+import kz.ilotterytea.voxelphalia.voxels.specialvoxels.*;
 
 public class VoxelRegistry extends Registry<Voxel> {
     @Override
@@ -112,6 +110,8 @@ public class VoxelRegistry extends Registry<Voxel> {
                 case "workbench" -> new WorkbenchVoxel(id, material);
                 case "furnace" -> new FurnaceVoxel(id, material);
                 case "chest" -> new ChestVoxel(id, material);
+                case "liquid" -> new LiquidVoxel(id, material);
+                case "sand" -> new SandVoxel(id, material);
                 case null, default -> new Voxel(id, material);
             };
 

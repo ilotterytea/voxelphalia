@@ -6,5 +6,7 @@
     ],
     "translucent": true,
     "type": "liquid"
-  }
+  },
+  "behaviour": "liquid",
+  "breakable": false
 }

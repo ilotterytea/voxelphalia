@@ -5,13 +5,16 @@ import com.badlogic.gdx.utils.Array;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.Entity;
 import kz.ilotterytea.voxelphalia.entities.LivingEntity;
-import kz.ilotterytea.voxelphalia.entities.SaplingEntity;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
 import kz.ilotterytea.voxelphalia.utils.Tickable;
+import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
 import kz.ilotterytea.voxelphalia.voxels.InteractableVoxel;
+import kz.ilotterytea.voxelphalia.voxels.PhysicalVoxel;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class Level implements Tickable {
     public enum LevelGeneratorType {
@@ -23,6 +26,7 @@ public class Level implements Tickable {
     }
 
     protected final Array<Chunk> chunks;
+    protected final Queue<Vector3> voxelPhysicsQueue;
     protected final int width, height, depth;
     protected final ArrayList<Entity> entities;
     protected final int seed;
@@ -32,6 +36,8 @@ public class Level implements Tickable {
     protected final LevelGameMode gameMode;
     protected final LevelGeneratorType generatorType;
 
+    private boolean applyPhysics;
+
     public Level(String name, int width, int height, int depth, int seed, LevelGeneratorType generatorType, LevelGameMode gameMode) {
         this.width = width;
         this.height = height;
@@ -40,6 +46,7 @@ public class Level implements Tickable {
         this.name = name;
         this.generatorType = generatorType;
         this.gameMode = gameMode;
+        this.voxelPhysicsQueue = new ArrayDeque<>();
 
         int chunkCapacity = width * height * depth;
         this.chunks = new Array<>(chunkCapacity);
@@ -50,6 +57,10 @@ public class Level implements Tickable {
 
         this.entities = new ArrayList<>();
         this.lastTimeOpened = System.currentTimeMillis();
+    }
+
+    public Identifier getVoxel(float x, float y, float z) {
+        return getVoxel((int) x, (int) y, (int) z);
     }
 
     public Identifier getVoxel(int x, int y, int z) {
@@ -91,6 +102,10 @@ public class Level implements Tickable {
         }
     }
 
+    public void placeVoxel(Voxel voxel, float x, float y, float z) {
+        placeVoxel(voxel, (int) x, (int) y, (int) z);
+    }
+
     public void placeVoxel(Voxel voxel, int x, int y, int z) {
         for (int xy = -1; xy < 2; xy++) {
             for (int xc = -1; xc < 2; xc++) {
@@ -109,6 +124,10 @@ public class Level implements Tickable {
                     }
                 }
             }
+        }
+
+        if (isApplyingPhysics()) {
+            voxelPhysicsQueue.add(new Vector3(x, y, z));
         }
     }
 
@@ -170,7 +189,7 @@ public class Level implements Tickable {
         return this.chunks.size;
     }
 
-    public float getHighestY(float x, float z) {
+    public int getHighestY(float x, float z) {
         int ix = (int) x;
         int iz = (int) z;
         if (ix < 0 || ix >= getWidthInVoxels()) return 0;
@@ -179,6 +198,10 @@ public class Level implements Tickable {
             if (getVoxel(ix, y, iz) != null) return y + 1;
         }
         return 0;
+    }
+
+    public boolean hasVoxel(float x, float y, float z) {
+        return hasVoxel((int) x, (int) y, (int) z);
     }
 
     public boolean hasVoxel(int x, int y, int z) {
@@ -274,20 +297,29 @@ public class Level implements Tickable {
 
     @Override
     public void tick(float delta) {
-        Array<Entity> removeEntities = new Array<>();
-        for (Entity entity : entities) {
-            if (entity instanceof Tickable e) {
-                e.tick(delta);
-                e.tick(delta, this);
-            }
+        if (!isApplyingPhysics()) return;
+        VoxelRegistry registry = VoxelphaliaGame.getInstance().getVoxelRegistry();
+        int budget = 60;
+        while (!voxelPhysicsQueue.isEmpty() && budget-- > 0) {
+            Vector3 p = voxelPhysicsQueue.poll();
 
-            if (entity instanceof SaplingEntity tree) {
-                if (tree.hasGrown()) removeEntities.add(entity);
-            }
-        }
+            float[] posAround = new float[]{
+                p.x, p.y, p.z,
+                p.x - 1, p.y, p.z,
+                p.x + 1, p.y, p.z,
+                p.x, p.y - 1, p.z,
+                p.x, p.y + 1, p.z,
+                p.x, p.y, p.z - 1,
+                p.x, p.y, p.z + 1,
+            };
 
-        for (Entity e : removeEntities) {
-            removeEntity(e);
+            for (int i = 0; i < 6; i++) {
+                float x = posAround[i * 3], y = posAround[i * 3 + 1], z = posAround[i * 3 + 2];
+                Voxel v = registry.getEntry(getVoxel(x, y, z));
+                if (v instanceof PhysicalVoxel physicalVoxel) {
+                    physicalVoxel.onPhysicsApply(this, new Vector3(x, y, z));
+                }
+            }
         }
     }
 
@@ -317,5 +349,13 @@ public class Level implements Tickable {
 
     public LevelGeneratorType getGeneratorType() {
         return generatorType;
+    }
+
+    public boolean isApplyingPhysics() {
+        return applyPhysics;
+    }
+
+    public void setApplyPhysics(boolean applyPhysics) {
+        this.applyPhysics = applyPhysics;
     }
 }
