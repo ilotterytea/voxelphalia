@@ -18,6 +18,7 @@ import java.util.Random;
 
 public class IslandTerrainGenerator implements TerrainGenerator {
     private final FastNoiseLite heightNoise, detailNoise, treeNoise;
+    private final FastNoiseLite caveNoise, caveWrapNoise;
 
     private final Voxel mantle, stone, water, sand, dirt, grass, snow;
 
@@ -33,6 +34,18 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         treeNoise = new FastNoiseLite(seed + 4);
         treeNoise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
         treeNoise.SetFrequency(0.6f);
+
+        caveNoise = new FastNoiseLite(seed + 8);
+        caveNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2S);
+        caveNoise.SetFrequency(0.008f);
+        caveNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
+        caveNoise.SetFractalOctaves(3);
+        caveNoise.SetFractalGain(0.5f);
+        caveNoise.SetFractalLacunarity(2.0f);
+
+        caveWrapNoise = new FastNoiseLite(seed + 9);
+        caveWrapNoise.SetNoiseType(FastNoiseLite.NoiseType.OpenSimplex2);
+        caveWrapNoise.SetFrequency(0.05f);
 
         VoxelRegistry voxels = VoxelphaliaGame.getInstance().getVoxelRegistry();
 
@@ -117,6 +130,17 @@ public class IslandTerrainGenerator implements TerrainGenerator {
                     level.placeVoxel(snow, x, terrainHeight, z);
                     level.placeVoxel(stone, x, terrainHeight - 1, z);
                 }
+
+                // generating caves
+                for (int y = 4; y < terrainHeight + 3; y++) {
+                    if (!isCave(x, y, z)) continue;
+
+                    if (y <= WATER_HEIGHT) {
+                        level.placeVoxel(water, x, y, z);
+                    } else {
+                        level.placeVoxel(null, x, y, z);
+                    }
+                }
             }
         }
     }
@@ -179,5 +203,12 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         }
 
         Gdx.app.log(getClass().getSimpleName(), "Placed " + success + " trees");
+    }
+
+    private boolean isCave(int x, int y, int z) {
+        FastNoiseLite.Vector3 v = new FastNoiseLite.Vector3(x, y, z);
+        caveWrapNoise.DomainWarp(v);
+        float n = Math.abs(caveNoise.GetNoise(v.x, v.y, v.z));
+        return n < 0.05f && y > 3 && y < 75;
     }
 }
