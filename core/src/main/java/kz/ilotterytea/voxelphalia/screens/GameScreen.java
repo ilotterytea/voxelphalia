@@ -44,6 +44,7 @@ import kz.ilotterytea.voxelphalia.ui.game.crafting.SmeltingWindow;
 import kz.ilotterytea.voxelphalia.ui.game.crafting.WorkbenchWindow;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.ChestWindow;
 import kz.ilotterytea.voxelphalia.ui.game.inventory.InventoryWindow;
+import kz.ilotterytea.voxelphalia.utils.Identifier;
 
 public class GameScreen implements Screen {
     private VoxelphaliaGame game;
@@ -99,13 +100,16 @@ public class GameScreen implements Screen {
             .orElse(null);
 
         if (playerEntity == null) {
-            Vector3 playerSpawnPoint = new Vector3(
-                MathUtils.random(20, level.getWidthInVoxels() - 40),
-                0f,
-                MathUtils.random(20, level.getDepthInVoxels() - 40)
-            );
-
-            playerSpawnPoint.y = level.getHighestY(playerSpawnPoint.x, playerSpawnPoint.z) + 1f;
+            Vector3 playerSpawnPoint = new Vector3();
+            Identifier v, v2;
+            do {
+                playerSpawnPoint.x = MathUtils.random(level.getWidthInVoxels());
+                playerSpawnPoint.z = MathUtils.random(level.getDepthInVoxels());
+                playerSpawnPoint.y = level.getHighestY(playerSpawnPoint.x, playerSpawnPoint.z);
+                v = level.getVoxel((int) playerSpawnPoint.x, (int) playerSpawnPoint.y - 1, (int) playerSpawnPoint.z);
+                v2 = level.getVoxel((int) playerSpawnPoint.x, (int) playerSpawnPoint.y, (int) playerSpawnPoint.z);
+            } while (v == null || v2 != null || !v.equals("sand"));
+            playerSpawnPoint.y++;
 
             playerEntity = new PlayerEntity(playerSpawnPoint, camera);
             playerEntity.setFocused(true);
