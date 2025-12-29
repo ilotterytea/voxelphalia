@@ -128,7 +128,7 @@ public class GameScreen implements Screen {
 
         this.clouds = new SkyClouds(
             new Vector3(level.getWidthInVoxels() / 2f, level.getHeightInVoxels() + 10f, level.getDepthInVoxels() / 2f),
-            new Vector3(1000f, 0f, 1000f)
+            new Vector3(16384f, 0f, 16384f)
         );
 
         this.ocean = new InfiniteOcean(level, TerrainGeneratorSettings.getDefaultSettings(level.getGeneratorType()).waterHeight + 1);
