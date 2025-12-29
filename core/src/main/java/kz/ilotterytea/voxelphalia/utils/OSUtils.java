@@ -1,5 +1,7 @@
 package kz.ilotterytea.voxelphalia.utils;
 
+import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
+
 public class OSUtils {
     private static final String OS = System.getProperty("os.name").toLowerCase();
 
@@ -29,26 +31,30 @@ public class OSUtils {
         }
     }
 
-    public static String getUserDataDirectory(String applicationName) {
-        String DATA_HOME;
+    public static String getUserDataDirectory() {
+        String path;
 
-        if ((DATA_HOME = System.getenv("XDG_DATA_HOME")) == null) {
-            if (isLinux || isAndroid) {
-                DATA_HOME = System.getProperty("user.home") + "/.local/share";
-            } else if (isMac) {
-                DATA_HOME = System.getProperty("user.home") + "/Library/Application Support";
-            } else if (isIos) {
-                DATA_HOME = System.getProperty("user.home") + "/Documents";
+        if ((path = System.getenv("XDG_DATA_HOME")) == null) {
+            path = System.getProperty("user.home");
+            if (isLinux || isMac) {
+                path += "/Documents";
             } else if (isWindows) {
-                if ((DATA_HOME = System.getenv("APPDATA")) == null) {
-                    DATA_HOME = System.getProperty("user.home") + "/Documents/My Games";
-                }
+                path += "/Saved Games";
             }
         }
 
-        if (applicationName == null || DATA_HOME == null) return DATA_HOME;
+        if (path == null) throw new RuntimeException("Failed to determine path to user data directory");
 
-        return DATA_HOME + "/" + applicationName;
+        return path + "/" + VoxelphaliaConstants.Metadata.APP_ID;
     }
 
+    public static String getPicturesDirectory() {
+        String path;
+
+        if ((path = System.getenv("XDG_DATA_HOME")) == null) {
+            path = System.getProperty("user.home") + "/Pictures";
+        }
+
+        return path + "/" + VoxelphaliaConstants.Metadata.APP_ID;
+    }
 }

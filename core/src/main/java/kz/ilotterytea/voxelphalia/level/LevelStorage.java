@@ -12,7 +12,6 @@ import kz.ilotterytea.voxelphalia.entities.*;
 import kz.ilotterytea.voxelphalia.inventory.Inventory;
 import kz.ilotterytea.voxelphalia.items.Weapon;
 import kz.ilotterytea.voxelphalia.utils.Identifier;
-import kz.ilotterytea.voxelphalia.utils.OSUtils;
 import kz.ilotterytea.voxelphalia.utils.registries.VoxelRegistry;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 import kz.ilotterytea.voxelphalia.voxels.specialvoxels.ChestVoxel;
@@ -28,24 +27,8 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class LevelStorage {
-    private static String levelsFolderName;
-
-    static {
-        levelsFolderName = OSUtils.getUserDataDirectory(
-            String.format("%s/%s/levels",
-                VoxelphaliaConstants.Metadata.APP_DEV,
-                VoxelphaliaConstants.Metadata.APP_ID
-            ));
-
-        File folder = new File(levelsFolderName);
-
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
-    }
-
     public static void save(Level level) {
-        String folderName = levelsFolderName + "/" + level.name;
+        String folderName = VoxelphaliaConstants.Paths.LEVEL_DIRECTORY + "/" + level.name;
 
         File folder;
 
@@ -283,7 +266,7 @@ public class LevelStorage {
     }
 
     public static Level loadLevel(String levelName) {
-        String folderName = levelsFolderName + "/" + levelName;
+        String folderName = VoxelphaliaConstants.Paths.LEVEL_DIRECTORY + "/" + levelName;
 
         if (!new File(folderName).exists()) {
             return null;
@@ -320,7 +303,7 @@ public class LevelStorage {
     }
 
     public static ArrayList<Entity> loadEntities(String levelName) {
-        String folderName = levelsFolderName + "/" + levelName;
+        String folderName = VoxelphaliaConstants.Paths.LEVEL_DIRECTORY + "/" + levelName;
         if (!new File(folderName).exists()) {
             return null;
         }
@@ -459,7 +442,7 @@ public class LevelStorage {
     }
 
     public static Array<Chunk> loadChunkRegions(String levelName) {
-        String folderName = levelsFolderName + "/" + levelName;
+        String folderName = VoxelphaliaConstants.Paths.LEVEL_DIRECTORY + "/" + levelName;
         if (!new File(folderName).exists()) {
             return null;
         }

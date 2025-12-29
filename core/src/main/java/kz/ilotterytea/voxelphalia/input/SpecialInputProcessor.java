@@ -11,9 +11,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.audio.IdentifiedSound;
 import kz.ilotterytea.voxelphalia.entities.PlayerEntity;
-import kz.ilotterytea.voxelphalia.utils.OSUtils;
 
-import java.io.File;
 import java.util.zip.Deflater;
 
 public class SpecialInputProcessor implements InputProcessor {
@@ -43,9 +41,7 @@ public class SpecialInputProcessor implements InputProcessor {
             case Input.Keys.F2: {
                 Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-                String screenShotName = String.format("%s/screenshots", OSUtils.getUserDataDirectory(VoxelphaliaConstants.Metadata.APP_DEV + "/" + VoxelphaliaConstants.Metadata.APP_ID));
-                new File(screenShotName).mkdirs();
-                screenShotName += "/" + System.currentTimeMillis() + ".png";
+                String screenShotName = String.format("%s/%s.png", VoxelphaliaConstants.Paths.SCREENSHOTS_DIRECTORY, System.currentTimeMillis());
 
                 PixmapIO.writePNG(Gdx.files.absolute(screenShotName), pixmap, Deflater.NO_COMPRESSION, true);
                 pixmap.dispose();

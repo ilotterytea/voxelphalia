@@ -21,7 +21,6 @@ import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.screens.LevelLoadingScreen;
 import kz.ilotterytea.voxelphalia.ui.menu.TiledVoxelTexture;
-import kz.ilotterytea.voxelphalia.utils.OSUtils;
 import kz.ilotterytea.voxelphalia.utils.tuples.Pair;
 
 import java.text.SimpleDateFormat;
@@ -87,10 +86,7 @@ public class LevelSelectionScreen implements Screen {
         worldSelectionTable.add(createNewLevelButton).size(384f, 384f);
 
         // Worlds
-        FileHandle levelsFolder = Gdx.files.absolute(OSUtils.getUserDataDirectory(String.format("%s/%s/levels",
-            VoxelphaliaConstants.Metadata.APP_DEV,
-            VoxelphaliaConstants.Metadata.APP_ID
-        )));
+        FileHandle levelsFolder = Gdx.files.absolute(VoxelphaliaConstants.Paths.LEVEL_DIRECTORY);
 
         Array<Pair<Level, FileHandle>> levels = new Array<>();
 

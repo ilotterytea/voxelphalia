@@ -3,7 +3,6 @@ package kz.ilotterytea.voxelphalia.lwjgl3;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.GLVersion;
 import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
-import kz.ilotterytea.voxelphalia.utils.OSUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -64,16 +63,9 @@ public class VoxelphaliaExceptionFrame extends JFrame {
         writer.write("--- END CRASH REPORT ---");
         writer.flush();
 
-        File directory = new File(OSUtils.getUserDataDirectory(String.format("%s/%s/crashreports",
-            VoxelphaliaConstants.Metadata.APP_DEV,
-            VoxelphaliaConstants.Metadata.APP_ID
-        )));
+        File directory = new File(VoxelphaliaConstants.Paths.REPORTS_DIRECTORY);
 
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-
-        File reportFile = new File(String.format("%s/report-%s.log", directory.getAbsolutePath(), "123"));
+        File reportFile = new File(String.format("%s/%s.log", directory.getAbsolutePath(), System.currentTimeMillis()));
         boolean reportSaved = false;
 
         try {
