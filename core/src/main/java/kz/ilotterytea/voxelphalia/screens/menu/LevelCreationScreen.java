@@ -3,11 +3,14 @@ package kz.ilotterytea.voxelphalia.screens.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
@@ -16,6 +19,8 @@ import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.screens.LevelLoadingScreen;
 import kz.ilotterytea.voxelphalia.ui.menu.TiledVoxelTexture;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingSelectBox;
+import kz.ilotterytea.voxelphalia.ui.sound.SoundingTextButton;
 
 public class LevelCreationScreen implements Screen {
     private VoxelphaliaGame game;
@@ -49,6 +54,8 @@ public class LevelCreationScreen implements Screen {
         table.pad(8f);
         stage.addActor(table);
 
+        float sectionWidth = 512f, sectionPad = 16f, elementPad = 4f;
+
         // -- TOP --
         Table topTable = new Table();
         Label titleLabel = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_TITLE), skin);
@@ -63,51 +70,82 @@ public class LevelCreationScreen implements Screen {
         // --- World name ---
         Table worldNameTable = new Table();
         worldNameTable.align(Align.topLeft);
-        centerTable.add(worldNameTable).width(400f).row();
+        centerTable.add(worldNameTable).width(sectionWidth).padBottom(sectionPad).row();
 
         Label worldName = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_NAME), skin);
         worldName.setAlignment(Align.left);
-        worldNameTable.add(worldName).padBottom(16f).growX().row();
+        worldNameTable.add(worldName).padBottom(elementPad).growX().row();
 
         TextField worldField = new TextField("", skin);
         worldField.setMessageText("My World");
-        worldNameTable.add(worldField).growX().padBottom(64f).row();
+        worldNameTable.add(worldField).growX().row();
 
         // --- Seed name ---
         Table seedNameTable = new Table();
         seedNameTable.align(Align.topLeft);
-        centerTable.add(seedNameTable).width(400f).row();
+        centerTable.add(seedNameTable).width(sectionWidth).padBottom(sectionPad).row();
 
         Label seedName = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_SEED), skin);
         seedName.setAlignment(Align.left);
-        Label seedSubtitle = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_SEED_DESCRIPTION), skin);
+        Label seedSubtitle = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_SEED_DESCRIPTION), skin, "level-creation-subtitle");
         seedName.setAlignment(Align.left);
-        seedNameTable.add(seedName).padBottom(16f).growX().row();
+        seedNameTable.add(seedName).growX().padBottom(elementPad).row();
 
         TextField seedField = new TextField("", skin);
-        seedNameTable.add(seedField).growX().row();
+        seedNameTable.add(seedField).growX().padBottom(elementPad).row();
 
-        seedNameTable.add(seedSubtitle).padBottom(16f).growX().row();
+        seedNameTable.add(seedSubtitle).growX().row();
+
+        // Level type
+        Table levelTypeTable = new Table();
+        levelTypeTable.align(Align.topLeft);
+        centerTable.add(levelTypeTable).width(sectionWidth).padBottom(sectionPad).row();
+
+        Label levelTypeName = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_TYPE), skin);
+        levelTypeName.setAlignment(Align.left);
+        levelTypeTable.add(levelTypeName).padBottom(elementPad).growX().row();
+        Label levelTypeSubtitle = new Label("", skin, "level-creation-subtitle");
+        levelTypeSubtitle.setAlignment(Align.left);
+
+        SoundingSelectBox<String> levelTypeSelectBox = new SoundingSelectBox<>(skin);
+        Array<String> levelTypeArray = new Array<>();
+        for (Level.LevelGeneratorType type : Level.LevelGeneratorType.values()) levelTypeArray.add(type.name());
+        levelTypeSelectBox.setItems(levelTypeArray);
+        levelTypeSelectBox.setSelected(levelTypeArray.get(0));
+        levelTypeSubtitle.setText(localizationManager.getLine(LineId.parse("menu.level.type." + levelTypeArray.get(0) + ".description")));
+
+        levelTypeSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String selectedString = levelTypeSelectBox.getSelected();
+                levelTypeSubtitle.setText(
+                    localizationManager.getLine(LineId.parse("menu.level.type." + selectedString + ".description"))
+                );
+            }
+        });
+        levelTypeTable.add(levelTypeSelectBox).padBottom(elementPad).growX().row();
+        levelTypeTable.add(levelTypeSubtitle).growX().row();
 
         // -- BOTTOM --
         Table bottomTable = new Table();
         table.add(bottomTable).fillX().pad(16f).row();
 
         // -- Creation button --
-        TextButton creationButton = new TextButton(localizationManager.getLine(LineId.MENU_LEVEL_CREATE), skin);
+        SoundingTextButton creationButton = new SoundingTextButton(localizationManager.getLine(LineId.MENU_LEVEL_CREATE), skin);
         creationButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 String levelName = worldField.getText();
                 if (levelName.isEmpty()) levelName = worldField.getMessageText();
-                game.setScreen(new LevelLoadingScreen(levelName, Level.LevelGeneratorType.LIMITED, Level.LevelGameMode.SURVIVAL));
+
+                game.setScreen(new LevelLoadingScreen(levelName, Level.LevelGeneratorType.valueOf(levelTypeSelectBox.getSelected()), Level.LevelGameMode.SURVIVAL));
             }
         });
-        bottomTable.add(creationButton).width(400f).padBottom(16f).row();
+        bottomTable.add(creationButton).width(sectionWidth).padBottom(16f).row();
 
         // -- Back button --
-        TextButton backButton = new TextButton(localizationManager.getLine(LineId.MENU_BACK), skin);
+        SoundingTextButton backButton = new SoundingTextButton(localizationManager.getLine(LineId.MENU_BACK), skin);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -115,7 +153,7 @@ public class LevelCreationScreen implements Screen {
                 game.setScreen(new LevelSelectionScreen());
             }
         });
-        bottomTable.add(backButton).width(400f);
+        bottomTable.add(backButton).width(sectionWidth);
 
         Gdx.input.setInputProcessor(stage);
     }

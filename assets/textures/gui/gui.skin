@@ -106,11 +106,11 @@
     },
   },
   com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-      default: {
-        font: default,
-        fontColor: white,
-        background: button-disabled
-      },
+    default: {
+      font: default,
+      fontColor: white,
+      background: button-disabled
+    },
   },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
     default: {
@@ -141,6 +141,10 @@
       font: default,
       fontColor: gray
     },
+    level-creation-subtitle: {
+      font: tiny-default,
+      fontColor: gray
+    }
   },
   com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
     default-horizontal: {

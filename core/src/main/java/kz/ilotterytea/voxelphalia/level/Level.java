@@ -18,7 +18,8 @@ import java.util.Queue;
 
 public class Level implements Tickable {
     public enum LevelGeneratorType {
-        LIMITED
+        LIMITED,
+        ISLAND
     }
 
     public enum LevelGameMode {
