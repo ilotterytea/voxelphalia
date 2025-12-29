@@ -15,6 +15,7 @@ public class LivingEntity extends RenderablePhysicalEntity {
     protected final BoundingBox hitBox;
     protected int health, maxHealth, damage;
     protected boolean dead;
+    private float maxFallSpeed;
 
     protected float damageInDelay, lastFootstepTime;
 
@@ -118,6 +119,14 @@ public class LivingEntity extends RenderablePhysicalEntity {
         super.tick(delta);
         damageInDelay -= delta;
         lastFootstepTime += delta;
+
+        if (onGround && maxFallSpeed < 0f) {
+            float impactSpeed = Math.abs(maxFallSpeed);
+            if (impactSpeed / 9f >= 2f) takeDamage((int) (impactSpeed * 0.5f));
+            maxFallSpeed = 0f;
+        } else if (!onGround && velocity.y < maxFallSpeed) {
+            maxFallSpeed = velocity.y;
+        }
     }
 
     public BoundingBox getHitBox() {
