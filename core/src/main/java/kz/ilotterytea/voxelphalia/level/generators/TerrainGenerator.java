@@ -11,4 +11,6 @@ public interface TerrainGenerator {
     void generateMobs(Level level, MobType mob);
 
     void generateMinerals(Level level);
+
+    TerrainGeneratorSettings getSettings();
 }

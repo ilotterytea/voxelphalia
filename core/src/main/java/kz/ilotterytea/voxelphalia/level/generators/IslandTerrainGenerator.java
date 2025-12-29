@@ -29,8 +29,15 @@ public class IslandTerrainGenerator implements TerrainGenerator {
 
     private final Voxel mantle, stone, water, sand, dirt, grass, snow;
 
+    private final TerrainGeneratorSettings settings;
+
     public IslandTerrainGenerator(int seed) {
+        this(seed, TerrainGeneratorSettings.defaultIslandSettings());
+    }
+
+    public IslandTerrainGenerator(int seed, TerrainGeneratorSettings settings) {
         caveChunks = new Array<>();
+        this.settings = settings;
 
         heightNoise = new FastNoiseLite(seed);
         heightNoise.SetNoiseType(FastNoiseLite.NoiseType.Perlin);
@@ -73,13 +80,6 @@ public class IslandTerrainGenerator implements TerrainGenerator {
 
     @Override
     public void generateLandscape(Level level) {
-        final float WATER_HEIGHT = 10f;
-        final float SAND_LEVEL = 0.18f;
-        final float GRASS_LEVEL = 0.6f;
-        final float ROCK_LEVEL = 0.66f;
-        final int DIRT_DEPTH = 4;
-        final float HEIGHT = 5 * 16;
-
         for (int x = 0; x < level.getWidthInVoxels(); x++) {
             for (int z = 0; z < level.getDepthInVoxels(); z++) {
                 float base = heightNoise.GetNoise(x, z) * 5;
@@ -111,31 +111,31 @@ public class IslandTerrainGenerator implements TerrainGenerator {
                 }
 
                 // water
-                if (terrainHeight < WATER_HEIGHT) {
+                if (terrainHeight < settings.waterHeight) {
                     // filling with the water
-                    for (int y = terrainHeight; y <= WATER_HEIGHT; y++) {
+                    for (int y = terrainHeight; y <= settings.waterHeight; y++) {
                         level.placeVoxel(water, x, y, z);
                     }
-                    for (int i = 0; i <= DIRT_DEPTH; i++) {
+                    for (int i = 0; i <= settings.dirtDepth; i++) {
                         level.placeVoxel(sand, x, terrainHeight - i, z);
                     }
                 }
                 //beach
-                else if (terrainHeight < SAND_LEVEL * HEIGHT) {
-                    for (int i = 0; i <= DIRT_DEPTH; i++) {
+                else if (terrainHeight < settings.sandLevel * settings.height) {
+                    for (int i = 0; i <= settings.dirtDepth; i++) {
                         level.placeVoxel(sand, x, terrainHeight - i, z);
                     }
                 }
                 // grass
-                else if (terrainHeight < GRASS_LEVEL * HEIGHT) {
+                else if (terrainHeight < settings.grassLevel * settings.height) {
                     level.placeVoxel(grass, x, terrainHeight, z);
-                    for (int i = 1; i <= DIRT_DEPTH; i++) {
+                    for (int i = 1; i <= settings.dirtDepth; i++) {
                         level.placeVoxel(dirt, x, terrainHeight - i, z);
                     }
-                    level.placeVoxel(stone, x, terrainHeight - DIRT_DEPTH - 1, z);
+                    level.placeVoxel(stone, x, terrainHeight - settings.dirtDepth - 1, z);
                 }
                 // rock hills
-                else if (terrainHeight < ROCK_LEVEL * HEIGHT) {
+                else if (terrainHeight < settings.rockLevel * settings.height) {
                     level.placeVoxel(stone, x, terrainHeight, z);
                 }
                 // snowy peaks
@@ -148,7 +148,7 @@ public class IslandTerrainGenerator implements TerrainGenerator {
                 for (int y = 4; y < terrainHeight + 3; y++) {
                     if (!isCave(x, y, z)) continue;
 
-                    if (y <= WATER_HEIGHT) {
+                    if (y <= settings.waterHeight) {
                         level.placeVoxel(water, x, y, z);
                     } else {
                         level.placeVoxel(null, x, y, z);
@@ -166,7 +166,7 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         int success = 0;
 
         try {
-            for (int i = 0; i < 2000; i++) {
+            for (int i = 0; i < settings.mobAmount; i++) {
                 int x = random.nextInt(level.getWidthInVoxels());
                 int z = random.nextInt(level.getDepthInVoxels());
                 float value = treeNoise.GetNoise(x, z);
@@ -198,24 +198,8 @@ public class IslandTerrainGenerator implements TerrainGenerator {
     @Override
     public void generateMinerals(Level level) {
         VoxelRegistry registry = VoxelphaliaGame.getInstance().getVoxelRegistry();
-        Voxel[] minerals = new Voxel[]{
-            registry.getEntry("coal_mineral"),
-            registry.getEntry("iron_mineral"),
-            registry.getEntry("gold_mineral"),
-            registry.getEntry("ruby_mineral"),
-            registry.getEntry("gemstone_mineral"),
-        };
 
-        // minY, maxY, minimal noise
-        float[] settings = new float[]{
-            40f, 100f, 0.6f,
-            32f, 49f, 0.94f,
-            21f, 33f, 0.85f,
-            40f, 100f, 0.9f,
-            11f, 20f, 0.97f,
-        };
-
-        int[] generatedAmount = new int[minerals.length];
+        int[] generatedAmount = new int[settings.minerals.size];
 
         // multithreaded ore placement
         int threadCount = Runtime.getRuntime().availableProcessors();
@@ -230,9 +214,8 @@ public class IslandTerrainGenerator implements TerrainGenerator {
             for (List<Chunk> batch : chunkBatches) {
                 tasks.add(() -> {
                     for (Chunk chunk : batch) {
-                        for (int i = 0; i < minerals.length; i++) {
-                            float minY = settings[i * 3], maxY = settings[i * 3 + 1], value = settings[i * 3 + 2];
-                            int generatedMinerals = generateMineral(chunk, level, minerals[i], minY, maxY, value, level.getSeed() + 121);
+                        for (int i = 0; i < settings.minerals.size; i++) {
+                            int generatedMinerals = generateMineral(chunk, level, settings.minerals.get(i), level.getSeed() + 121);
                             generatedAmount[i] += generatedMinerals;
                         }
                     }
@@ -247,16 +230,18 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         }
 
         for (int i = 0; i < generatedAmount.length; i++) {
-            Gdx.app.log(getClass().getSimpleName(), "Generated " + generatedAmount[i] + " " + minerals[i]);
+            Gdx.app.log(getClass().getSimpleName(), "Generated " + generatedAmount[i] + " " + settings.minerals.get(i));
         }
     }
 
-    private int generateMineral(Chunk chunk, Level level, Voxel mineral, float minY, float maxY, float value, int seed) {
-        if (chunk.getOffset().y < minY || chunk.getOffset().y > maxY) {
+    private int generateMineral(Chunk chunk, Level level, TerrainGeneratorSettings.Mineral mineral, int seed) {
+        if (chunk.getOffset().y < mineral.minY() || chunk.getOffset().y > mineral.maxY()) {
             return 0;
         }
 
-        Random random = new Random(seed + mineral.getId().hashCode());
+        Voxel voxel = VoxelphaliaGame.getInstance().getVoxelRegistry().getEntry(mineral.identifier());
+
+        Random random = new Random(seed + mineral.identifier().hashCode());
 
         Array<Vector3> positions = new Array<>();
 
@@ -268,10 +253,10 @@ public class IslandTerrainGenerator implements TerrainGenerator {
                 for (int y = 0; y < Chunk.SIZE; y++) {
                     int ly = (int) (chunk.getOffset().y + y);
                     Identifier v = level.getVoxel(lx, ly, lz);
-                    if (ly < minY || ly > maxY || v == null || !v.equals("stone")) continue;
+                    if (ly < mineral.minY() || ly > mineral.maxY() || v == null || !v.equals("stone")) continue;
 
                     float n = oreNoise.GetNoise(lx, ly, lz);
-                    if (n < value) continue;
+                    if (n < mineral.threshold()) continue;
 
                     positions.add(new Vector3(lx, ly, lz));
                 }
@@ -294,7 +279,7 @@ public class IslandTerrainGenerator implements TerrainGenerator {
             while (!queue.isEmpty() && size > 0) {
                 Vector3 c = queue.poll();
                 if (!visited.add(c)) continue;
-                level.placeVoxel(mineral, (int) c.x, (int) c.y, (int) c.z);
+                level.placeVoxel(voxel, c.x, c.y, c.z);
                 amount++;
                 size--;
 
@@ -320,7 +305,7 @@ public class IslandTerrainGenerator implements TerrainGenerator {
     @Override
     public void generateTrees(Level level) {
         Random random = new Random(level.getSeed() + 4);
-        int attempts = 16000, success = 0;
+        int attempts = settings.treeAmount, success = 0;
 
         for (int i = 0; i < attempts; i++) {
             int x = random.nextInt(level.getWidthInVoxels());
@@ -347,5 +332,10 @@ public class IslandTerrainGenerator implements TerrainGenerator {
         caveWrapNoise.DomainWarp(v);
         float n = Math.abs(caveNoise.GetNoise(v.x, v.y, v.z));
         return n < 0.05f && y > 3 && y < 75;
+    }
+
+    @Override
+    public TerrainGeneratorSettings getSettings() {
+        return settings;
     }
 }
