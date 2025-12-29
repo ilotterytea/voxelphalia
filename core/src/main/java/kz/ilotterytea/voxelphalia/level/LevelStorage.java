@@ -1,6 +1,7 @@
 package kz.ilotterytea.voxelphalia.level;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -546,5 +547,37 @@ public class LevelStorage {
         }
 
         return chunks;
+    }
+
+    public static Array<Level> loadAllLevelsData() {
+        Array<Level> levels = new Array<>();
+
+        FileHandle rootDirectory = Gdx.files.absolute(VoxelphaliaConstants.Paths.LEVEL_DIRECTORY);
+        if (!rootDirectory.exists()) rootDirectory.mkdirs();
+        else if (!rootDirectory.isDirectory()) throw new RuntimeException(rootDirectory.path() + " is not a directory");
+
+        for (FileHandle folder : rootDirectory.list()) {
+            if (!folder.isDirectory()) continue;
+            Level level = loadLevel(folder.name());
+            if (level == null) continue;
+            levels.add(level);
+        }
+
+        return levels;
+    }
+
+    public static Array<String> loadAllLevelNames() {
+        Array<String> names = new Array<>();
+
+        FileHandle rootDirectory = Gdx.files.absolute(VoxelphaliaConstants.Paths.LEVEL_DIRECTORY);
+        if (!rootDirectory.exists()) rootDirectory.mkdirs();
+        else if (!rootDirectory.isDirectory()) throw new RuntimeException(rootDirectory.path() + " is not a directory");
+
+        for (FileHandle folder : rootDirectory.list()) {
+            if (!folder.isDirectory()) continue;
+            names.add(folder.name());
+        }
+
+        return names;
     }
 }

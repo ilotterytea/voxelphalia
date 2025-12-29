@@ -17,6 +17,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
 import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.screens.LevelLoadingScreen;
 import kz.ilotterytea.voxelphalia.ui.menu.TiledVoxelTexture;
 import kz.ilotterytea.voxelphalia.ui.sound.SoundingSelectBox;
@@ -72,13 +73,31 @@ public class LevelCreationScreen implements Screen {
         worldNameTable.align(Align.topLeft);
         centerTable.add(worldNameTable).width(sectionWidth).padBottom(sectionPad).row();
 
-        Label worldName = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_NAME), skin);
-        worldName.setAlignment(Align.left);
-        worldNameTable.add(worldName).padBottom(elementPad).growX().row();
+        Label worldNameLabel = new Label(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_NAME), skin);
+        worldNameLabel.setAlignment(Align.left);
+        worldNameTable.add(worldNameLabel).padBottom(elementPad).growX().row();
+
+        Label worldNamePreview = new Label("", skin, "level-creation-subtitle");
+        worldNamePreview.setAlignment(Align.left);
 
         TextField worldField = new TextField("", skin);
+        worldField.setMaxLength(30);
         worldField.setMessageText("My World");
-        worldNameTable.add(worldField).growX().row();
+        final String[] worldName = {worldField.getMessageText()};
+        Array<String> names = LevelStorage.loadAllLevelNames();
+        worldNamePreview.setText(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_NAME_PREVIEW, deduplicateName(worldName[0], names)));
+        worldField.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                worldName[0] = worldField.getText();
+                if (worldName[0].isBlank()) worldName[0] = worldField.getMessageText();
+                worldName[0] = deduplicateName(worldName[0], names);
+                worldNamePreview.setText(localizationManager.getLine(LineId.MENU_LEVEL_CREATE_NAME_PREVIEW, worldName[0]));
+            }
+        });
+        worldNameTable.add(worldField).padBottom(elementPad).growX().row();
+
+        worldNameTable.add(worldNamePreview).growX().row();
 
         // --- Seed name ---
         Table seedNameTable = new Table();
@@ -136,8 +155,6 @@ public class LevelCreationScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                String levelName = worldField.getText();
-                if (levelName.isEmpty()) levelName = worldField.getMessageText();
 
                 int seed = (int) (System.currentTimeMillis() / 1000);
                 if (!seedField.getText().isBlank()) {
@@ -145,7 +162,7 @@ public class LevelCreationScreen implements Screen {
                 }
 
                 Level level = new Level(
-                    levelName,
+                    deduplicateName(worldName[0], LevelStorage.loadAllLevelNames()),
                     Level.LevelGeneratorType.valueOf(levelTypeSelectBox.getSelected()),
                     Level.LevelGameMode.SURVIVAL,
                     seed
@@ -205,5 +222,15 @@ public class LevelCreationScreen implements Screen {
         Gdx.input.setInputProcessor(null);
         stage.dispose();
         backgroundTexture.dispose();
+    }
+
+    private String deduplicateName(String name, Array<String> names) {
+        String next = name;
+        int attempts = 0;
+        while (names.contains(next, false)) {
+            attempts++;
+            next = String.format("%s (%d)", name, attempts);
+        }
+        return next;
     }
 }
