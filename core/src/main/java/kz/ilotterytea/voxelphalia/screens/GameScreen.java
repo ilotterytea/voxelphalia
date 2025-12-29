@@ -35,6 +35,7 @@ import kz.ilotterytea.voxelphalia.input.PlayerInputProcessor;
 import kz.ilotterytea.voxelphalia.input.SpecialInputProcessor;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.RenderableLevel;
+import kz.ilotterytea.voxelphalia.level.generators.TerrainGeneratorSettings;
 import kz.ilotterytea.voxelphalia.ui.DebugInfoStack;
 import kz.ilotterytea.voxelphalia.ui.game.HotbarTable;
 import kz.ilotterytea.voxelphalia.ui.game.PauseScreenStack;
@@ -130,7 +131,7 @@ public class GameScreen implements Screen {
             new Vector3(1000f, 0f, 1000f)
         );
 
-        this.ocean = new InfiniteOcean(level, 11);
+        this.ocean = new InfiniteOcean(level, TerrainGeneratorSettings.getDefaultSettings(level.getGeneratorType()).waterHeight + 1);
 
         showStage();
 
