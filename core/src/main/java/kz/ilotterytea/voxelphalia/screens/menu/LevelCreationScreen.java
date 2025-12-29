@@ -139,7 +139,19 @@ public class LevelCreationScreen implements Screen {
                 String levelName = worldField.getText();
                 if (levelName.isEmpty()) levelName = worldField.getMessageText();
 
-                game.setScreen(new LevelLoadingScreen(levelName, Level.LevelGeneratorType.valueOf(levelTypeSelectBox.getSelected()), Level.LevelGameMode.SURVIVAL));
+                int seed = (int) (System.currentTimeMillis() / 1000);
+                if (!seedField.getText().isBlank()) {
+                    seed = seedField.getText().hashCode();
+                }
+
+                Level level = new Level(
+                    levelName,
+                    Level.LevelGeneratorType.valueOf(levelTypeSelectBox.getSelected()),
+                    Level.LevelGameMode.SURVIVAL,
+                    seed
+                );
+
+                game.setScreen(new LevelLoadingScreen(level));
             }
         });
         bottomTable.add(creationButton).width(sectionWidth).padBottom(16f).row();

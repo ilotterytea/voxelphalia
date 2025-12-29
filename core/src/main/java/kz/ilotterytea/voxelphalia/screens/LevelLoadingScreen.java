@@ -12,13 +12,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.github.czyzby.noise4j.map.Grid;
-import com.github.czyzby.noise4j.map.generator.util.Generators;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.entities.mobs.MobType;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.level.Chunk;
 import kz.ilotterytea.voxelphalia.level.Level;
-import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.level.generators.IslandTerrainGenerator;
 import kz.ilotterytea.voxelphalia.level.generators.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
@@ -42,16 +40,8 @@ public class LevelLoadingScreen implements Screen {
 
     private Thread generationThread;
 
-    public LevelLoadingScreen(String levelName, Level.LevelGeneratorType generatorType, Level.LevelGameMode gameMode) {
-        try {
-            this.level = LevelStorage.loadAll(levelName);
-        } catch (Exception e) {
-            Gdx.app.error("LevelLoadingScreen", "Failed to load level \"" + levelName + "\"", e);
-        }
-
-        if (this.level == null) {
-            this.level = new Level(levelName, 30, 30, 30, Generators.rollSeed(), generatorType, gameMode);
-        }
+    public LevelLoadingScreen(Level level) {
+        this.level = level;
     }
 
     @Override

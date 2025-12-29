@@ -39,6 +39,10 @@ public class Level implements Tickable {
 
     private boolean applyPhysics;
 
+    public Level(String name, LevelGeneratorType generatorType, LevelGameMode gameMode, int seed) {
+        this(name, 30, 30, 30, seed, generatorType, gameMode);
+    }
+
     public Level(String name, int width, int height, int depth, int seed, LevelGeneratorType generatorType, LevelGameMode gameMode) {
         this.width = width;
         this.height = height;

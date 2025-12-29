@@ -176,7 +176,11 @@ public class LevelSelectionScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);
-                    game.setScreen(new LevelLoadingScreen(level.second.name(), Level.LevelGeneratorType.LIMITED, Level.LevelGameMode.SURVIVAL));
+                    try {
+                        game.setScreen(new LevelLoadingScreen(LevelStorage.loadAll(level.second.name())));
+                    } catch (RuntimeException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
             levelButtonTable.add(playButton).width(100f);
