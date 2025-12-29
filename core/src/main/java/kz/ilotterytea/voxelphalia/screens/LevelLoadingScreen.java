@@ -18,6 +18,7 @@ import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.level.Chunk;
 import kz.ilotterytea.voxelphalia.level.Level;
 import kz.ilotterytea.voxelphalia.level.generators.IslandTerrainGenerator;
+import kz.ilotterytea.voxelphalia.level.generators.LimitedTerrainGenerator;
 import kz.ilotterytea.voxelphalia.level.generators.TerrainGenerator;
 import kz.ilotterytea.voxelphalia.voxels.Voxel;
 
@@ -102,7 +103,11 @@ public class LevelLoadingScreen implements Screen {
         stepBar = new ProgressBar(0f, 6f, 1f, false, skin);
         table.add(stepBar).width(300f);
 
-        generator = new IslandTerrainGenerator(level.getSeed());
+        generator = switch (level.getGeneratorType()) {
+            case LIMITED -> new LimitedTerrainGenerator();
+            case ISLAND -> new IslandTerrainGenerator(level.getSeed());
+            default -> throw new RuntimeException("Unimplemented level generator: " + level.getGeneratorType());
+        };
 
         runGenerationThread();
     }
