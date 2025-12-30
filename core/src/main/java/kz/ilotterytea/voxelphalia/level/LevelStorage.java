@@ -303,6 +303,39 @@ public class LevelStorage {
         return level;
     }
 
+    public static LevelMetadata loadLevelData(String levelName) {
+        FileHandle file = Gdx.files.absolute(String.format("%s/%s/level.dat", VoxelphaliaConstants.Paths.LEVEL_DIRECTORY, levelName));
+
+        if (!file.exists()) {
+            return null;
+        }
+
+        LevelMetadata data;
+
+        Gdx.app.log("LevelStorage", "Loading level.dat for " + levelName + "...");
+
+        try (GZIPInputStream gis = new GZIPInputStream(file.read())) {
+            String contents = new String(gis.readAllBytes(), StandardCharsets.UTF_8);
+            JsonValue json = new JsonReader().parse(contents);
+
+            data = new LevelMetadata(
+                json.getString("name"),
+                json.getInt("width"),
+                json.getInt("height"),
+                json.getInt("depth"),
+                json.getInt("seed"),
+                Level.LevelGeneratorType.valueOf(json.getString("generatorType")),
+                Level.LevelGameMode.valueOf(json.getString("gameMode"))
+            );
+
+            data.setLastTimeOpened(json.getLong("lastOpened"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return data;
+    }
+
     public static ArrayList<Entity> loadEntities(String levelName) {
         String folderName = VoxelphaliaConstants.Paths.LEVEL_DIRECTORY + "/" + levelName;
         if (!new File(folderName).exists()) {

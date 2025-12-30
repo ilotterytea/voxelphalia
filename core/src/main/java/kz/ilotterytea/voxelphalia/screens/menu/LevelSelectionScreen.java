@@ -17,7 +17,7 @@ import kz.ilotterytea.voxelphalia.VoxelphaliaConstants;
 import kz.ilotterytea.voxelphalia.VoxelphaliaGame;
 import kz.ilotterytea.voxelphalia.l10n.LineId;
 import kz.ilotterytea.voxelphalia.l10n.LocalizationManager;
-import kz.ilotterytea.voxelphalia.level.Level;
+import kz.ilotterytea.voxelphalia.level.LevelMetadata;
 import kz.ilotterytea.voxelphalia.level.LevelStorage;
 import kz.ilotterytea.voxelphalia.screens.LevelLoadingScreen;
 import kz.ilotterytea.voxelphalia.ui.menu.TiledVoxelTexture;
@@ -88,11 +88,11 @@ public class LevelSelectionScreen implements Screen {
         // Worlds
         FileHandle levelsFolder = Gdx.files.absolute(VoxelphaliaConstants.Paths.LEVEL_DIRECTORY);
 
-        Array<Pair<Level, FileHandle>> levels = new Array<>();
+        Array<Pair<LevelMetadata, FileHandle>> levels = new Array<>();
 
         for (FileHandle levelFolder : levelsFolder.list()) {
             if (!levelFolder.isDirectory()) continue;
-            Level level = LevelStorage.loadLevel(levelFolder.name());
+            LevelMetadata level = LevelStorage.loadLevelData(levelFolder.name());
             if (level == null) continue;
             levels.add(new Pair<>(level, levelFolder));
         }
@@ -102,7 +102,7 @@ public class LevelSelectionScreen implements Screen {
         thumbnailTextures = new Array<>();
 
         for (int i = 0; i < levels.size; i++) {
-            Pair<Level, FileHandle> level = levels.get(i);
+            Pair<LevelMetadata, FileHandle> level = levels.get(i);
 
             // Level (table)
             Table levelTable = new Table(skin);

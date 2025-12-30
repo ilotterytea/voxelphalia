@@ -16,26 +16,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
 
-public class Level implements Tickable {
-    public enum LevelGeneratorType {
-        LIMITED,
-        ISLAND
-    }
-
-    public enum LevelGameMode {
-        SURVIVAL;
-    }
-
+public class Level extends LevelMetadata implements Tickable {
     protected final Array<Chunk> chunks;
     protected final Queue<Vector3> voxelPhysicsQueue;
-    protected final int width, height, depth;
     protected final ArrayList<Entity> entities;
-    protected final int seed;
-    protected final String name;
-    protected long lastTimeOpened;
-
-    protected final LevelGameMode gameMode;
-    protected final LevelGeneratorType generatorType;
 
     private boolean applyPhysics;
 
@@ -44,13 +28,7 @@ public class Level implements Tickable {
     }
 
     public Level(String name, int width, int height, int depth, int seed, LevelGeneratorType generatorType, LevelGameMode gameMode) {
-        this.width = width;
-        this.height = height;
-        this.depth = depth;
-        this.seed = seed;
-        this.name = name;
-        this.generatorType = generatorType;
-        this.gameMode = gameMode;
+        super(name, width, height, depth, seed, generatorType, gameMode);
         this.voxelPhysicsQueue = new ArrayDeque<>();
 
         int chunkCapacity = width * height * depth;
@@ -334,26 +312,6 @@ public class Level implements Tickable {
 
     public ArrayList<Entity> getEntities() {
         return entities;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public long getLastTimeOpened() {
-        return lastTimeOpened;
-    }
-
-    public void setLastTimeOpened(long lastTimeOpened) {
-        this.lastTimeOpened = lastTimeOpened;
-    }
-
-    public LevelGameMode getGameMode() {
-        return gameMode;
-    }
-
-    public LevelGeneratorType getGeneratorType() {
-        return generatorType;
     }
 
     public boolean isApplyingPhysics() {
