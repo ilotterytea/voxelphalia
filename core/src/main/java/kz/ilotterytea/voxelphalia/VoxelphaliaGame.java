@@ -40,6 +40,8 @@ public class VoxelphaliaGame extends Game {
         recipeRegistry = new RecipeRegistry();
         soundRegistry = new SoundRegistry();
         localizationManager = new LocalizationManager();
+        localizationManager.setLocaleIndex(preferences.getInteger("localization-id", 0));
+
         shapeRenderer = new ShapeRenderer();
 
         if (preferences.getBoolean("fullscreen", false)) {

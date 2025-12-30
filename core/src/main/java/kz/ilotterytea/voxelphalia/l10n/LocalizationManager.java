@@ -2,16 +2,14 @@ package kz.ilotterytea.voxelphalia.l10n;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 public class LocalizationManager {
-    private final ArrayList<Localization> localizations;
+    private final Array<Localization> localizations;
     private int index;
 
     public LocalizationManager() {
-        this.localizations = new ArrayList<>();
+        this.localizations = new Array<>();
 
         FileHandle assetsFile = Gdx.files.internal("assets.txt");
 
@@ -29,9 +27,20 @@ public class LocalizationManager {
         return this.localizations.get(index).getLine(id, arguments);
     }
 
-    public List<String> getNames() {
-        return this.localizations.stream()
-            .map(Localization::getName)
-            .toList();
+    public void setLocaleIndex(int index) {
+        if (index + 1 > localizations.size)
+            throw new IllegalArgumentException("Localization index: " + index + " > " + (localizations.size - 1));
+
+        this.index = index;
+    }
+
+    public int getLocaleIndex() {
+        return index;
+    }
+
+    public Array<String> getNames() {
+        Array<String> names = new Array<>();
+        this.localizations.forEach(l -> names.add(l.getName()));
+        return names;
     }
 }

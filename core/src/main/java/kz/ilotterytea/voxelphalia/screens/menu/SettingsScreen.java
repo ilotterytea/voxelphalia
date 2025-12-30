@@ -184,6 +184,32 @@ public class SettingsScreen implements Screen {
         Label gameplayTitle = new Label(localizationManager.getLine(LineId.SETTINGS_GAMEPLAY), skin);
         table.add(gameplayTitle).growX().padBottom(sectionPad).row();
 
+        // -- LOCALIZATION --
+        Table localizationTable = new Table();
+        localizationTable.align(Align.left);
+        table.add(localizationTable).growX().padLeft(rowPad).padBottom(sectionPad).row();
+
+        Label localizationLabel = new Label(localizationManager.getLine(LineId.SETTINGS_LOCALIZATION), skin);
+        localizationLabel.setAlignment(Align.left);
+        localizationTable.add(localizationLabel).growX().padRight(rowPad);
+
+        SoundingSelectBox<String> localizationSelectBox = new SoundingSelectBox<>(skin);
+        Array<String> names = localizationManager.getNames();
+        localizationSelectBox.setItems(names);
+        localizationSelectBox.setSelected(names.get(localizationManager.getLocaleIndex()));
+        localizationSelectBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                String selectedString = localizationSelectBox.getSelected();
+                int index = names.indexOf(selectedString, false);
+                preferences.putInteger("localization-id", index);
+                preferences.flush();
+                localizationManager.setLocaleIndex(index);
+                VoxelphaliaGame.getInstance().setScreen(new SettingsScreen());
+            }
+        });
+        localizationTable.add(localizationSelectBox).width(256f);
+
         // -- MATURE CONTENT --
         Table matureContentTable = new Table();
         matureContentTable.align(Align.left);
