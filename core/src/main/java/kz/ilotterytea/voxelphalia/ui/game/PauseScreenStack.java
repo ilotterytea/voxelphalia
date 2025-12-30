@@ -66,11 +66,11 @@ public class PauseScreenStack extends Stack {
         // -- SETTINGS BUTTON --
         Table settingsTable = new Table();
         settingsTable.setFillParent(true);
-        add(settingsTable);
+        //add(settingsTable);
 
         SettingsWindow settingsWindow = new SettingsWindow(skin);
         settingsWindow.setVisible(false);
-        settingsTable.add(settingsWindow).size(400f, 450f);
+        //settingsTable.add(settingsWindow).size(400f, 450f);
 
         SoundingTextButton settingsButton = new SoundingTextButton(localizationManager.getLine(LineId.PAUSE_SETTINGS), skin);
         settingsButton.addListener(new ClickListener() {
@@ -80,7 +80,7 @@ public class PauseScreenStack extends Stack {
                 settingsWindow.setVisible(!settingsWindow.isVisible());
             }
         });
-        window.add(settingsButton).growX().padBottom(30f).row();
+        //window.add(settingsButton).growX().padBottom(30f).row();
 
         // -- QUIT BUTTON --
         SoundingTextButton quitButton = new SoundingTextButton(localizationManager.getLine(LineId.PAUSE_QUIT), skin);
