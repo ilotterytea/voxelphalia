@@ -1,0 +1,9 @@
+settings.png
+size:128,32
+repeat:none
+general
+bounds:32,0,32,32
+graphics
+bounds:0,0,32,32
+sound
+bounds:64,0,32,32
