@@ -97,7 +97,7 @@ public class LevelSelectionScreen implements Screen {
             levels.add(new Pair<>(level, levelFolder));
         }
 
-        levels.sort(Comparator.comparingLong(o -> o.first.getLastTimeOpened()));
+        levels.sort(Comparator.comparingLong(o -> -o.first.getLastTimeOpened()));
 
         thumbnailTextures = new Array<>();
 
