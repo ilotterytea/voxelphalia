@@ -9,11 +9,11 @@ import java.time.Month;
 
 public class VoxelphaliaConstants {
     public static class Metadata {
-        public static final String APP_NAME = "voxelphalia";
+        public static final String APP_NAME = "Voxelphalia";
         public static final String APP_ID = "voxelphalia";
         public static final String APP_PACKAGE = "kz.ilotterytea.voxelphalia";
         public static final String APP_DEV = "ilotterytea";
-        public static final String APP_VERSION = "0.7.1";
+        public static final String APP_VERSION = "0.8";
     }
 
     public static class Paths {
